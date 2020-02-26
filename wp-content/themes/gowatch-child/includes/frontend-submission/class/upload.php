@@ -95,12 +95,10 @@ class TSZF_Upload {
 
             echo airkit_var_sanitize( $response['html'], 'true' );
         } else {
-            echo 'error';
+            // send response to frontend
+             echo json_encode( $attach );
         }
 
-
-        // $response = array('success' => false, 'message' => $attach['error']);
-        // echo json_encode( $response );
         exit;
     }
 
@@ -114,10 +112,8 @@ class TSZF_Upload {
         if($upload_data['size'] + getTotalUploadedFileSizeOfCurrentUser() >= getDiskQuotaOfCurrentUser() * 1024 * 1024 *1024)
             return array('success' => false, 'error' => 'disk quota exceed the 2GB limit!');
 
-        $mime = wp_check_filetype($upload_data['name']);
-
-        if($mime['type'] != 'application/zip') {
-            return array('success' => false, 'error' => 'only one zip file required!');
+        if(!self::is_allowed_upload_file_type($upload_data['name'])){
+            return array('success' => false, 'error' => 'only one zip or laz file is allowed!');
         }
 
         $uploaded_file = wp_handle_upload( $upload_data, array('test_form' => false) );
@@ -214,8 +210,21 @@ class TSZF_Upload {
         ) );
     }
 
+    static function is_allowed_upload_file_type($filename) {
+        $mime = wp_check_filetype($filename);
+
+        if($mime['type'] == 'application/zip') {
+            return true;
+        }
+
+        if($mime['type'] == 'application/laz') {
+            return true;
+        }
+
+        return false;
+    }
+
     function insert_image() {
         $this->upload_file( true );
     }
-
 }

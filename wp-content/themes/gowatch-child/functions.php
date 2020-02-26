@@ -12,8 +12,9 @@ if (!defined('CS_LIB_VER')) {
     define('CS_LIB_VER', '1.0.0'); //library version of js and css
 }
 
+// GB format
 if (!defined('DEFAULT_DISK_QUOTA')) {
-    define('DEFAULT_DISK_QUOTA', 0);
+    define('DEFAULT_DISK_QUOTA', 2);
 }
 
 if (!defined('CONSTRUKTED_EC2_SERVER')) {
@@ -273,3 +274,11 @@ function make_ascii_filename($filename) {
 }
 
 add_filter('sanitize_file_name', 'make_ascii_filename', 10);
+
+function construkted_upload_mimes($mime_types) {
+    $mime_types['laz'] = 'application/laz';
+
+    return $mime_types;
+}
+
+add_action('upload_mimes', 'construkted_upload_mimes');

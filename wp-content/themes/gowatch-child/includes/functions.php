@@ -103,7 +103,7 @@ function getTotalUploadedFileGBSizeOfCurrentUser() {
     return number_format($total, 2);
 }
 
-// GB format
+// return value will have the GB format
 
 function getDiskQuotaOfCurrentUser() {
     $current_user = wp_get_current_user();

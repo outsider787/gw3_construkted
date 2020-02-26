@@ -170,8 +170,22 @@
             $('#' + file.id + " b").html("100%");
             $('#' + file.id).remove();
 
-            if(response.response != 'error') {
+            var realResponseString = response.response;
 
+            var isError = true;
+            var realResponse;
+
+            try {
+                realResponse = JSON.parse(realResponseString);
+
+                if(realResponse.success)
+                    isError = false;
+            }
+            catch(err) {
+                isError = false;
+            }
+
+            if(!isError) {
                 this.perFileCount++;
                 var $container = $('#' + this.container).find('.tszf-attachment-list');
                 $container.append(response.response);
@@ -184,8 +198,7 @@
                 }
 
             } else {
-
-                alert(response.response);
+                alert(realResponse.error);
 
                 this.count -= 1;
                 this.showHide();
