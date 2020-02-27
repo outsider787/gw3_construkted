@@ -127,7 +127,7 @@ $shown_ids = array();
 
                                 <?php elseif ( 'posts' == $key ): ?>
                                     <div class="row">
-                                        <div class="col-md-6 col-sm-6"><?php echo getTotalUploadedFileGBSizeOfCurrentUser()?> GB of <?php echo getDiskQuotaOfCurrentUser()?>GB remaining. <a href="/pricing"><?php esc_html_e( 'Get more storage space.', 'gowatch-child' ); ?></a></div>
+                                        <div class="col-md-6 col-sm-6">Used Storage: <?php echo getTotalUploadedFileGBSizeOfCurrentUser()?> GB | Total Quota: <?php echo getDiskQuotaOfCurrentUser()?>GB <a href="/pricing"><?php esc_html_e( 'Get more storage space.', 'gowatch-child' ); ?></a></div>
                                         <div class="col-md-6 col-sm-6"><?php $frontend_dashboard->sortby(); ?></div>
                                     </div>
                                     <?php
