@@ -54,8 +54,52 @@ function doUpdateState(data) {
             continue;
         }
 
-        postStateDiv.innerHTML = getState(tilingJobInfo);
+        var percent = getProcessingProgress(tilingJobInfo);
+
+        if(percent == 100)
+            postStateDiv.innerHTML = 'Completed';
+        else
+            postStateDiv.innerHTML = percent + ' %';
     }
+}
+
+function getProcessingProgress(tilingJobInfo) {
+    var state = tilingJobInfo.state;
+
+    if(state === State.Creating)
+        return 5;
+    // 5-20%
+    else if(state === State.Uploading){
+        var uploadingPercent = tilingJobInfo.uploadingProgress;
+
+        var percent = 5 + uploadingPercent / 100 * 15;
+
+        return percent.toFixed(2);
+    }
+    // 20-70%
+    else if(state === State.Tiling) {
+        if(isNaN(tilingJobInfo.tilingStatus))
+            return 20;
+        else{
+            var tilingPercent = tilingJobInfo.tilingStatus;
+
+            var percent = 20 + tilingPercent / 100 * 50;
+
+            return percent.toFixed(2);
+        }
+    }
+    else if(state === State.Downloading)
+        return 70;
+    else if(state === State.Packaging)
+        return 80;
+    else if(state === State.Deleting)
+        return 90;
+    else if(state === State.Finished)
+        return 95;
+    if(state === State.Completed)
+        return 100;
+    else
+        return 0;
 }
 
 function getState(tilingJobInfo) {
