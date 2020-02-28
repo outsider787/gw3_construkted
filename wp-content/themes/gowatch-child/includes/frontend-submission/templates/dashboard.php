@@ -196,48 +196,37 @@ $shown_ids = array();
                                                                 loop           : loop
 
                                                             },  function(data){
-
                                                                 if( data !== '0' ){
-
                                                                     if( $container_wrap.hasClass('ts-masonry-container') ){
-
                                                                         var data_content = jQuery(data).appendTo($container_wrap);
-
                                                                         $container_wrap.isotope('appended', jQuery(data_content));
 
                                                                         setTimeout(function(){
                                                                             $container_wrap.isotope('layout');
                                                                             AIRKIT.lazyLoad.control( $container_wrap );
+                                                                            AIRKIT.init();
                                                                         },1200);
-
                                                                     } else {
-
                                                                         setTimeout(function(){
                                                                             jQuery(data).css('opacity', 0).appendTo($container_wrap).css('opacity', 1);
                                                                             AIRKIT.lazyLoad.control( $container_wrap );
+                                                                            AIRKIT.init();
                                                                         }, 1000);
-
                                                                     }
-
-
-                                                                } else { 
-
+                                                                } else {
                                                                     loadmoreButton.remove();
-
                                                                 }
 
                                                                 jQuery('#airkit_loading-preload').removeClass('shown');
 
                                                                 // Hide the preloader
                                                                 setTimeout(function(){
-
                                                                     element.addClass('loading-out');
                                                                 },800);
 
                                                                 setTimeout(function(){
                                                                     element.removeClass('loading-out loading');
                                                                 }, 1500)
-
                                                             }
                                                         );
                                                     });
