@@ -588,13 +588,19 @@ class TSZF_Frontend_Form_Post extends TSZF_Render_Form {
             tszf_clear_buffer();
 
             if($is_update == false) {
-                $asset_type = $_POST['asset_type'];
+                $upload_data_type = $_POST['upload_data_type'];
+
+                if($upload_data_type == 'Images for photogrammetry processing') {
+                    $asset_type = 'polygon-mesh';
+                }
+                else
+                    $asset_type = $_POST['asset_type'];
 
                 $asset_type = self::convert_asset_type_from_gowatch_to_edd6($asset_type);
                 $attachment_id = $_POST['tszf_files']['upload_asset'][0];
 
                 self::set_default_thumbnail_of_being_processed_asset($post_id, $postarr['post_name']);
-                self::start_upload_to_s3_and_tiling($post_id, $attachment_id, $postarr['post_name'], $asset_type);
+                self::start_upload_to_s3_and_tiling($post_id, $attachment_id, $postarr['post_name'], $upload_data_type, $asset_type);
             }
 
             $password = isset( $_POST['asset_view_password'] ) ? $_POST['asset_view_password'] : '';
@@ -927,7 +933,7 @@ class TSZF_Frontend_Form_Post extends TSZF_Render_Form {
         return $post_slug;
     }
 
-    static function start_upload_to_s3_and_tiling($post_id, $attachment_id, $post_slug, $asset_model_type) {
+    static function start_upload_to_s3_and_tiling($post_id, $attachment_id, $post_slug, $upload_data_type, $asset_model_type) {
         $attached_file = get_attached_file($attachment_id, false);
 
         // save uploaded file size
@@ -958,6 +964,7 @@ class TSZF_Frontend_Form_Post extends TSZF_Render_Form {
         $command = $command . '"' . $post_id . '" ';
         $command = $command . '"' . $post_slug . '" ';
         $command = $command . '"' . $user_nice_name . '" ';
+        $command = $command . '"' . $upload_data_type . '" ';
         $command = $command . '"' . $asset_model_type . '" ';
         $command = $command . '"' . $attached_file . '" ';
         $command = $command . '"' . $s3_access_id . '" ';
