@@ -95,7 +95,9 @@ $article_atts['class'] = get_post_class( $article_classes );
 
 
 			echo '</div>';
-
+            echo '<div id="side-menu-bar-wrapper">';
+                require_once dirname(__DIR__) . '/side-menu-bar/side-menu-bar-init.php';
+            echo '</div>';
 			echo '<div class="loading-spinner"></div>';
 		echo '</figure>';
 
