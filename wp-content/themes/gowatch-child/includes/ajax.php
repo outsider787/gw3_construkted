@@ -136,8 +136,7 @@ function construkted_delete_asset( $post_id ) {
     $original_3d_file_base_name = get_post_meta($post_id, 'original_3d_file_base_name', true);
 
     if($original_3d_file_base_name == '') {
-        error_log('we can not find original file name.');
-        return;
+        return array('success' => false, 'error' => 'failed to find original zip file name!');
     }
 
     $server_url = CONSTRUKTED_EC2_API_DELETE_ASSET;
@@ -151,7 +150,7 @@ function construkted_delete_asset( $post_id ) {
     if( is_wp_error( $ret ) ) {
         $error_string = $ret->get_error_message();
 
-        wp_die($error_string);
+        return array('success' => false, 'error' => $error_string);
     }
 
     $body = wp_remote_retrieve_body( $ret );
@@ -159,8 +158,12 @@ function construkted_delete_asset( $post_id ) {
     $data = json_decode( $body );
 
     if($data->errCode != 0) {
-        wp_die('delete asset api have sent error!' . ' Error message: ' . $data->errMsg);
+        $error_string = 'delete asset api have sent error!' . ' Error message: ' . $data->errMsg;
+
+        return array('success' => false, 'error' => $error_string);
     }
+
+    return array('success' => true, 'error' => '');
 }
 
 function construkted_remove_post() {
@@ -171,7 +174,19 @@ function construkted_remove_post() {
     $post_ID = sanitize_text_field( $_POST['post_id'] );
     $post_title = get_the_title( $post_ID );
 
-    construkted_delete_asset($post_ID);
+    $ret = construkted_delete_asset($post_ID);
+
+    if($ret['success'] == false) {
+        $return['alert'] = 'error';
+        $return['label'] = esc_html__( 'Delete', 'gowatch' );
+        $return['icon'] = 'icon-error';
+        $return['message'] = sprintf( esc_html__( 'There was an error deleting %s', 'gowatch' ), '<strong>' . esc_html( $post_title ) . '</strong>' );
+        $return['redirect'] = home_url() . '/profile/?active_tab=posts';
+
+        wp_send_json( $return, false );
+
+        die();
+    }
 
     $deleted_post = wp_delete_post( $post_ID, false );
 
