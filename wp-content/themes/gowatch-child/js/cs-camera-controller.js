@@ -9,16 +9,10 @@ EDD_CJS.CameraController = (function () {
     var DIRECTION_LEFT = 2;
     var DIRECTION_RIGHT = 3;
 
-    var HEADING_DIRECTION_NONE = -1;
-
-    var HEADING_DIRECTION_LEFT = 1;
-    var HEADING_DIRECTION_RIGHT = 2;
-
     var DEFAULT_HUMAN_WALKING_SPEED = 0.5;
 
     var MAX_PITCH_IN_DEGREE = 88;
     var ROTATE_SPEED = -5;
-    var HEADING_CHANGE_SPEED = -5;
     var COLLISION_RAY_HEIGHT = 0.5;
     var HUMAN_EYE_HEIGHT = 1.65;
 
@@ -32,10 +26,8 @@ EDD_CJS.CameraController = (function () {
         this._camera = this._cesiumViewer.camera;
 
         this._direction = DIRECTION_NONE;
-        this._headingDirection = HEADING_DIRECTION_NONE;
 
         this._main3dTileset = options.main3dTileset;
-        this._enabledFPV = true;
 
         /**
          * heading: angle with up direction
@@ -153,11 +145,9 @@ EDD_CJS.CameraController = (function () {
             case 'E'.charCodeAt(0):
                 return 'moveDown';
             case 'D'.charCodeAt(0):
-                // this._headingDirection = HEADING_DIRECTION_RIGHT;  //Rotate camera to the right with key press "D"
                 this._direction = DIRECTION_RIGHT;  // Move camera right with key press "D"
                 return;
             case 'A'.charCodeAt(0):
-                // this._headingDirection = HEADING_DIRECTION_LEFT;  //Rotate camera to the left with key press "A"
                 this._direction = DIRECTION_LEFT;  // Move camera left with key press "A"
                 return;
             case 90: // z
@@ -172,7 +162,6 @@ EDD_CJS.CameraController = (function () {
     //noinspection JSUnusedLocalSymbols
     CameraController.prototype._onKeyUp = function (keyCode) {
         this._direction = DIRECTION_NONE;
-        this._headingDirection = HEADING_DIRECTION_NONE;
     };
 
     CameraController.prototype._onMouseLButtonClicked = function (movement) {
@@ -180,50 +169,7 @@ EDD_CJS.CameraController = (function () {
         this._mousePosition = this._startMousePosition = Cesium.Cartesian3.clone(movement.position);
     };
 
-    CameraController.prototype._enterFPV1 = function(movement) {
-        var position = this._cesiumViewer.scene.pickPosition(movement.position);
-
-        if(position === undefined)
-            return;
-
-        var globe = this._cesiumViewer.scene.globe;
-
-        var cartographic = globe.ellipsoid.cartesianToCartographic(position);
-
-        // consider terrain height
-        var terrainHeight = globe.getHeight(cartographic);
-
-        // determine we clicked out of main 3d tileset
-        if (Cesium.Math.equalsEpsilon(cartographic.height, terrainHeight, Cesium.Math.EPSILON4, Cesium.Math.EPSILON1))
-            return;
-
-        // I am not sure why negative
-        if (cartographic.height < 0) {
-            console.warn("height is negative");
-            return;
-        }
-
-        var height = this._cesiumViewer.scene.sampleHeight(cartographic);
-
-        if(height === undefined)
-            return false;
-
-        cartographic.height = height + HUMAN_EYE_HEIGHT;
-
-        if(!this._enabled)
-            this._enable(cartographic);
-
-        this._camera.flyTo({
-            destination : globe.ellipsoid.cartographicToCartesian(cartographic),
-            orientation : {
-                heading : this._camera.heading,
-                pitch :  0,
-                roll : 0.0
-            }
-        });
-    };
-
-    CameraController.prototype._enterFPV2 = function(movement) {
+    CameraController.prototype._enterFPV = function(movement) {
         var scene = this._cesiumViewer.scene;
 
         scene.globe.depthTestAgainstTerrain = true;
@@ -276,12 +222,7 @@ EDD_CJS.CameraController = (function () {
     };
 
     CameraController.prototype._onMouseLButtonDoubleClicked = function (movement) {
-        if(!this._enabledFPV)
-            return;
-
-        //this._enterFPV1(movement);
-
-        this._enterFPV2(movement);
+        this._enterFPV(movement);
     };
 
     CameraController.prototype._onMouseMove = function (movement) {
@@ -322,31 +263,6 @@ EDD_CJS.CameraController = (function () {
             orientation: {
                 heading : Cesium.Math.toRadians(newHeadingInDegree),
                 pitch : Cesium.Math.toRadians(newPitchInDegree),
-                roll : this._camera.roll
-            }
-        });
-    };
-
-    CameraController.prototype._changeCameraHeading = function (dt) {
-        var deltaHeadingInDegree = 0;
-
-        if(this._headingDirection === HEADING_DIRECTION_LEFT)
-            deltaHeadingInDegree = 1;
-
-        if(this._headingDirection === HEADING_DIRECTION_RIGHT)
-            deltaHeadingInDegree = -1;
-
-        var currentHeadingInDegree = Cesium.Math.toDegrees(this._camera.heading);
-
-        deltaHeadingInDegree = deltaHeadingInDegree * HEADING_CHANGE_SPEED;
-
-        var newHeadingInDegree = currentHeadingInDegree + deltaHeadingInDegree;
-        var currentPitchInDegree = Cesium.Math.toDegrees(this._camera.pitch);
-
-        this._camera.setView({
-            orientation: {
-                heading : Cesium.Math.toRadians(newHeadingInDegree),
-                pitch : Cesium.Math.toRadians(currentPitchInDegree),
                 roll : this._camera.roll
             }
         });
@@ -420,7 +336,7 @@ EDD_CJS.CameraController = (function () {
 
         if(sampledHeight === undefined) {
             console.log('sampled height is undefined');
-            return
+            return;
         }
 
         if(sampledHeight < 0) {
@@ -450,10 +366,6 @@ EDD_CJS.CameraController = (function () {
         if(this._isMouseLeftButtonPressed)
             this._changeCameraHeadingPitchByMouse(dt);
 
-        if(this._headingDirection !== HEADING_DIRECTION_NONE) {
-            this._changeCameraHeading(dt);
-        }
-
         if(this._direction !== DIRECTION_NONE) {
             this._changeCameraPosition(dt);
         }
@@ -464,7 +376,6 @@ EDD_CJS.CameraController = (function () {
 
         $('#' + this._exitFPVModeButtonId).on('click', function(event){
             self._disable();
-            //self._camera.flyToBoundingSphere(self._main3dTileset.boundingSphere);
             self.setDefaultView();
             $('#' + self._exitFPVModeButtonId).hide();
         });
@@ -507,7 +418,7 @@ EDD_CJS.CameraController = (function () {
     CameraController.prototype.setDefaultView = function() {
         var defaultCameraPositionDirection = CONSTRUKTED_AJAX.default_camera_position_direction;
 
-        if(defaultCameraPositionDirection !== undefined && defaultCameraPositionDirection !== "" ) {
+        if(defaultCameraPositionDirection !== undefined && defaultCameraPositionDirection !== "") {
             defaultCameraPositionDirection = JSON.parse(defaultCameraPositionDirection);
 
             var cartographic = new Cesium.Cartographic(defaultCameraPositionDirection.longitude, defaultCameraPositionDirection.latitude, defaultCameraPositionDirection.height);
@@ -524,10 +435,6 @@ EDD_CJS.CameraController = (function () {
         else {
             this._camera.flyToBoundingSphere(this._main3dTileset.boundingSphere);
         }
-    };
-
-    CameraController.prototype.setEnabledFPV = function(value) {
-        this._enabledFPV = value;
     };
 
     CameraController.prototype._walkingSpeed = function() {
