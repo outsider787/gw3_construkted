@@ -35,9 +35,7 @@ var theApp = (function () {
     }
 
     function create3DMap() {
-        // tom
         Cesium.Ion.defaultAccessToken = CONSTRUKTED_AJAX.cesium_access_token;
-
 
         viewer = new Cesium.Viewer('cesiumContainer', {
             animation: false,
@@ -46,7 +44,7 @@ var theApp = (function () {
             geocoder: false,
             sceneModePicker: false,
             timeline: false,
-            fullscreenElement: "cesiumContainer",
+            fullscreenElement: 'cesiumContainer',
             requestRenderMode : true
         });
 
