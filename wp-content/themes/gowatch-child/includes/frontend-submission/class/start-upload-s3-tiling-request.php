@@ -1,6 +1,6 @@
 <?php
 
-if ($argc != 11)
+if ($argc != 12)
 {
     echo 'invalid argument count : ' . $argc . "\n";
     exit();
