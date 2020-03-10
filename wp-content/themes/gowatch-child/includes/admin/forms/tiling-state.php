@@ -10,7 +10,7 @@ if ( !defined( 'ABSPATH' ) ) exit;
 
 
 <?php
-    $url = CONSTRUKTED_EC2_API_GET_ACTIVE;
+    $url = CONSTRUKTED_EC2_API_TASK_ALL;
     $ret = wp_remote_get( $url );
 
     // check error

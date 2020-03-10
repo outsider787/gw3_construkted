@@ -1,18 +1,27 @@
-var State = {
-    Unknown: 'Unknown',
-    Creating: 'Creating',        // creating Cesium asset
-    Uploading: 'Uploading',      // uploading
-    Tiling: 'Tiling',            // tiling by Cesium API
-    Downloading: 'Downloading',  // downloading tileset tiled by Cesium API
-    Packaging: 'Packaging',      // packaging downloaded tileset to sqlite file
-    Deleting: 'Deleting',        // deleting downloaded original downloaded tile
-    Finished: 'Finished',        // tiling and packaging finished
-    Completed: 'Completed',      // corresponding WordPress 's post state is to updated to 'publish'
-    ErrorInUpdatePostState: 'ErrorInPostState'
+var statusCodes = {
+    QUEUED: 10,
+    RUNNING: 20,
+
+    // task is paused and wait for
+    CPU_INTENSIVE_RUNNING_QUEUED: 30,
+    FAILED: 40,
+    COMPLETED: 50,
+    CANCELED: 60
+};
+
+var runningStatusCodes = {
+    NONE: 0,
+    PROCESSING_DRONE_IMAGE: 10,
+    CREATING_CESIUM_ASSET: 20,
+    UPLOADING: 30,
+    TILING: 40,
+    DOWNLOADING: 50,
+    PACKAGING: 60,
+    PUBLISHING_CONSTRUKTED_ASSET: 70
 };
 
 function updateState() {
-    var url = "https://tile01.construkted.com:5000/get_active";
+    var url = "https://tile01.construkted.com:5000/task/all";
 
     $.ajax({
         url : url,
@@ -46,15 +55,15 @@ function doUpdateState(data) {
             continue;
         }
 
-        var tilingJobInfo = getTilingJobInfo(data, postId);
+        var taskInfo = getTaskInfo(data, postId);
 
-        if(tilingJobInfo === null) {
+        if(taskInfo === null) {
             // postStateDiv.innerHTML = "Unknown";
             postStateDiv.innerHTML = wpPostState;
             continue;
         }
 
-        var percent = getProcessingProgress(tilingJobInfo);
+        var percent = getProcessingProgress(taskInfo);
 
         if(percent == 100)
             postStateDiv.innerHTML = 'Completed';
@@ -63,40 +72,38 @@ function doUpdateState(data) {
     }
 }
 
-function getProcessingProgress(tilingJobInfo) {
-    var state = tilingJobInfo.state;
+function getProcessingProgress(taskInfo) {
+    var statusCode = taskInfo.status.code;
 
-    if(state === State.Creating)
+    var runningStatus = taskInfo.runningStatus;
+
+    if(runningStatus === runningStatusCodes.CREATING_CESIUM_ASSET)
         return 5;
     // 5-20%
-    else if(state === State.Uploading){
-        var uploadingPercent = tilingJobInfo.uploadingProgress;
+    else if(runningStatus === runningStatusCodes.UPLOADING){
+        var uploadingPercent = taskInfo.uploadingProgress;
 
         var percent = 5 + uploadingPercent / 100 * 15;
 
         return percent.toFixed(2);
     }
     // 20-70%
-    else if(state === State.Tiling) {
-        if(isNaN(tilingJobInfo.tilingStatus))
+    else if(runningStatus === runningStatusCodes.TILING) {
+        if(isNaN(taskInfo.tilingProgress))
             return 20;
         else{
-            var tilingPercent = tilingJobInfo.tilingStatus;
+            var tilingPercent = taskInfo.tilingProgress;
 
             var percent = 20 + tilingPercent / 100 * 50;
 
             return percent.toFixed(2);
         }
     }
-    else if(state === State.Downloading)
+    else if(runningStatus === runningStatusCodes.DOWNLOADING)
         return 70;
-    else if(state === State.Packaging)
+    else if(runningStatus === runningStatusCodes.PACKAGING)
         return 80;
-    else if(state === State.Deleting)
-        return 90;
-    else if(state === State.Finished)
-        return 95;
-    if(state === State.Completed)
+    else if(runningStatus === runningStatusCodes.PUBLISHING_CONSTRUKTED_ASSET)
         return 100;
     else
         return 0;
@@ -129,7 +136,7 @@ function getState(tilingJobInfo) {
         return "Unknown";
 }
 
-function getTilingJobInfo(data, postId) {
+function getTaskInfo(data, postId) {
     for(var i = 0; i < data.length; i++) {
         if(data[i].postId === postId ){
             return data[i];

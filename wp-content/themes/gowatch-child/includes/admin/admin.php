@@ -104,7 +104,7 @@ class CONSTRUKTED_Admin {
         wp_enqueue_script( 'construkted-admin-script', $js_path, array('jquery'), false, true );
 
         wp_localize_script( 'construkted-admin-script', 'construktedAdminParam', array(
-                'tilingStateEndPoint'       => CONSTRUKTED_EC2_API_GET_ACTIVE
+                'tilingStateEndPoint'       => CONSTRUKTED_EC2_API_TASK_ALL
             )
         );
     }

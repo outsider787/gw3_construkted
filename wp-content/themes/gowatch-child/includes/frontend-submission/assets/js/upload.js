@@ -103,7 +103,7 @@
         },
 
         added: function (up, files) {
-            var ajaxurl = tszf_frontend_upload.plupload.construkted_ec2_api_get_active_url;
+            var ajaxurl = tszf_frontend_upload.plupload.construkted_ec2_api_task_all_url;
 
             var self = this;
 

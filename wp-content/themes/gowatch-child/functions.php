@@ -29,8 +29,8 @@ if (!defined('CONSTRUKTED_EC2_API_REQUEST_TILING')) {
     define('CONSTRUKTED_TILING_SERVER', CONSTRUKTED_EC2_SERVER . ':5000/request_tiling');
 }
 
-if (!defined('CONSTRUKTED_EC2_API_GET_ACTIVE')) {
-    define('CONSTRUKTED_EC2_API_GET_ACTIVE', CONSTRUKTED_EC2_SERVER . ':5000/get_active');
+if (!defined('CONSTRUKTED_EC2_API_TASK_ALL')) {
+    define('CONSTRUKTED_EC2_API_TASK_ALL', CONSTRUKTED_EC2_SERVER . ':5000/task/all');
 }
 
 if (!defined('CONSTRUKTED_EC2_API_DELETE_ASSET')) {
@@ -260,7 +260,7 @@ function override_upload_script() {
                 'filters'          => array(array('title' => __( 'Allowed Files', 'gowatch' ), 'extensions' => '*')),
                 'multipart'        => true,
                 'urlstream_upload' => true,
-                'construkted_ec2_api_get_active_url' => CONSTRUKTED_EC2_API_GET_ACTIVE
+                'construkted_ec2_api_task_all_url' => CONSTRUKTED_EC2_API_TASK_ALL
             )
         ));
 
