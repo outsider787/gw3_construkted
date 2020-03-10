@@ -173,38 +173,48 @@ function construkted_remove_post() {
 
     $post_ID = sanitize_text_field( $_POST['post_id'] );
     $post_title = get_the_title( $post_ID );
+    $delete_construkted_asset = $_POST['delete_construkted_asset'] ;
 
-    $ret = construkted_delete_asset($post_ID);
+    if(isset($delete_construkted_asset) && $delete_construkted_asset == 'false') {
+        $delete_construkted_asset = false;
+    } else {
+        $delete_construkted_asset = true;
+    }
 
-    if($ret['success'] == false) {
-        $return['alert'] = 'error';
-        $return['label'] = esc_html__( 'Delete', 'gowatch' );
-        $return['icon'] = 'icon-error';
-        $return['message'] = sprintf( esc_html__( 'There was an error deleting %s', 'gowatch' ), '<strong>' . esc_html( $post_title ) . '</strong>' );
-        $return['redirect'] = home_url() . '/profile/?active_tab=posts';
+    if($delete_construkted_asset) {
+        $ret = construkted_delete_asset($post_ID);
 
-        wp_send_json( $return, false );
+        if($ret['success'] == false) {
+            $return['alert'] = 'error';
+            $return['label'] = esc_html__( 'Delete', 'gowatch' );
+            $return['icon'] = 'icon-error';
+            $return['message'] = sprintf( esc_html__( 'There was an error deleting %s', 'gowatch' ), '<strong>' . esc_html( $post_title ) . '</strong>' );
+            $return['redirect'] = home_url() . '/profile/?active_tab=posts';
 
-        die();
+            wp_send_json( $return, false );
+
+            die();
+        }
     }
 
     $deleted_post = wp_delete_post( $post_ID, false );
 
     if ( !is_wp_error( $deleted_post ) ) {
-
         $return['alert'] 	= 'success';
         $return['label'] 	= esc_html__( 'Deleted', 'gowatch' );
         $return['icon'] 	= 'icon-flag';
         $return['message']  = sprintf( esc_html__( 'You have successfully deleted %s', 'gowatch' ), '<strong>' . esc_html( $post_title ) . '</strong>' );
         $return['redirect'] = home_url() . '/profile/?active_tab=posts';
 
+        // case of invalid zip file
+        if($delete_construkted_asset == false) {
+            $return['message']  = sprintf( esc_html__( '%s have been deleted', 'gowatch' ), '<strong>' . esc_html( $post_title ) . '</strong>' );
+        }
     } else {
-
         $return['alert'] = 'error';
         $return['label'] = esc_html__( 'Delete', 'gowatch' );
         $return['icon'] = 'icon-error';
         $return['message'] = sprintf( esc_html__( 'There was an error deleting %s', 'gowatch' ), '<strong>' . esc_html( $post_title ) . '</strong>' );
-
     }
 
     wp_send_json( $return, false );
