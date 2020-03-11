@@ -1,0 +1,158 @@
+.video-figure-content {
+    margin-right: 40px;
+}
+
+#side-menu-bar-wrapper {
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.bst4-wrapper #navbar-right {
+    height: 100vh;
+    right: 0;
+    position: absolute;
+    padding: 0 !important;
+}
+
+.bst4-wrapper #navbar-right .nav,
+.bst4-wrapper #navbar-right .nav-item {
+    margin: 0 !important;
+}
+
+/*
+navbar buttons
+*/
+
+.bst4-wrapper #navbar-right .nav-item .btn {
+    width: 45px;
+    height: 45px;
+    padding: 15px !important;
+    margin-top: 10px;
+    background-origin: content-box !important;
+    box-sizing: border-box !important;
+}
+
+#nav-layers .btn {
+    background: url('../icons/layers.png') no-repeat center center;
+}
+
+#nav-layers.active .btn {
+    background: url('../icons/layers_hl.png') no-repeat center center;
+}
+
+#nav-geo .btn {
+    background: url('../icons/geo.png') no-repeat center center;
+}
+
+#nav-geo.active .btn {
+    background: url('../icons/geo_hl.png') no-repeat center center;
+}
+
+#nav-measurements .btn {
+    background: url('../icons/measurements.png') no-repeat center center;
+}
+
+#nav-measurements.active .btn {
+    background: url('../icons/measurements_hl.png') no-repeat center center;
+}
+
+#nav-settings .btn {
+    background: url('../icons/settings.png') no-repeat center center;
+}
+
+#nav-settings.active .btn {
+    background: url('../icons/settings_hl.png') no-repeat center center;
+}
+
+/**
+popups
+ */
+
+.popup-wrapper {
+    right: 70px;
+    position: absolute;
+    background: transparent;
+}
+
+.popup-title {
+    padding: 15px;
+    margin: 0;
+    font-size: 26px;
+    text-align: left;
+}
+
+.content-wrapper {
+    padding: 0 15px 15px 15px;
+    overflow-y: auto;
+    text-align: left;
+    width: 300px;
+    height: 400px;
+}
+
+.popup-content {
+    position: relative;
+    background-color: white;
+    opacity: 0.9;
+    padding: 0;
+    margin: auto;
+    border: 1px solid #aaa;
+    border-radius: 5px;
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 0.4s;
+    animation-name: animatetop;
+    animation-duration: 0.4s
+}
+
+@-webkit-keyframes animatetop {
+    from {
+        top: -300px;
+        opacity: 0
+    }
+    to {
+        top: 0;
+        opacity: 1
+    }
+}
+
+@keyframes animatetop {
+    from {
+        top: -300px;
+        opacity: 0
+    }
+    to {
+        top: 0;
+        opacity: 1
+    }
+}
+
+.close-btn {
+    float: right;
+    color: lightgray;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.close-btn:hover {
+    color: darkgray;
+}
+
+/*form elements*/
+
+.bst4-wrapper .form-check {
+    margin: 0.5rem 0 0.5rem 0;
+}
+
+.bst4-wrapper .content-wrapper .btn-light {
+    border: 1px solid #ccc !important;
+    margin: 5px 5px 5px 0;
+}
+
+.bst4-wrapper .text-input-group label {
+    width: 7rem;
+}
+
+.bst4-wrapper .input-group {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}

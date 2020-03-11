@@ -47,7 +47,7 @@ function enqueue_scripts_and_styles_for_asset_view(){
     );
 }
 
-function construkted_cesium_viewer() {
+function render_construkted_cesium_viewer() {
     echo '<div id="cesiumContainer"></div>';
     echo '<div id="toolbar" ><button id="exitFPVModeButton" style="display: none" class="cesium-button">EXIT FPV MODE</button></div>';
 

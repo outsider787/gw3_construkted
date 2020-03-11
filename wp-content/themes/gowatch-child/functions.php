@@ -44,6 +44,7 @@ require(CONSTRUKTED_PATH . '/includes/ajax.php');
 require(CONSTRUKTED_PATH . '/includes/admin/admin.php');
 require(CONSTRUKTED_PATH . '/includes/frontend-submission/includes/construkted/loader.php');
 require (CONSTRUKTED_PATH . '/includes/class.compilator.php' );
+require(CONSTRUKTED_PATH . '/includes/side-bar/side-bar.php');
 
 // Post Meta
 require ( CONSTRUKTED_PATH . '/includes/class.postmeta.php' );

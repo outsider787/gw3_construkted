@@ -71,15 +71,10 @@ $article_atts['class'] = get_post_class( $article_classes );
 
 <?php
 	if( !post_password_required() ) {
-
 		echo '<figure '. airkit_element_attributes( $figure_attributes, array(), $post->ID, false ) .'>';
-
 			echo '<div class="video-figure-content is-extended">';
-
 				echo '<div class="container-fluid">';
-
-                		construkted_cesium_viewer();
-
+              		render_construkted_cesium_viewer();
 				echo '</div>';
 
 				if ( 'y' === airkit_option_value( 'general', 'enable_lightbox' ) && !$button ) {
@@ -92,17 +87,13 @@ $article_atts['class'] = get_post_class( $article_classes );
 				if ( 'y' === airkit_option_value( 'general', 'enable_lightbox' ) && !$button ) {
 					echo '</a>';
 				}
-
-
 			echo '</div>';
-            echo '<div id="side-menu-bar-wrapper">';
-                require_once dirname(__DIR__) . '/side-menu-bar/side-menu-bar-init.php';
-            echo '</div>';
-			//echo '<div class="loading-spinner"></div>';
+
+			render_construkted_side_bar();
+
 		echo '</figure>';
 
 		echo airkit_Compilator::playlist_panel($playlist_ID);
-
 	}
 ?>
 
