@@ -10,31 +10,218 @@ var theApp = (function () {
     // it define tbody, th, td,, tfoot 's background color
 
     function applyCesiumCssStyle() {
-        var cesiumNavigationHelp = $('.cesium-click-navigation-help.cesium-navigation-help-instructions');
-        cesiumNavigationHelp.find("td").css({"background-color": "rgba(38, 38, 38, 0.75)"});
+        var cesiumNavigationHelp = jQuery('.cesium-click-navigation-help.cesium-navigation-help-instructions');
+        cesiumNavigationHelp.find('td').css({'background-color': 'rgba(38, 38, 38, 0.75)'});
 
-        var cesiumTouchNavigationHelp = $('.cesium-touch-navigation-help.cesium-navigation-help-instructions');
-        cesiumTouchNavigationHelp.find("td").css({"background-color": "rgba(38, 38, 38, 0.75)"});
+        var cesiumTouchNavigationHelp = jQuery('.cesium-touch-navigation-help.cesium-navigation-help-instructions');
+        cesiumTouchNavigationHelp.find('td').css({'background-color': 'rgba(38, 38, 38, 0.75)'});
     }
 
     function start() {
-        $('#capture_thumbnail').click(function () {
+        jQuery('#capture_thumbnail').click(function () {
             captureThumbnail();
         });
 
-        $('#save_current_view').click(function () {
+        jQuery('#save_current_view').click(function () {
             saveCurrentView();
         });
 
-        $('#reset_camera_view').click(function () {
+        jQuery('#reset_camera_view').click(function () {
             resetCameraView();
         });
 
+        jQuery('#maximum-screen-space-error-slider').change(function () {
+            var value = this.value;
+
+            var maximumScreenSpaceError = 32 - value;
+
+            if(!tilesets)
+                return;
+
+            tilesets.maximumScreenSpaceError = maximumScreenSpaceError;
+        });
+
+        _initGeoLocationWidget();
+        _updateGeoLocationWidget();
         create3DMap();
         applyCesiumCssStyle();
     }
 
+    function setTilesetModelMatrixJson() {
+        var latitude = $('#tileset_latitude').val();
+        var longitude = $('#tileset_longitude').val();
+        var altitude = $('#tileset_altitude').val();
+        var heading = $('#tileset_heading').val();
+
+        latitude = parseFloat(latitude);
+        longitude = parseFloat(longitude);
+        altitude = parseFloat(altitude);
+        heading = parseFloat(heading);
+
+        if(isNaN(latitude) || latitude < -90 || latitude > 90){
+            $('#tileset_latitude').val("");
+            alert("invalid latitude!");
+            return;
+        }
+
+        if(isNaN(longitude) || longitude < -180 || longitude > 180){
+            $('#tileset_longitude').val("");
+            alert("invalid longitude!");
+            return;
+        }
+
+        if(isNaN(altitude)){
+            $('#tileset_altitude').val("");
+            alert("invalid altitude!");
+            return;
+        }
+
+        if(isNaN(heading)){
+            $('#tileset_heading').val("");
+            alert("invalid heading!");
+            return;
+        }
+
+        var position = transformEditor.viewModel.position;
+        var headingPitchRoll = transformEditor.viewModel.headingPitchRoll;
+        var scale = transformEditor.viewModel.scale;
+
+        var data = {
+            latitude: latitude,
+            longitude: longitude,
+            altitude: altitude,
+            heading: heading,
+
+            position: position,
+            headingPitchRoll: headingPitchRoll,
+            scale: scale
+        };
+
+        $.ajax({
+            url : CONSTRUKTED_AJAX.ajaxurl,
+            type : 'post',
+            data : {
+                action : 'set_tileset_model_matrix_json',
+                post_id : CONSTRUKTED_AJAX.post_id,
+                tileset_model_matrix_json: JSON.stringify(data)
+            },
+            success : function( response ) {
+                // I am not sure why?
+                var json_string = response.substring(0, response.length - 1);
+
+                var data = JSON.parse(json_string);
+
+                if(data.ret === false) {
+                    alert("Passed values is the same as the values that is already in the database!");
+                    return;
+                }
+
+                alert("Successfully updated!");
+                setTilesetModelMatrixData(tilesets, data);
+                viewer.zoomTo(tilesets);
+            },
+            error: function(xhr, status, error) {
+                alert("error");
+            }
+        });
+    }
+
+    function _initGeoLocationWidget() {
+        jQuery('#edit_asset_geo_location_button').click(function () {
+            if(transformEditor)
+                transformEditor.viewModel.activate();
+        });
+
+        $('#exit_edit_asset_geo_location_button').click(function () {
+            setTilesetModelMatrixJson();
+        });
+
+        $('#tileset_longitude').change(function () {
+            var longitude = $('#tileset_longitude').val();
+
+            if(longitude > 180 || longitude < -180) {
+                console.warn('invalid longitude: ' + longitude);
+                return;
+            }
+
+            var translation = Cesium.Matrix4.getTranslation(tilesets.modelMatrix, new Cesium.Cartesian3());
+
+            var carto = Cesium.Cartographic.fromCartesian(translation);
+
+            carto.longitude = longitude * Cesium.Math.RADIANS_PER_DEGREE;
+
+            var newPosition = viewer.scene.globe.ellipsoid.cartographicToCartesian(carto);
+
+            tilesets.modelMatrix = Cesium.Matrix4.setTranslation(tilesets.modelMatrix, newPosition, tilesets.modelMatrix);
+
+            viewer.zoomTo(tilesets);
+        });
+
+        $('#tileset_latitude').change(function () {
+            var latitude = $('#tileset_latitude').val();
+
+            if(latitude > 90 || latitude < -90) {
+                console.warn('invalid latitude: ' + latitude);
+                return;
+            }
+
+            var translation = Cesium.Matrix4.getTranslation(tilesets.modelMatrix, new Cesium.Cartesian3());
+
+            var carto = Cesium.Cartographic.fromCartesian(translation);
+
+            carto.latitude = latitude * Cesium.Math.RADIANS_PER_DEGREE;
+
+            var newPosition = viewer.scene.globe.ellipsoid.cartographicToCartesian(carto);
+
+            tilesets.modelMatrix = Cesium.Matrix4.setTranslation(tilesets.modelMatrix, newPosition, tilesets.modelMatrix);
+
+            viewer.zoomTo(tilesets);
+        });
+
+        $('#tileset_altitude').change(function () {
+            var altitude = $('#tileset_altitude').val();
+
+            if(altitude > 15000 || altitude < -1000) {
+                console.warn('invalid altitude: ' + altitude);
+                return;
+            }
+
+            var translation = Cesium.Matrix4.getTranslation(tilesets.modelMatrix, new Cesium.Cartesian3());
+
+            var carto = Cesium.Cartographic.fromCartesian(translation);
+
+            carto.allatitude = altitude;
+
+            var newPosition = viewer.scene.globe.ellipsoid.cartographicToCartesian(carto);
+
+            tilesets.modelMatrix = Cesium.Matrix4.setTranslation(tilesets.modelMatrix, newPosition, tilesets.modelMatrix);
+
+            viewer.zoomTo(tilesets);
+        });
+    }
+
+    function _updateGeoLocationWidget() {
+        var tileset_model_matrix_data = CONSTRUKTED_AJAX.tileset_model_matrix_data;
+
+        if(tileset_model_matrix_data){
+            $('#tileset_latitude').val(tileset_model_matrix_data.latitude);
+            $('#tileset_longitude').val(tileset_model_matrix_data.longitude);
+            $('#tileset_altitude').val(tileset_model_matrix_data.altitude);
+            $('#tileset_heading').val(tileset_model_matrix_data.heading);
+        }
+        else{
+            $('#tileset_latitude').val(0);
+            $('#tileset_longitude').val(0);
+            $('#tileset_altitude').val(0);
+            $('#tileset_heading').val(0);
+        }
+    }
+
     function create3DMap() {
+        //test
+
+        CONSTRUKTED_AJAX.is_owner = true;
+
         Cesium.Ion.defaultAccessToken = CONSTRUKTED_AJAX.cesium_access_token;
 
         viewer = new Cesium.Viewer('cesiumContainer', {
@@ -89,11 +276,11 @@ var theApp = (function () {
 
         // Change the text in the Help menu
 
-        $(".cesium-navigation-help-pan").text("Rotate view");
-        $(".cesium-navigation-help-zoom").text("Pan view");
-        $(".cesium-navigation-help-rotate").text("Zoom view");
+        jQuery(".cesium-navigation-help-pan").text("Rotate view");
+        jQuery(".cesium-navigation-help-zoom").text("Pan view");
+        jQuery(".cesium-navigation-help-rotate").text("Zoom view");
 
-        var navigationHelpDetailsElements = $(".cesium-navigation-help-details");
+        var navigationHelpDetailsElements = jQuery(".cesium-navigation-help-details");
 
         for(var i = 0; i < navigationHelpDetailsElements.length; i++) {
             var element = navigationHelpDetailsElements[i];
@@ -179,7 +366,6 @@ var theApp = (function () {
 
                             transformEditor.viewModel.deactivate();
                         }
-
                     } else {
                         tilesets.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(Cesium.Cartesian3.fromDegrees(0, 0));
                     }
@@ -227,7 +413,7 @@ var theApp = (function () {
 
         var mediumQuality  = viewer.canvas.toDataURL('image/jpeg', 0.5);
 
-        $.ajax({
+        jQuery.ajax({
             url : CONSTRUKTED_AJAX.ajaxurl,
             type : 'post',
             data : {
@@ -245,7 +431,7 @@ var theApp = (function () {
     }
 
     function saveCurrentView() {
-        $.ajax({
+        jQuery.ajax({
             url : CONSTRUKTED_AJAX.ajaxurl,
             type : 'post',
             data : {
@@ -263,7 +449,7 @@ var theApp = (function () {
     }
 
     function resetCameraView() {
-        $.ajax({
+        jQuery.ajax({
             url : CONSTRUKTED_AJAX.ajaxurl,
             type : 'post',
             data : {
@@ -287,7 +473,7 @@ var theApp = (function () {
 })();
 
 jQuery(document).ready(function(){
-    window.$=jQuery;
+    window.$ = jQuery;
 
     theApp.start();
 });

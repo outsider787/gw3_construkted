@@ -8,27 +8,6 @@
     left: 5px;
 }
 
-#capture_thumbnail {
-    position: absolute;
-    top: 120px;
-    right: 30px;
-    width: 200px;
-}
-
-#save_current_view {
-    position: absolute;
-    top: 170px;
-    right: 30px;
-    width: 200px;
-}
-
-#reset_camera_view {
-    position: absolute;
-    top: 220px;
-    right: 30px;
-    width: 200px;
-}
-
 .btn-download {
     display: block;
     padding: 0 15px;

@@ -25,8 +25,10 @@ function enqueue_construkted_scripts(){
 
     $post_slug = get_post_field( 'post_name', $post_id );
     $default_camera_position_direction = get_post_meta( $post_id, 'default_camera_position_direction', true);
+    $tileset_model_matrix_json = get_post_meta( $post_id, 'asset_geo-location', true);
 
     // pass parameter to starting script: construkted-scrip.js
+
     wp_localize_script( 'construkted-script', 'CONSTRUKTED_AJAX',
         array(
             'cesium_access_token' => CONSTRUKTED_CESIUM_ACCESS_TOKEN,
@@ -34,7 +36,8 @@ function enqueue_construkted_scripts(){
             'post_id' => $post_id,
             'post_slug' => $post_slug,
             'default_camera_position_direction' => $default_camera_position_direction,
-            'tile_server_url' => CONSTRUKTED_3D_TILE_SERVER_URL
+            'tile_server_url' => CONSTRUKTED_3D_TILE_SERVER_URL,
+            'asset_geo-location' => $tileset_model_matrix_json
         )
     );
 }

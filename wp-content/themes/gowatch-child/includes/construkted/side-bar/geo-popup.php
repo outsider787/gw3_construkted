@@ -5,24 +5,36 @@
         </h3>
 
         <div class="content-wrapper"><div>Adjust the position of the asset.</div>
-            <button type="button" class="btn btn-light">Edit</button><div class="text-input-group">
+            <button type="button" id = "edit_asset_geo_location_button" class="btn btn-light">Edit</button>
+
+            <div class="text-input-group">
                 <div class="input-group">
                     <label for="latitude">Latitude:</label>
-                    <input type="text" name="latitude" value="" placeholder="75.12345678">
+                    <input type="text" id = "tileset_longitude" name="latitude">
                 </div>
             </div>
+
             <div class="text-input-group">
                 <div class="input-group">
                     <label for="longitude">Longitude:</label>
-                    <input type="text" name="longitude" value="75.12345678" placeholder="75.12345678">
+                    <input type="text" id = "tileset_latitude" name="longitude">
                 </div>
             </div>
+
             <div class="text-input-group">
                 <div class="input-group">
                     <label for="altitude">Altitude:</label>
-                    <input type="text" name="altitude" value="1534.56" placeholder="1423.24">
+                    <input type="text" id = "tileset_altitude" name="altitude">
                 </div>
             </div>
-            <button type="button" class="btn btn-light">Save</button></div>
+
+            <div class="text-input-group">
+                <div class="input-group">
+                    <label for="heading">Heading:</label>
+                    <input type="text" id = "tileset_heading" name="heading">
+                </div>
+            </div>
+
+            <button type="button" id = "exit_edit_asset_geo_location_button" class="btn btn-light">Save</button></div>
     </div>
 </div>
