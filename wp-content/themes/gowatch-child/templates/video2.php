@@ -90,7 +90,7 @@ $article_atts['class'] = get_post_class( $article_classes );
 			echo '</div>';
 
 			render_construkted_side_bar();
-
+            enqueue_construkted_scripts();
 		echo '</figure>';
 
 		echo airkit_Compilator::playlist_panel($playlist_ID);

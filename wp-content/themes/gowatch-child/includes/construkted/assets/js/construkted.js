@@ -283,7 +283,7 @@ var theApp = (function () {
         viewer: viewer,
         cameraController: cameraController,
         start: start
-    }
+    };
 })();
 
 jQuery(document).ready(function(){
