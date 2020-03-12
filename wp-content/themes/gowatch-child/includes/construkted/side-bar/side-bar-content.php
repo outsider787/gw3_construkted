@@ -21,7 +21,7 @@
         </nav>
 
         <?php require_once __DIR__ . '/layers-popup.php'; ?>
-        <?php require_once __DIR__ . '/geo-popup.php'; ?>
+        <?php require_once __DIR__ . '/geolocation-popup.php'; ?>
         <?php require_once __DIR__ . '/measurements-popup.php'; ?>
         <?php require_once __DIR__ . '/settings-popup.php'; ?>
     </div>

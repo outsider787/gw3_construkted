@@ -1,4 +1,4 @@
-<div id="construkted-popup-geo" class="popup-wrapper" style="display: none;">
+<div id="construkted-popup-geolocation" class="popup-wrapper" style="display: none;">
     <div class="popup-content">
         <h3 class="popup-title">Geo-Location
             <span class="close-btn">×</span>
@@ -35,6 +35,6 @@
                 </div>
             </div>
 
-            <button type="button" id = "exit_edit_asset_geo_location_button" class="btn btn-light">Save</button></div>
+            <button type="button" id = "save_tileset_model_matrix_button" class="btn btn-light">Save</button></div>
     </div>
 </div>

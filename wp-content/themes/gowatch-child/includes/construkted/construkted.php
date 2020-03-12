@@ -35,9 +35,9 @@ function enqueue_construkted_scripts(){
             'ajaxurl' => admin_url( 'admin-ajax.php' ),
             'post_id' => $post_id,
             'post_slug' => $post_slug,
-            'default_camera_position_direction' => $default_camera_position_direction,
             'tile_server_url' => CONSTRUKTED_3D_TILE_SERVER_URL,
-            'asset_geo-location' => $tileset_model_matrix_json
+            'default_camera_position_direction' => $default_camera_position_direction,
+            'tileset_model_matrix' => $tileset_model_matrix_json
         )
     );
 }

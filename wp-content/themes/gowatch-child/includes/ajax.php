@@ -240,12 +240,11 @@ function set_tileset_model_matrix_json() {
     $post_id = $_REQUEST['post_id'];
     $tileset_model_matrix_json = $_REQUEST['tileset_model_matrix_json'];
 
-    $ret0 = update_post_meta( $_REQUEST['post_id'], 'default_camera_position_direction', '' );
     $ret = update_post_meta( $post_id, 'asset_geo-location', $tileset_model_matrix_json );
 
     $data->ret = $ret;
 
-    $json = json_encode($data);
+    echo json_encode($data);
 
-    echo $json;
+    wp_die();
 }

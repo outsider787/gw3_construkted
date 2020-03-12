@@ -14,18 +14,18 @@ jQuery(function ($) {
     var jqNavbarSettingsBtn = $('#construkted-popup-settings-btn');
 
     var jqLayersPopup = $('#construkted-popup-layers');
-    var jqGeoPopup = $('#construkted-popup-geo');
+    var jqGeolocationPopup = $('#construkted-popup-geolocation');
     var jqMeasurementsPopup = $('#construkted-popup-measurements');
     var jqSettingsPopup = $('#construkted-popup-settings');
 
     var jqLayersPopupCloseBtn = $('#construkted-popup-layers .close-btn');
-    var jqGeoPopupCloseBtn = $('#construkted-popup-geo .close-btn');
+    var jqGeoPopupCloseBtn = $('#construkted-popup-geolocation .close-btn');
     var jqMeasurementsPopupCloseBtn = $('#construkted-popup-measurements .close-btn');
     var jqSettingsPopupCloseBtn = $('#construkted-popup-settings .close-btn');
 
     function hideAllPopup() {
         jqLayersPopup.hide();
-        jqGeoPopup.hide();
+        jqGeolocationPopup.hide();
         jqMeasurementsPopup.hide();
         jqSettingsPopup.hide();
     }
@@ -37,7 +37,7 @@ jQuery(function ($) {
 
     jqNavbarGeoBtn.click(function () {
         hideAllPopup();
-        jqGeoPopup.show();
+        jqGeolocationPopup.show();
     });
 
     jaNavbarMeasurementsBtn.click(function () {
@@ -55,7 +55,7 @@ jQuery(function ($) {
     });
 
     jqGeoPopupCloseBtn.click(function () {
-        jqGeoPopup.hide();
+        jqGeolocationPopup.hide();
     });
 
     jqMeasurementsPopupCloseBtn.click(function () {
