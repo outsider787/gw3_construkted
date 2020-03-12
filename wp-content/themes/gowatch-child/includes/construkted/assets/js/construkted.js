@@ -45,8 +45,36 @@ var theApp = (function () {
         _updateGeoLocationWidget();
         create3DMap();
         applyCesiumCssStyle();
+
+        _initMeasurementPopup();
     }
 
+    function _initMeasurementPopup() {
+        var measure = viewer.measure;
+
+        var viewModel = measure.viewModel;
+
+        jQuery('#measurement-component-distance').click(function () {
+            viewModel._activate();
+            viewModel.selectedMeasurement = viewModel._measurements[1];
+        });
+
+        jQuery('#measurement-polyline').click(function () {
+            viewModel._activate();
+            viewModel.selectedMeasurement = viewModel._measurements[2];
+        });
+
+        jQuery('#measurement-area').click(function () {
+            viewModel._activate();
+            viewModel.selectedMeasurement = viewModel._measurements[6];
+        });
+
+        jQuery('#measurement-point').click(function () {
+            viewModel._activate();
+            viewModel.selectedMeasurement = viewModel._measurements[7];
+        });
+    }
+    
     function setTilesetModelMatrixJson() {
         var latitude = $('#tileset_latitude').val();
         var longitude = $('#tileset_longitude').val();
@@ -232,7 +260,8 @@ var theApp = (function () {
             sceneModePicker: false,
             timeline: false,
             fullscreenElement: 'cesiumContainer',
-            requestRenderMode : true
+            requestRenderMode : true,
+            navigationHelpButton: false
         });
 
         viewer.extend(Cesium.viewerMeasureMixin, {
@@ -246,7 +275,7 @@ var theApp = (function () {
         // fix css error
         var measureButtons = document.getElementsByClassName('cesium-measure-button');
 
-        for(i = 0; i < measureButtons.length; i++)
+        for(var i = 0; i < measureButtons.length; i++)
         {
             measureButtons[i].style["box-sizing"] = 'content-box';
         }
@@ -273,34 +302,6 @@ var theApp = (function () {
             eventType : Cesium.CameraEventType.RIGHT_DRAG,
             modifier : Cesium.KeyboardEventModifier.CTRL
         }];
-
-        // Change the text in the Help menu
-
-        jQuery(".cesium-navigation-help-pan").text("Rotate view");
-        jQuery(".cesium-navigation-help-zoom").text("Pan view");
-        jQuery(".cesium-navigation-help-rotate").text("Zoom view");
-
-        var navigationHelpDetailsElements = jQuery(".cesium-navigation-help-details");
-
-        for(var i = 0; i < navigationHelpDetailsElements.length; i++) {
-            var element = navigationHelpDetailsElements[i];
-
-            if(element.textContent === "Right click + drag, or") {
-                element.textContent = "Right click + drag";
-            }
-
-            if(element.textContent === "Mouse wheel scroll") {
-                element.textContent = "";
-            }
-
-            if(element.textContent === "Middle click + drag, or") {
-                element.textContent = "Scroll mouse wheel";
-            }
-
-            if(element.textContent === "CTRL + Left/Right click + drag") {
-                element.textContent = "Middle click + drag";
-            }
-        }
 
         var tilesetURL = CONSTRUKTED_AJAX.tile_server_url +  CONSTRUKTED_AJAX.post_slug + '/tileset.json';
 
@@ -333,8 +334,6 @@ var theApp = (function () {
 		tilesets.pointCloudShading.eyeDomeLightingStrength = 0.5;
 		tilesets.pointCloudShading.eyeDomeLightingRadius = 0.5;
 		
-        viewer.scene.debugShowFramesPerSecond = true;
-
         tilesets.readyPromise.then(function(){
             var options = {
                 exitFPVModeButtonId: "exitFPVModeButton",
