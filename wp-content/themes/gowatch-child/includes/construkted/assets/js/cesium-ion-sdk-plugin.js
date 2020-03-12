@@ -2809,6 +2809,8 @@
       this._tempNextPos = new cesium.Cartesian3();
       this._mode = DrawingMode$1.BeforeDraw;
       this._lastClickPosition = new cesium.Cartesian2(Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY);
+      this._polygonOptions = options.polygonOptions;
+      this._polylineOptions = options.polylineOptions;
   }
 
   /**
@@ -2928,6 +2930,16 @@
       primitives.remove(this._polyline);
 
       return cesium.destroyObject(this);
+  };
+
+  PolygonDrawing.prototype.newPolygon = function () {
+      return this._primitives.add(new PolygonPrimitive(this._polygonOptions));
+  };
+
+  PolygonDrawing.prototype.newPolyline = function () {
+      return this._primitives.add(new PolylinePrimitive(cesium.combine({
+          loop: true
+      }, this._polylineOptions)));
   };
 
   // Exposed for specs
@@ -3102,6 +3114,8 @@
       this._removeEvent = this._scene.preRender.addEventListener(function () {
           that.updateLabel();
       });
+
+      this._measurementResult = [];
   }
 
   AreaMeasurementDrawing.prototype = Object.create(PolygonDrawing.prototype);
@@ -3261,7 +3275,35 @@
       this._removeEvent();
       this._labelCollection.remove(this._label);
 
+      for (var i = 0; i < this._measurementResult.length; i++) {
+          this._labelCollection.remove(this._measurementResult[i].label);
+          this._primitives.remove(this._measurementResult[i].polygon);
+          this._primitives.remove(this._measurementResult[i].polyline);
+      }
+
       PolygonDrawing.prototype.destroy.call(this);
+  };
+
+  AreaMeasurementDrawing.prototype._saveCurrentMeasurementAndPrepareNew = function () {
+      //we save current measurement and prepare new fresh
+
+      this._measurementResult.push({
+          label: this._label,
+          polygon: this._polygon,
+          polyline: this._polyline,
+          points: this._points
+      });
+
+      this._label = this._labelCollection.add(MeasurementSettings.getLabelOptions());
+      this._polygon = PolygonDrawing.prototype.newPolygon.call(this);
+      this._polyline = PolygonDrawing.prototype.newPolyline.call(this);
+      this._points = [];
+  };
+
+  AreaMeasurementDrawing.prototype.handleDoubleClick = function () {
+      PolygonDrawing.prototype.handleDoubleClick.call(this);
+
+      this._saveCurrentMeasurementAndPrepareNew();
   };
 
   function getIcon(size) {
@@ -3356,6 +3398,11 @@
        */
       id: {
           value: 'areaMeasurement'
+      },
+      measurementResult: {
+          get: function () {
+              return this._drawing._measurementResult;
+          }
       }
   });
 
@@ -3542,6 +3589,8 @@
       this._removeEvent = scene.preRender.addEventListener(function () {
           that._updateLabelPosition();
       });
+
+      this._measurementResult = [];
   }
 
   DistanceMeasurement.prototype = Object.create(Measurement.prototype);
@@ -3683,6 +3732,11 @@
               if (this._mode !== Mode.BeforeDraw) {
                   this._updateComponents();
               }
+          }
+      },
+      measurementResult: {
+          get: function () {
+              return this._measurementResult;
           }
       }
   });
@@ -3876,6 +3930,8 @@
           this._endPoint.show = true;
           this._polyline.positions = positions;
           this._mode = Mode.AfterDraw;
+
+          this._saveCurrentMeasurementAndPrepareNew();
       }
   };
 
@@ -3969,6 +4025,90 @@
       labels.remove(this._yAngleLabel);
 
       return cesium.destroyObject(this);
+  };
+
+  DistanceMeasurement.prototype._saveCurrentMeasurementAndPrepareNew = function () {
+      //we save current measurement and prepare new fresh
+
+      this._measurementResult.push({
+          startPoint: this._startPoint,
+          endPoint: this._endPoint,
+          polyline: this._polyline,
+          xyPolyline: this._xyPolyline,
+          xyBox: this._xyBox,
+          label: this._label,
+          xLabel: this._xLabel,
+          xAngleLabel: this._xAngleLabel,
+          yLabel: this._yLabel,
+          yAngleLabel: this._yAngleLabel
+      });
+
+      var pointCollection = this._pointCollection;
+      var labelCollection = this._labelCollection;
+      var primitives = this._primitives;
+      var xyPolylinePositions = [new cesium.Cartesian3(), new cesium.Cartesian3(), new cesium.Cartesian3()];
+      var xyBoxPositions = [new cesium.Cartesian3(), new cesium.Cartesian3(), new cesium.Cartesian3()];
+      var xPixelOffset = new cesium.Cartesian2(9, 0);
+      var yPixelOffset = new cesium.Cartesian2(-9, 0);
+      var positions = [new cesium.Cartesian3(), new cesium.Cartesian3()];
+
+      var scene = this._scene;
+      var ellipsoid = scene.frameState.mapProjection.ellipsoid;
+
+      this._startPoint = pointCollection.add(MeasurementSettings.getPointOptions());
+      this._endPoint = pointCollection.add(MeasurementSettings.getPointOptions());
+
+      this._positions = positions;
+      this._polyline = primitives.add(new PolylinePrimitive(MeasurementSettings.getPolylineOptions({
+          ellipsoid: ellipsoid,
+          width: 3,
+          show: false,
+          positions: positions
+      })));
+
+      this._xyPolylinePositions = xyPolylinePositions;
+      this._xyPolyline = primitives.add(new PolylinePrimitive(MeasurementSettings.getPolylineOptions({
+          ellipsoid: ellipsoid,
+          width: 2,
+          positions: xyPolylinePositions,
+          materialType: cesium.Material.PolylineDashType
+      })));
+
+      this._xyBoxPositions = xyBoxPositions;
+      this._xyBox = primitives.add(new PolylinePrimitive(MeasurementSettings.getPolylineOptions({
+          ellipsoid: ellipsoid,
+          width: 1,
+          positions: xyBoxPositions
+      })));
+
+      this._label = labelCollection.add(MeasurementSettings.getLabelOptions({
+          horizontalOrigin: cesium.HorizontalOrigin.LEFT,
+          verticalOrigin: cesium.VerticalOrigin.TOP,
+          pixelOffset: new cesium.Cartesian2(10, 10)
+      }));
+
+      this._xPixelOffset = xPixelOffset;
+      this._xLabel = labelCollection.add(MeasurementSettings.getLabelOptions({
+          scale: 0.6
+      }));
+      this._xAngleLabel = labelCollection.add(MeasurementSettings.getLabelOptions({
+          scale: 0.6,
+          horizontalOrigin: cesium.HorizontalOrigin.LEFT,
+          verticalOrigin: cesium.VerticalOrigin.MIDDLE,
+          pixelOffset: xPixelOffset
+      }));
+
+      this._yPixelOffset = yPixelOffset;
+      this._yLabel = labelCollection.add(MeasurementSettings.getLabelOptions({
+          scale: 0.6,
+          horizontalOrigin: cesium.HorizontalOrigin.RIGHT,
+          pixelOffset: yPixelOffset
+      }));
+      this._yAngleLabel = labelCollection.add(MeasurementSettings.getLabelOptions({
+          scale: 0.6,
+          verticalOrigin: cesium.VerticalOrigin.TOP,
+          pixelOffset: new cesium.Cartesian2(0, 9)
+      }));
   };
 
   // Exposed for specs
@@ -4204,6 +4344,7 @@
       this._tempNextPos = new cesium.Cartesian3();
       this._mode = DrawingMode$1.BeforeDraw;
       this._lastClickPosition = new cesium.Cartesian2(Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY);
+      this._polylineOptions = options.polylineOptions;
   }
 
   /**
@@ -4313,6 +4454,10 @@
       this._primitives.remove(this._polyline);
 
       return cesium.destroyObject(this);
+  };
+
+  PolylineDrawing.prototype.newPolyline = function () {
+      return this._primitives.add(new PolylinePrimitive(this._polylineOptions));
   };
 
   // Exposed for specs
@@ -5314,6 +5459,11 @@
        */
       id: {
           value: 'pointMeasurement'
+      },
+      measurementResult: {
+          get: function () {
+              return this._measurementResult;
+          }
       }
   });
 
@@ -5516,6 +5666,8 @@
       this._removeEvent = scene.preRender.addEventListener(function () {
           that.updateLabel();
       });
+
+      this._measurementResult = [];
   }
 
   PolylineMeasurementDrawing.prototype = Object.create(PolylineDrawing.prototype);
@@ -5542,6 +5694,9 @@
   PolylineMeasurementDrawing.prototype.updateLabel = function () {
       var positions = this._positions;
       if (positions.length < 2) {
+          return;
+      }
+      if (this._segmentLabels.length < 1) {
           return;
       }
       var scene = this._scene;
@@ -5688,6 +5843,28 @@
       PolylineDrawing.prototype.destroy.call(this);
   };
 
+  PolylineMeasurementDrawing.prototype.handleDoubleClick = function () {
+      PolylineDrawing.prototype.handleDoubleClick.call(this);
+
+      this._saveCurrentMeasurementAndPrepareNew();
+  };
+
+  PolylineMeasurementDrawing.prototype._saveCurrentMeasurementAndPrepareNew = function () {
+      //we save current measurement and prepare new fresh
+
+      this._measurementResult.push({
+          label: this._label,
+          segmentLabels: this._segmentLabels,
+          polyline: this._polyline,
+          points: this._points
+      });
+
+      this._label = this._labelCollection.add(MeasurementSettings.getLabelOptions());
+      this._segmentLabels = [];
+      this._polyline = PolylineDrawing.prototype.newPolyline.call(this);
+      this._points = [];
+  };
+
   function getIcon$5(size) {
       return '<svg viewBox="0 0 30 30" height="' + size + 'px" width="' + size + 'px">\n\
                   <g transform="translate(0,-267)">\n\
@@ -5781,6 +5958,11 @@
        */
       id: {
           value: 'polylineMeasurement'
+      },
+      measurementResult: {
+          get: function () {
+              return this._drawing._measurementResult;
+          }
       }
   });
 
