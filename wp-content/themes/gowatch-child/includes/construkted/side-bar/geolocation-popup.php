@@ -4,26 +4,32 @@
             <span class="close-btn">×</span>
         </h3>
 
-        <div class="content-wrapper"><div>Adjust the position of the asset.</div>
+        <div class="content-wrapper">
+            <div class="form-group">
+                <label >Transparency</label>
+                <input type="range" id="tileset-transparency-slider" class="form-control-range" min="0" max="1" value="1" step="0.01">
+            </div>
+
+            <div>Adjust the position of the asset.</div>
             <button type="button" id = "edit_asset_geo_location_button" class="btn btn-light">Edit</button>
 
             <div class="text-input-group">
                 <div class="input-group">
-                    <label for="latitude">Latitude:</label>
-                    <input type="text" id = "tileset_longitude" name="latitude">
+                    <label>Latitude:</label>
+                    <input type="text" id = "tileset_latitude" name="latitude">
                 </div>
             </div>
 
             <div class="text-input-group">
                 <div class="input-group">
-                    <label for="longitude">Longitude:</label>
-                    <input type="text" id = "tileset_latitude" name="longitude">
+                    <label>Longitude:</label>
+                    <input type="text" id = "tileset_longitude" name="longitude">
                 </div>
             </div>
 
             <div class="text-input-group">
                 <div class="input-group">
-                    <label for="altitude">Altitude:</label>
+                    <label>Altitude:</label>
                     <input type="text" id = "tileset_altitude" name="altitude">
                 </div>
             </div>

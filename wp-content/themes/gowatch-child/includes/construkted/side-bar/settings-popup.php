@@ -1,6 +1,6 @@
 <div id="construkted-popup-settings" class="popup-wrapper" style="display: none;">
     <div class="popup-content">
-        <h3 class="popup-title">Settings <span class="close-btn">×</span>
+        <h3 class="popup-title">Settings <span class="close-btn">×</span></h3>
 
         <div class="content-wrapper">
             <div class="form-group">

@@ -1784,6 +1784,17 @@
               if (scene.requestRenderMode) {
                   scene.requestRender();
               }
+
+              // custom gw code
+
+              var carto = Cesium.Cartographic.fromCartesian(value);
+
+              var longitude = Cesium.Math.toDegrees(carto.longitude);
+              var latitude = Cesium.Math.toDegrees(carto.latitude);
+
+              $('#tileset_longitude').val(longitude);
+              $('#tileset_latitude').val(latitude);
+              $('#tileset_altitude').val(carto.height);
           }
       });
 

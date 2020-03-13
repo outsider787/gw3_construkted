@@ -15,6 +15,41 @@ var theApp = (function () {
     function _initGeoLocationPopup() {
         var tileset_model_matrix = CONSTRUKTED_AJAX.tileset_model_matrix;
 
+        var setHprQuaternion = new Cesium.Quaternion();
+        var setHprQuaternion2 = new Cesium.Quaternion();
+        var setHprTranslation = new Cesium.Cartesian3();
+        var setHprScale = new Cesium.Cartesian3();
+        var setHprCenter = new Cesium.Cartesian3();
+        var setHprTransform = new Cesium.Matrix4();
+        var setHprRotation = new Cesium.Matrix3();
+
+        function setHeadingPitchRoll(transform, headingPitchRoll) {
+            //>>includeStart('debug', pragmas.debug);
+            Cesium.Check.defined('transform', transform);
+            Cesium.Check.defined('headingPitchRoll', headingPitchRoll);
+            //>>includeEnd('debug');
+
+            var rotationQuaternion = Cesium.Quaternion.fromHeadingPitchRoll(headingPitchRoll, setHprQuaternion);
+            var translation = Cesium.Matrix4.getTranslation(transform, setHprTranslation);
+            var scale = Cesium.Matrix4.getScale(transform, setHprScale);
+            var center = Cesium.Matrix4.multiplyByPoint(transform, Cesium.Cartesian3.ZERO, setHprCenter);
+            var backTransform = Cesium.Transforms.eastNorthUpToFixedFrame(center, undefined, setHprTransform);
+
+            var rotationFixed = Cesium.Matrix4.getMatrix3(backTransform, setHprRotation);
+            var quaternionFixed = Cesium.Quaternion.fromRotationMatrix(rotationFixed, setHprQuaternion2);
+            var rotation = Cesium.Quaternion.multiply(quaternionFixed, rotationQuaternion, rotationFixed);
+
+            return Cesium.Matrix4.fromTranslationQuaternionRotationScale(translation, rotation, scale, transform);
+        }
+
+        function changeTilesetModelMatrix(newPosition, headingPitchRoll) {
+            var origModelMatrix = tilesets.modelMatrix;
+
+            origModelMatrix = Cesium.Matrix4.setTranslation(origModelMatrix, newPosition, origModelMatrix);
+
+            setHeadingPitchRoll(origModelMatrix, headingPitchRoll);
+        }
+
         if(tileset_model_matrix){
             var position = tileset_model_matrix.position;
 
@@ -52,15 +87,21 @@ var theApp = (function () {
                 return;
             }
 
-            var translation = Cesium.Matrix4.getTranslation(tilesets.modelMatrix, new Cesium.Cartesian3());
+            var origModelMatrix = tilesets.modelMatrix;
 
-            var carto = Cesium.Cartographic.fromCartesian(translation);
+            var origPosition = Cesium.Matrix4.getTranslation(origModelMatrix, new Cesium.Cartesian3());
 
-            carto.longitude = longitude * Cesium.Math.RADIANS_PER_DEGREE;
+            var origCartographic = Cesium.Cartographic.fromCartesian(origPosition);
 
-            var newPosition = viewer.scene.globe.ellipsoid.cartographicToCartesian(carto);
+            origCartographic.longitude = longitude * Cesium.Math.RADIANS_PER_DEGREE;
 
-            tilesets.modelMatrix = Cesium.Matrix4.setTranslation(tilesets.modelMatrix, newPosition, tilesets.modelMatrix);
+            var newPosition = viewer.scene.globe.ellipsoid.cartographicToCartesian(origCartographic);
+
+            var scene = viewer.scene;
+
+            var headingPitchRoll = Cesium.Transforms.fixedFrameToHeadingPitchRoll(origModelMatrix, scene.mapProjection.ellipsoid, undefined, new Cesium.HeadingPitchRoll());
+
+            changeTilesetModelMatrix(newPosition, headingPitchRoll);
 
             viewer.zoomTo(tilesets);
         });
@@ -75,15 +116,21 @@ var theApp = (function () {
                 return;
             }
 
-            var translation = Cesium.Matrix4.getTranslation(tilesets.modelMatrix, new Cesium.Cartesian3());
+            var origModelMatrix = tilesets.modelMatrix;
 
-            var carto = Cesium.Cartographic.fromCartesian(translation);
+            var origPosition = Cesium.Matrix4.getTranslation(origModelMatrix, new Cesium.Cartesian3());
 
-            carto.latitude = latitude * Cesium.Math.RADIANS_PER_DEGREE;
+            var origCartographic = Cesium.Cartographic.fromCartesian(origPosition);
 
-            var newPosition = viewer.scene.globe.ellipsoid.cartographicToCartesian(carto);
+            origCartographic.latitude = latitude * Cesium.Math.RADIANS_PER_DEGREE;
 
-            tilesets.modelMatrix = Cesium.Matrix4.setTranslation(tilesets.modelMatrix, newPosition, tilesets.modelMatrix);
+            var newPosition = viewer.scene.globe.ellipsoid.cartographicToCartesian(origCartographic);
+
+            var scene = viewer.scene;
+
+            var headingPitchRoll = Cesium.Transforms.fixedFrameToHeadingPitchRoll(origModelMatrix, scene.mapProjection.ellipsoid, undefined, new Cesium.HeadingPitchRoll());
+
+            changeTilesetModelMatrix(newPosition, headingPitchRoll);
 
             viewer.zoomTo(tilesets);
         });
@@ -98,17 +145,58 @@ var theApp = (function () {
                 return;
             }
 
-            var translation = Cesium.Matrix4.getTranslation(tilesets.modelMatrix, new Cesium.Cartesian3());
+            var origModelMatrix = tilesets.modelMatrix;
 
-            var carto = Cesium.Cartographic.fromCartesian(translation);
+            var origPosition = Cesium.Matrix4.getTranslation(origModelMatrix, new Cesium.Cartesian3());
 
-            carto.allatitude = altitude;
+            var origCartographic = Cesium.Cartographic.fromCartesian(origPosition);
 
-            var newPosition = viewer.scene.globe.ellipsoid.cartographicToCartesian(carto);
+            origCartographic.altitude = altitude;
 
-            tilesets.modelMatrix = Cesium.Matrix4.setTranslation(tilesets.modelMatrix, newPosition, tilesets.modelMatrix);
+            var newPosition = viewer.scene.globe.ellipsoid.cartographicToCartesian(origCartographic);
+
+            var scene = viewer.scene;
+
+            var headingPitchRoll = Cesium.Transforms.fixedFrameToHeadingPitchRoll(origModelMatrix, scene.mapProjection.ellipsoid, undefined, new Cesium.HeadingPitchRoll());
+
+            changeTilesetModelMatrix(newPosition, headingPitchRoll);
 
             viewer.zoomTo(tilesets);
+        });
+
+        jQuery('#tileset_heading').change(function () {
+            var heading = jQuery('#tileset_heading').val();
+            heading = parseFloat(heading);
+
+            if(isNaN(heading) || heading > 180 || heading < -180) {
+                jQuery('#tileset_heading').val('');
+                alert('invalid heading: ' + heading);
+                return;
+            }
+
+            var origModelMatrix = tilesets.modelMatrix;
+
+            var origPosition = Cesium.Matrix4.getTranslation(origModelMatrix, new Cesium.Cartesian3());
+
+            var scene = viewer.scene;
+
+            var headingPitchRoll = Cesium.Transforms.fixedFrameToHeadingPitchRoll(origModelMatrix, scene.mapProjection.ellipsoid, undefined, new Cesium.HeadingPitchRoll());
+
+            headingPitchRoll.heading = heading * Cesium.Math.RADIANS_PER_DEGREE;
+
+            changeTilesetModelMatrix(origPosition, headingPitchRoll);
+
+            viewer.zoomTo(tilesets);
+        });
+
+        jQuery('#tileset-transparency-slider').change(function () {
+            var value = this.value;
+
+            tilesets.style = new Cesium.Cesium3DTileStyle({
+                color: 'rgba(255, 255, 255,' + value + ')'
+            });
+
+            viewer.scene.requestRender();
         });
     }
 
@@ -460,7 +548,6 @@ var theApp = (function () {
         //tilesets.pointCloudShading.attenuation = true;
         //tilesets.pointCloudShading.maximumAttenuation = 5;
 
-		tilesets.maximumScreenSpaceError = 6.0;
 		tilesets.pointCloudShading.maximumAttenuation = 1.2; // Don't allow points larger than 4 pixels.
 		tilesets.pointCloudShading.baseResolution = 0.44; // Assume an original capture resolution of 5 centimeters between neighboring points.
 		tilesets.pointCloudShading.geometricErrorScale = 0.3; // Applies to both geometric error and the base resolution.
