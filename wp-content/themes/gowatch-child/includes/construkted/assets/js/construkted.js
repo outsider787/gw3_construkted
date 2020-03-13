@@ -198,7 +198,6 @@ var theApp = (function () {
             addMeasurementCheckbox('area-' + measurementIndex, 'Area ' + measurementIndex);
         });
 
-
         function deactivateAllMeasurementToolButtons() {
             $('*[id*=measurement-tool-button]').each(function() {
                 this.classList.remove('active');
@@ -326,6 +325,11 @@ var theApp = (function () {
 
                 console.log(this.id);
             });
+        });
+
+        $('#end-measurement').click(function () {
+            deactivateAllMeasurementToolButtons();
+            measureViewModel._deactivate();
         });
     }
 

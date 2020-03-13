@@ -134,6 +134,7 @@ popups
 }
 
 .close-btn:hover {
+    cursor: pointer;
     color: darkgray;
 }
 
