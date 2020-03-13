@@ -115,26 +115,217 @@ var theApp = (function () {
     function _initMeasurementPopup() {
         var measure = viewer.measure;
 
-        var viewModel = measure.viewModel;
+        var measureViewModel = measure.viewModel;
 
-        jQuery('#measurement-component-distance').click(function () {
-            viewModel._activate();
-            viewModel.selectedMeasurement = viewModel._measurements[1];
+        var pointMeasurement = measureViewModel._measurements[7];
+        var distanceMeasurement = measureViewModel._measurements[1];
+        var polylineMeasurement = measureViewModel._measurements[2];
+        var areaMeasurement = measureViewModel._measurements[6];
+
+        function addMeasurementCheckbox(id, label) {
+            var newCheckBox = ' <div class="form-check">\n' +
+                '                                    <input class="form-check-input" type="checkbox" id="' + id + '" checked>\n' +
+                '                                    <label class="form-check-label">\n' +
+                label +
+                '                                    </label>\n' +
+                '                                </div>';
+
+            $('#measurement-list').append(newCheckBox);
+
+            $('[id=' + id + ']').change(function () {
+                var tokens = id.split('-');
+
+                var measurementType = tokens[0];
+                var measurementIndex = parseInt(tokens[1]);
+
+                if(measurementType === 'point') {
+                    showHidePointMeasurement(pointMeasurement.measurementResult[measurementIndex], this.checked);
+                }
+
+                if(measurementType === 'distance') {
+                    showHideDistanceMeasurement(distanceMeasurement.measurementResult[measurementIndex], this.checked);
+                }
+
+                if(measurementType === 'polyline') {
+                    showHidePolylineMeasurement(polylineMeasurement.measurementResult[measurementIndex], this.checked);
+                }
+
+                if(measurementType === 'area') {
+                    showHideAreaMeasurement(areaMeasurement.measurementResult[measurementIndex], this.checked);
+                }
+
+                viewer.scene.requestRender();
+            });
+        }
+
+        pointMeasurement.newMeasurement.addEventListener(function (measurementIndex) {
+            console.log(measurementIndex);
+
+            var measurement = pointMeasurement.measurementResult[measurementIndex];
+
+            console.log(measurement);
+
+            addMeasurementCheckbox('point-' + measurementIndex, 'Point ' + measurementIndex);
         });
 
-        jQuery('#measurement-polyline').click(function () {
-            viewModel._activate();
-            viewModel.selectedMeasurement = viewModel._measurements[2];
+        distanceMeasurement.newMeasurement.addEventListener(function (measurementIndex) {
+            console.log(measurementIndex);
+
+            var measurement = distanceMeasurement.measurementResult[measurementIndex];
+
+            console.log(measurement);
+
+            addMeasurementCheckbox('distance-' + measurementIndex, 'Distance ' + measurementIndex);
         });
 
-        jQuery('#measurement-area').click(function () {
-            viewModel._activate();
-            viewModel.selectedMeasurement = viewModel._measurements[6];
+        polylineMeasurement.newMeasurement.addEventListener(function (measurementIndex) {
+            console.log(measurementIndex);
+
+            var measurement = polylineMeasurement.measurementResult[measurementIndex];
+
+            console.log(measurement);
+
+            addMeasurementCheckbox('polyline-' + measurementIndex, 'Polyline ' + measurementIndex);
         });
 
-        jQuery('#measurement-point').click(function () {
-            viewModel._activate();
-            viewModel.selectedMeasurement = viewModel._measurements[7];
+        areaMeasurement.newMeasurement.addEventListener(function (measurementIndex) {
+            console.log(measurementIndex);
+
+            var measurement = areaMeasurement.measurementResult[measurementIndex];
+
+            console.log(measurement);
+
+            addMeasurementCheckbox('area-' + measurementIndex, 'Area ' + measurementIndex);
+        });
+
+
+        function deactivateAllMeasurementToolButtons() {
+            $('*[id*=measurement-tool-button]').each(function() {
+                this.classList.remove('active');
+            });
+        }
+
+        function enableEndMeasurementButton () {
+            $('#end-measurement').removeClass('disabled');
+        }
+
+        jQuery('#measurement-tool-button-component-distance').click(function () {
+            deactivateAllMeasurementToolButtons();
+            this.classList.add('active');
+
+            enableEndMeasurementButton();
+
+            measureViewModel._activate();
+            measureViewModel.selectedMeasurement = distanceMeasurement;
+        });
+
+        jQuery('#measurement-tool-button-polyline').click(function () {
+            deactivateAllMeasurementToolButtons();
+            this.classList.add('active');
+
+            enableEndMeasurementButton();
+            measureViewModel._activate();
+            measureViewModel.selectedMeasurement = polylineMeasurement;
+        });
+
+        jQuery('#measurement-tool-button-area').click(function () {
+            deactivateAllMeasurementToolButtons();
+            this.classList.add('active');
+
+            enableEndMeasurementButton();
+            measureViewModel._activate();
+            measureViewModel.selectedMeasurement = areaMeasurement;
+        });
+
+        jQuery('#measurement-tool-button-point').click(function () {
+            deactivateAllMeasurementToolButtons();
+            this.classList.add('active');
+
+            enableEndMeasurementButton();
+
+            measureViewModel._activate();
+            measureViewModel.selectedMeasurement = pointMeasurement;
+        });
+
+        $('#end-measurement').click(function () {
+            deactivateAllMeasurementToolButtons();
+            measureViewModel._deactivate();
+        });
+
+        function showHidePointMeasurement(pointMeasurement, show) {
+            pointMeasurement.point.show = show;
+            pointMeasurement.label.show = show;
+        }
+
+        function showHideDistanceMeasurement(distanceMeasurement, show) {
+            distanceMeasurement.startPoint.show = show;
+            distanceMeasurement.endPoint.show = show;
+            distanceMeasurement.polyline.show = show;
+            distanceMeasurement.xyPolyline.show = show;
+            distanceMeasurement.xyBox.show = show;
+            distanceMeasurement.label.show = show;
+            distanceMeasurement.xLabel.show = show;
+            distanceMeasurement.xAngleLabel.show = show;
+            distanceMeasurement.yLabel.show = show;
+            distanceMeasurement.yAngleLabel.show = show;
+        }
+
+        function showHidePolylineMeasurement(polylineMeasurement, show) {
+            polylineMeasurement.label.show = show;
+
+            for (var i = 0; i < polylineMeasurement.segmentLabels.length; i++)
+                polylineMeasurement.segmentLabels[i].show = show;
+
+            polylineMeasurement.polyline.show = show;
+
+            for (i = 0; i < polylineMeasurement.points.length; i++)
+                polylineMeasurement.points[i].show = show;
+        }
+
+        function showHideAreaMeasurement(areaMeasurement, show) {
+            areaMeasurement.label.show = show;
+            areaMeasurement.polygon.show = show;
+            areaMeasurement.polyline.show = show;
+
+            for (var i = 0; i < areaMeasurement.points.length; i++)
+                areaMeasurement.points[i].show = show;
+        }
+
+        function showHideAllMeasurement(show) {
+            var pointMeasurements = pointMeasurement.measurementResult;
+
+            for(var i = 0; i < pointMeasurements.length; i++)
+                showHidePointMeasurement(pointMeasurements[i], show);
+
+            var distanceMeasurements = distanceMeasurement.measurementResult;
+
+            for(i = 0; i < distanceMeasurements.length; i++)
+                showHideDistanceMeasurement(distanceMeasurements[i], show);
+
+            var polylineMeasurements = polylineMeasurement.measurementResult;
+
+            for(i = 0; i < polylineMeasurements.length; i++)
+                showHidePolylineMeasurement(polylineMeasurements[i], show);
+
+            var areaMeasurements = areaMeasurement.measurementResult;
+
+            for(i = 0; i < areaMeasurements.length; i++)
+                showHideAreaMeasurement(areaMeasurements[i], show);
+
+            viewer.scene.requestRender();
+        }
+
+        $('#show-hide-all-measurement-checkbox').change(function () {
+            var checked = this.checked;
+
+            showHideAllMeasurement(checked);
+
+            $('*[id*=measurement-result]').each(function() {
+
+                this.checked = checked;
+
+                console.log(this.id);
+            });
         });
     }
 

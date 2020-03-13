@@ -3337,6 +3337,7 @@
       Measurement.call(this, options);
 
       this._drawing = new AreaMeasurementDrawing(options);
+      this._newMeasurement = new cesium.Event();
   }
 
   AreaMeasurement.prototype = Object.create(Measurement.prototype);
@@ -3403,6 +3404,11 @@
           get: function () {
               return this._drawing._measurementResult;
           }
+      },
+      newMeasurement: {
+          get: function () {
+              return this._newMeasurement;
+          }
       }
   });
 
@@ -3411,6 +3417,8 @@
    */
   AreaMeasurement.prototype.handleDoubleClick = function () {
       this._drawing.handleDoubleClick();
+
+      this._newMeasurement.raiseEvent(this._drawing._measurementResult.length - 1);
   };
 
   /**
@@ -3591,6 +3599,7 @@
       });
 
       this._measurementResult = [];
+      this._newMeasurement = new cesium.Event();
   }
 
   DistanceMeasurement.prototype = Object.create(Measurement.prototype);
@@ -3737,6 +3746,11 @@
       measurementResult: {
           get: function () {
               return this._measurementResult;
+          }
+      },
+      newMeasurement: {
+          get: function () {
+              return this._newMeasurement;
           }
       }
   });
@@ -4042,6 +4056,8 @@
           yLabel: this._yLabel,
           yAngleLabel: this._yAngleLabel
       });
+
+      this._newMeasurement.raiseEvent(this._measurementResult.length - 1);
 
       var pointCollection = this._pointCollection;
       var labelCollection = this._labelCollection;
@@ -5369,13 +5385,19 @@
       options = cesium.defaultValue(options, cesium.defaultValue.EMPTY_OBJECT);
       Measurement.call(this, options);
 
-      this._point = null;
-      this._label = null;
+      this._point = this._pointCollection.add(MeasurementSettings.getPointOptions());
+      this._label = this._labelCollection.add(MeasurementSettings.getLabelOptions({
+          horizontalOrigin: cesium.HorizontalOrigin.LEFT,
+          verticalOrigin: cesium.VerticalOrigin.CENTER,
+          pixelOffset: new cesium.Cartesian2(10, 0)
+      }));
+
       this._position = new cesium.Cartesian3();
       this._height = 0.0;
       this._slope = 0.0;
 
       this._measurementResult = [];
+      this._newMeasurement = new cesium.Event();
   }
 
   PointMeasurement.prototype = Object.create(Measurement.prototype);
@@ -5464,6 +5486,11 @@
           get: function () {
               return this._measurementResult;
           }
+      },
+      newMeasurement: {
+          get: function () {
+              return this._newMeasurement;
+          }
       }
   });
 
@@ -5471,18 +5498,20 @@
       return this._scene.pickPositionSupported;
   };
 
-  PointMeasurement.prototype._newMeasurementResult = function () {
+  PointMeasurement.prototype._saveCurrentMeasurementAndPrepareNew = function () {
+      this._measurementResult.push({
+          point: this._point,
+          label: this._label
+      });
+
+      this._newMeasurement.raiseEvent(this._measurementResult.length - 1);
+
       this._point = this._pointCollection.add(MeasurementSettings.getPointOptions());
       this._label = this._labelCollection.add(MeasurementSettings.getLabelOptions({
           horizontalOrigin: cesium.HorizontalOrigin.LEFT,
           verticalOrigin: cesium.VerticalOrigin.CENTER,
           pixelOffset: new cesium.Cartesian2(10, 0)
       }));
-
-      this._measurementResult.push({
-          point: this._point,
-          label: this._label
-      });
   };
 
   PointMeasurement.prototype.handleClick = function (clickPosition) {
@@ -5498,7 +5527,6 @@
           return;
       }
 
-      this._newMeasurementResult();
       this._label.show = false;
       this._point.show = false;
 
@@ -5536,6 +5564,8 @@
       this._position = cesium.Cartesian3.clone(position, this._position);
       this._height = height;
       this._slope = slope;
+
+      this._saveCurrentMeasurementAndPrepareNew();
   };
 
   /**
@@ -5897,6 +5927,7 @@
       Measurement.call(this, options);
 
       this._drawing = new PolylineMeasurementDrawing(options);
+      this._newMeasurement = new cesium.Event();
   }
 
   PolylineMeasurement.prototype = Object.create(Measurement.prototype);
@@ -5963,6 +5994,11 @@
           get: function () {
               return this._drawing._measurementResult;
           }
+      },
+      newMeasurement: {
+          get: function () {
+              return this._newMeasurement;
+          }
       }
   });
 
@@ -5971,6 +6007,8 @@
    */
   PolylineMeasurement.prototype.handleDoubleClick = function () {
       this._drawing.handleDoubleClick();
+
+      this._newMeasurement.raiseEvent(this._drawing._measurementResult.length - 1);
   };
 
   /**
