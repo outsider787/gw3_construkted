@@ -12,19 +12,21 @@
                 </div>
             </div>
 
-            <? global $post; ?>
+            <!-- These buttons should only be visible to the asset owner (logged in) -->
 
-<!--        if($post->post_author == get_current_user_id()) { ?>-->
-<!--        The buttons should only be visible to the asset owner (logged in)-->
+            <?php
+            global $post;
 
-            <p class="desc">Update thumbnail from current display</p>
-            <button type="button" id="capture_thumbnail" class="btn btn-light">Update thumbnail</button>
+            if($post->post_author == get_current_user_id()) { ?>
+                <p class="desc">Update thumbnail from current display</p>
+                <button type="button" id="capture_thumbnail" class="btn btn-light">Update thumbnail</button>
 
-            <p class="desc">Set default camera view to current view</p>
-            <button type="button" id="save_current_view" class="btn btn-light">Set default view</button>
+                <p class="desc">Set default camera view to current view</p>
+                <button type="button" id="save_current_view" class="btn btn-light">Set default view</button>
 
-            <p class="desc">Use if display is not showing in the asset</p>
-            <button type="button" id="reset_camera_view" class="btn btn-light">Reset camera view</button>
+                <p class="desc">Use if display is not showing in the asset</p>
+                <button type="button" id="reset_camera_view" class="btn btn-light">Reset camera view</button>
+            <?php } ?>
 
             <div class="form-group">
                 <label for="fpv_speed">FPV movement speed</label>

@@ -55,8 +55,8 @@ var theApp = (function () {
 
             var carto = Cesium.Cartographic.fromCartesian(new Cesium.Cartesian3(position.x , position.y, position.z));
 
-            jQuery('#tileset_latitude').val(Cesium.Math.toDegrees(carto.longitude));
-            jQuery('#tileset_longitude').val(Cesium.Math.toDegrees(carto.latitude));
+            jQuery('#tileset_latitude').val(Cesium.Math.toDegrees(carto.latitude));
+            jQuery('#tileset_longitude').val(Cesium.Math.toDegrees(carto.longitude));
             jQuery('#tileset_altitude').val(carto.height);
             jQuery('#tileset_heading').val(tileset_model_matrix.headingPitchRoll.heading);
         }
@@ -482,10 +482,6 @@ var theApp = (function () {
     }
 
     function _create3DMap() {
-        //test
-
-        CONSTRUKTED_AJAX.is_owner = true;
-
         Cesium.Ion.defaultAccessToken = CONSTRUKTED_AJAX.cesium_access_token;
 
         viewer = new Cesium.Viewer('cesiumContainer', {
