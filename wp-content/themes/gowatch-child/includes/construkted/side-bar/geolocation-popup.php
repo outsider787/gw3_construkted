@@ -53,11 +53,10 @@
             <!-- These buttons should only be visible to the asset owner (logged in) -->
 
             <?php
-            global $post;
 
             if($is_owner) { ?>
-                <button type="button" id = "save_tileset_model_matrix_button" class="btn btn-light">Save</button></div>
-
+                <button type="button" id = "save_tileset_model_matrix_button" class="btn btn-light">Save</button>
             <?php } ?>
+        </div>
     </div>
 </div>
