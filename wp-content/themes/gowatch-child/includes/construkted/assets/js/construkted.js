@@ -695,5 +695,7 @@ jQuery(document).ready(function(){
     if(CONSTRUKTED_AJAX.tileset_model_matrix && CONSTRUKTED_AJAX.tileset_model_matrix !== '')
         CONSTRUKTED_AJAX.tileset_model_matrix = JSON.parse(CONSTRUKTED_AJAX.tileset_model_matrix);
 
+    CONSTRUKTED_AJAX.is_owner = Boolean(CONSTRUKTED_AJAX.is_owner);
+
     theApp.start();
 });

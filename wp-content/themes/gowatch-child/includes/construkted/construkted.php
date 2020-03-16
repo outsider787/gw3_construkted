@@ -37,7 +37,8 @@ function enqueue_construkted_scripts(){
             'post_slug' => $post_slug,
             'tile_server_url' => CONSTRUKTED_3D_TILE_SERVER_URL,
             'default_camera_position_direction' => $default_camera_position_direction,
-            'tileset_model_matrix' => $tileset_model_matrix_json
+            'tileset_model_matrix' => $tileset_model_matrix_json,
+            'is_owner' => $post->post_author == get_current_user_id()
         )
     );
 }
