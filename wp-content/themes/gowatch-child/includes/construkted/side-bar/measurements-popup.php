@@ -16,7 +16,7 @@
                     <h5 class="card-title">Measurement Result</h5>
                     <div class="form-check">
                         <input checked class="form-check-input" id="show-hide-all-measurement-checkbox" type="checkbox">
-                        <label class="form-check-label">
+                        <label class="form-check-label" for="show-hide-all-measurement-checkbox">
                             Show / Hide All
                         </label>
                     </div>

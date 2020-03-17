@@ -3,19 +3,20 @@
         <nav id="navbar-right" class="navbar-right bg-light p-3">
             <ul class="nav flex-column">
                 <li class="nav-item" id="nav-layers">
-                    <button type="button" class="btn btn-light " id="construkted-popup-layers-btn" title="Layers of hover tips"></button>
+                    <span class="btn btn-light gwicon-layers" id="construkted-popup-layers-btn" title="Layers of hover tips">
+                    </span>
                 </li>
 
                 <li class="nav-item" id="nav-geo">
-                    <button type="button" class="btn btn-light " id="construked-popup-geo-btn" title="Geo-Location of hover tips"></button>
+                    <span class="btn btn-light  gwicon-global" id="construkted-popup-geolocation-btn" title="Geo-Location of hover tips"></span>
                 </li>
 
                 <li class="nav-item" id="nav-measurements">
-                    <button type="button" class="btn btn-light " id="construkted-popup-measurements-btn" title="Measurements of hover tips"></button>
+                    <span class="btn btn-light  gwicon-pencil" id="construkted-popup-measurements-btn" title="Measurements of hover tips"></span>
                 </li>
 
                 <li class="nav-item" id="nav-settings">
-                    <button type="button" class="btn btn-light " id="construkted-popup-settings-btn" title="Settings of hover tips"></button>
+                    <span class="btn btn-light  gwicon-gear" id="construkted-popup-settings-btn" title="Settings of hover tips"></span>
                 </li>
             </ul>
         </nav>

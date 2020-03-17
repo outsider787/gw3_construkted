@@ -8,6 +8,13 @@
      * @param int {max} maximum number of file uplaods
      * @param string {type}
      */
+
+    var Total_file_size_to_upload, startSeconds,currentSeconds,diffSeconds,ETA,keepTrack;
+    Total_file_size_to_upload = 0;
+    keepTrack = 1;
+    ETA = 0;
+            
+
     window.TSZF_Uploader = function (browse_button, container, max, type, allowed_type, max_file_size) {
         this.removed_files = [],
         this.container = container;
@@ -88,6 +95,8 @@
 
         startUploading: function(up, files) {
             var $container = $('#' + this.container).find('.tszf-attachment-upload-filelist');
+            $container.append(
+                    '<div class="upload-timing"></div><div class="upload-speed"></div>');
 
             this.showHide();
 
@@ -121,6 +130,10 @@
                 self.showHide();
                 self.uploader.refresh();
             });
+
+            plupload.each(files, function(file){
+                Total_file_size_to_upload +=file.size;
+            });
         },
 
         upload: function (uploader) {
@@ -133,13 +146,61 @@
         progress: function (up, file) {
             var item = $('#' + file.id);
 
+            function rectime(sec) {
+                var hr = Math.floor(sec / 3600);
+                var min = Math.floor((sec - (hr * 3600))/60);
+                sec -= ((hr * 3600) + (min * 60));
+                sec += ''; min += '';
+
+                while (min.length < 2) {
+                    min = '0' + min;
+                }
+                while (sec.length < 2) {
+                    sec = '0' + sec;
+                }
+
+                hr = (hr)?':'+hr:'';
+
+                return hr + min + ':' + sec;
+            }
+             
+            function bytesConvert(bytes,to){
+                if(to=="kb"){
+                    return Math.round((bytes/1024)*1)/1;
+                }else if(to=="mb"){
+                    return Math.round((bytes/1024/1024)*1)/1;
+                }else if(to=="gb"){
+                    return Math.round((bytes/1024/1024/1024)*1)/1;
+                }
+            }
+
             $('.bar', item).css({ width: file.percent + '%' });
             $('.percent', item).html( file.percent + '%' );
+
+            
+
+            if( keepTrack == 1 ){             
+                startSeconds = new Date();
+                setInterval(function() {
+                    currentSeconds = new Date();
+                    diffSeconds = currentSeconds.getTime() - startSeconds.getTime();
+                    ETA = parseInt(bytesConvert(Total_file_size_to_upload,'kb')/bytesConvert(up.total.bytesPerSec,'kb') - parseInt(diffSeconds/1000, 10), 10);
+                }, 1000);
+                keepTrack = 0;
+            }
+            jQuery('.upload-timing').html('Remaining ' + rectime(ETA));
+            jQuery('.upload-speed').html('Uploading at ' + bytesConvert(up.total.bytesPerSec,'mb') + ' mb/s');
         },
 
         error: function (up, error) {
 
             $('#' + this.container).find('#' + error.file.id).remove();
+            jQuery('.upload-timing').remove();
+            jQuery('.upload-speed').remove();
+
+            Total_file_size_to_upload = 0;
+            keepTrack = 1;
+            ETA = 0;
 
             var msg = '';
             switch(error.code) {
@@ -169,6 +230,8 @@
 
             $('#' + file.id + " b").html("100%");
             $('#' + file.id).remove();
+            jQuery('.upload-timing').remove();
+            jQuery('.upload-speed').remove();
 
             var realResponseString = response.response;
 
@@ -190,12 +253,17 @@
                 var $container = $('#' + this.container).find('.tszf-attachment-list');
                 $container.append(response.response);
 
+                Total_file_size_to_upload = 0;
+                keepTrack = 1;
+                ETA = 0;
+
                 if ( this.perFileCount > this.max ) {
                     var attach_id = $('.tszf-image-wrap:last a.attachment-delete',$container).data('attach_id');
                     self.removeExtraAttachment(attach_id);
                     $('.tszf-image-wrap',$container).last().remove();
                     this.perFileCount--;
                 }
+                this.showHide();
 
             } else {
                 alert(realResponse.error);

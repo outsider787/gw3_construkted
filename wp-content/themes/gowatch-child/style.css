@@ -7,6 +7,69 @@ Version: 1.0
 Template: gowatch
 */
 
+
+@font-face {
+  font-family: 'gw3icons';
+  src: url('includes/construkted/assets/font/gw3icons.eot?55486639');
+  src: url('includes/construkted/assets/font/gw3icons.eot?55486639#iefix') format('embedded-opentype'),
+       url('includes/construkted/assets/font/gw3icons.woff2?55486639') format('woff2'),
+       url('includes/construkted/assets/font/gw3icons.woff?55486639') format('woff'),
+       url('includes/construkted/assets/font/gw3icons.ttf?55486639') format('truetype'),
+       url('includes/construkted/assets/font/gw3icons.svg?55486639#gw3icons') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */
+/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */
+/*
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: 'gw3icons';
+    src: url('../font/gw3icons.svg?55486639#gw3icons') format('svg');
+  }
+}
+*/
+ 
+ [class^="gwicon-"]:before, [class*=" gwicon-"]:before {
+  font-family: "gw3icons";
+  font-style: normal;
+  font-weight: normal;
+  speak: none;
+ 
+  display: inline-block;
+  text-decoration: inherit;
+  width: 1em;
+  margin-right: .2em;
+  text-align: center;
+  /* opacity: .8; */
+ 
+  /* For safety - reset parent styles, that can break glyph codes*/
+  font-variant: normal;
+  text-transform: none;
+ 
+  /* fix buttons height, for twitter bootstrap */
+  line-height: 1em;
+ 
+  /* Animation center compensation - margins should be symmetric */
+  /* remove if not needed */
+  margin-left: .2em;
+ 
+  /* you can be more comfortable with increased icons size */
+  /* font-size: 120%; */
+ 
+  /* Font smoothing. That was taken from TWBS */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+ 
+  /* Uncomment for 3D effect */
+  /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
+}
+ 
+.gwicon-gear:before { content: '\e800'; } /* '' */
+.gwicon-pencil:before { content: '\e801'; } /* '' */
+.gwicon-global:before { content: '\e802'; } /* '' */
+.gwicon-layers:before { content: '\e803'; } /* '' */
+
 article .read-more {
     background-color: #fff; 
     color: #fff;
@@ -133,5 +196,274 @@ article .entry-meta-date a::after{
     vertical-align: middle;
     margin-left: 10px;
 }
-
 /* END of part for custom posts in Dashboard */
+#cesiumContainer {
+    height: calc(100vh - 71px);
+}
+.admin-bar #cesiumContainer {
+    height: calc(100vh - 103px);
+}
+#toolbar {
+    background: rgba(0, 0, 0, 0);
+    margin: 0;
+    position: absolute;
+    padding: 0;
+    border-radius: 0;
+    top: 5px;
+    left: 5px;
+}
+
+.btn-download {
+    display: block;
+    padding: 0 15px;
+    border-radius: 20px;
+    text-align: center;
+    height: 40px;
+    border: 1px solid #e5e8ee;
+    text-transform: uppercase;
+    line-height: 38px;
+    font-size: 12px;
+}
+
+#scroll-down-btn {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    /*right: 76px;*/
+    height: 29px;
+    line-height: 29px;
+    padding: 0 8px 0 14px;
+    background: #fff;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    background: rgba(55,105,150,1);
+    cursor: pointer;
+}
+#scroll-down-btn:hover {
+    background: rgba(142,108,136,1);
+}
+.cesium-credit-logoContainer img {
+    min-width: 0 !important;
+}
+
+.cesium-viewer-measureContainer {
+    display: none;
+}
+.cesium-viewer .cesium-widget-credits {
+    float: left;
+}
+
+
+
+/**
+    The code used for the sidebar
+*/
+
+.video-figure-content {
+    padding-right: 45px;
+    position: relative;
+}
+
+#side-menu-bar-wrapper {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.bst4-wrapper #navbar-right {
+    right: 0;
+    top: 0;
+    bottom: 0;
+    position: absolute;
+    padding: 0 !important;
+}
+
+.bst4-wrapper #navbar-right .nav,
+.bst4-wrapper #navbar-right .nav-item {
+    margin: 0 !important;
+    text-align: center;
+}
+
+/*
+navbar buttons
+*/
+
+.bst4-wrapper #navbar-right {
+    width: 45px;
+}
+.bst4-wrapper #navbar-right .nav-item .btn {
+    width: 41px;
+    height: 41px;
+    line-height: 41px;
+    font-size: 20px;
+    color: #777;
+    padding: 0;
+    border: 0 none;
+    border-radius: 50%;
+}
+.bst4-wrapper #navbar-right .nav-item:not(:first-of-type) .btn {
+    margin-top: 10px;
+}
+.bst4-wrapper #navbar-right .nav-item.active .btn {
+    color: rgba(55,105,150,1);
+    background: #FFF;
+}
+.bst4-wrapper #navbar-right .nav-item .btn:hover {
+    background-color: rgba(55,105,150,1);
+    color: #FFF;
+}
+
+/**
+popups
+ */
+
+.popup-wrapper {
+    right: 45px;
+    position: absolute;
+    background: transparent;
+    bottom: 0;
+    top: 0;
+    font-size: 13px;
+}
+
+.popup-title {
+    padding: 15px 20px;
+    margin: 0;
+    font-size: 26px;
+    text-align: left;
+}
+
+.content-wrapper {
+    padding: 0 20px 20px 20px;
+    overflow-y: auto;
+    text-align: left;
+    width: 300px;
+    height: 400px;
+}
+
+.popup-content {
+    position: relative;
+    background-color: white;
+    padding: 0;
+    margin: auto;
+    opacity: 0.95;
+    /*border: 1px solid #aaa;*/
+    /*border-radius: 5px;*/
+    height: 100%;
+    -webkit-animation-name: animateRight;
+    -webkit-animation-duration: 0.4s;
+    animation-name: animateRight;
+    animation-duration: 0.4s;
+    transition: .2s opacity ease;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+.popup-content:hover {
+    opacity: 1;
+}
+
+@-webkit-keyframes animateRight {
+    from {
+        right: -10px;
+        opacity: 0
+    }
+    to {
+        top: 0;
+        opacity: 0.95
+    }
+}
+
+@keyframes animateRight {
+    from {
+        right: -10px;
+        opacity: 0
+    }
+    to {
+        top: 0;
+        opacity: 0.95
+    }
+}
+
+.close-btn {
+    color: lightgray;
+    font-size: 24px;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    line-height: 1;
+}
+
+.close-btn:hover {
+    cursor: pointer;
+    color: darkgray;
+}
+
+/*form elements*/
+.bst4-wrapper .form-check-input {
+    margin-left: 0;
+    margin-right: 0.2em;
+}
+.bst4-wrapper .btn.btn-light {
+    border-radius: 15px;
+    padding-left: 1.05em;
+    padding-right: 1.05em;
+    padding: .36em 1.05em;
+}
+
+.bst4-wrapper input {
+    border-radius: 15px;
+    border: 1px solid #dedede;
+    padding: 4px 8px;
+}
+.bst4-wrapper .form-check {
+    padding-left: 2em;
+}
+.bst4-wrapper .form-check {
+    margin: 0.5rem 0 0.5rem 0;
+}
+.bst4-wrapper .btn-light:not(:disabled):not(.disabled):active,
+.bst4-wrapper .btn-light:not(:disabled):not(.disabled).active,
+.show > .bst4-wrapper .btn-light.dropdown-toggle {
+    background-color: rgba(55,105,150,1) !important;
+    border-color: rgba(55,105,150,1) !important;
+    color: #fff !important;
+}
+
+.bst4-wrapper .content-wrapper .btn-light {
+    border: 1px solid #ccc !important;
+    margin: 5px 5px 5px 0;
+    font-size: 13px;
+}
+.bst4-wrapper .content-wrapper .desc + button.btn.btn-light {
+    top: -1em !important;
+    position: relative;
+}
+.bst4-wrapper .text-input-group label {
+    width: 7rem;
+}
+
+.bst4-wrapper .input-group {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.bst4-wrapper .form-check-input {
+    margin-top: 0.1rem;
+    margin-left: -1.5rem !important;
+}
+
+@media screen and (max-width: 767px) {
+    #side-menu-bar-wrapper {
+        display: none;
+    }
+    .video-figure-content {
+        padding-right: 0;
+    }
+}

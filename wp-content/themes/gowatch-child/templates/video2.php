@@ -77,19 +77,15 @@ $article_atts['class'] = get_post_class( $article_classes );
               		render_construkted_cesium_viewer();
 				echo '</div>';
 
-				if ( 'y' === airkit_option_value( 'general', 'enable_lightbox' ) && !$button ) {
-					echo '<a href="' . esc_url( $airkit_img_src ) . '" data-fancybox="' . $post->ID . '">';
-				}
-
 				// echo get_the_post_thumbnail( $post->ID, 'gowatch_single');
 				airkit_overlay_effect_type();
 
-				if ( 'y' === airkit_option_value( 'general', 'enable_lightbox' ) && !$button ) {
-					echo '</a>';
-				}
+
+				// Show the right sidebar part
+				render_construkted_side_bar();
+				echo '<span id="scroll-down-btn">' . esc_html__('Details', 'gowatch-child') . ' <i class="icon-down"></i></span>';
 			echo '</div>';
 
-			render_construkted_side_bar();
             enqueue_construkted_scripts();
 		echo '</figure>';
 
