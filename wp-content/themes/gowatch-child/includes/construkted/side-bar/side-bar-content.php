@@ -8,15 +8,15 @@
                 </li>
 
                 <li class="nav-item" id="nav-geo">
-                    <span class="btn btn-light  gwicon-global" id="construkted-popup-geolocation-btn" title="Geo-Location of hover tips"></span>
+                    <span class="btn btn-light gwicon-global" id="construkted-popup-geolocation-btn" title="Geo-Location of hover tips"></span>
                 </li>
 
                 <li class="nav-item" id="nav-measurements">
-                    <span class="btn btn-light  gwicon-pencil" id="construkted-popup-measurements-btn" title="Measurements of hover tips"></span>
+                    <span class="btn btn-light gwicon-pencil" id="construkted-popup-measurements-btn" title="Measurements of hover tips"></span>
                 </li>
 
                 <li class="nav-item" id="nav-settings">
-                    <span class="btn btn-light  gwicon-gear" id="construkted-popup-settings-btn" title="Settings of hover tips"></span>
+                    <span class="btn btn-light gwicon-gear" id="construkted-popup-settings-btn" title="Settings of hover tips"></span>
                 </li>
             </ul>
         </nav>

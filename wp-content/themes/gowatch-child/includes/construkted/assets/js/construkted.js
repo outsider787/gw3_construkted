@@ -213,7 +213,7 @@ var theApp = (function () {
         function addMeasurementCheckbox(id, label) {
             var newCheckBox = ' <div class="form-check">\n' +
                 '                                    <input class="form-check-input" type="checkbox" id="' + id + '" checked>\n' +
-                '                                    <label class="form-check-label">\n' +
+                '                                    <label class="form-check-label" for="' + id + '">\n' +
                 label +
                 '                                    </label>\n' +
                 '                                </div>';

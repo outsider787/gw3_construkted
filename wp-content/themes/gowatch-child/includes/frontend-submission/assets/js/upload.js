@@ -188,8 +188,8 @@
                 }, 1000);
                 keepTrack = 0;
             }
-            jQuery('.upload-timing').html('Remaining ' + rectime(ETA));
-            jQuery('.upload-speed').html('Uploading at ' + bytesConvert(up.total.bytesPerSec,'mb') + ' mb/s');
+            jQuery('.upload-timing').html('Estimated time to complete upload: ' + rectime(ETA));
+            jQuery('.upload-speed').html('Uploading speed: ' + bytesConvert(up.total.bytesPerSec,'mb') + ' mb/s');
         },
 
         error: function (up, error) {
