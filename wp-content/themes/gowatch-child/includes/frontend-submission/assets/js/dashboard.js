@@ -20,8 +20,6 @@ var runningStatusCodes = {
     PUBLISHING_CONSTRUKTED_ASSET: 70
 };
 
-var garbageDataDetectedPostIds = {};
-
 function updateState() {
     var url = "https://tile01.construkted.com:5000/task/all";
 
@@ -40,7 +38,7 @@ function updateState() {
             setTimeout(function(){ updateState(); }, 1000);
         }
     });
-};
+}
 
 function doUpdateState(data) {
     var postStateDivList = $("div[id^='post-processing-state']");
@@ -69,13 +67,8 @@ function doUpdateState(data) {
         var runningStatus = taskInfo.runningStatus;
 
         if(statusCode === statusCodes.FAILED && runningStatus === runningStatusCodes.TILING) {
-            if(garbageDataDetectedPostIds[postId] !== true) {
-                postStateDiv.innerHTML = 'Garbage file detected!';
-                deletePostForInvalidZipFile(postId);
-
-                garbageDataDetectedPostIds[postId] = true;
-                continue;
-            }
+            postStateDiv.innerHTML = 'ERROR Please contact support@construkted.com';
+            continue;
         }
 
         var percent = getProcessingProgress(taskInfo);
@@ -174,63 +167,6 @@ function initState() {
         else
             postStateDiv.innerHTML = "Pending";
     }
-}
-
-function deletePostForInvalidZipFile(post_id) {
-    var $body = $('body');
-
-    var aTags = $('a[data-post-id=' + post_id + ']');
-
-    if(aTags.length === 0 ) {
-        console.warn('can not find ' + post_id);
-        return;
-    }
-
-    var aTag = aTags[0];
-    var nonce = aTag.getAttribute('data-ajax-nonce');
-    var delete_construkted_asset = false;
-
-    $.post(gowatch.ajaxurl, {
-        action: 'airkit_remove_post',
-        post_id: post_id,
-        security: nonce,
-        delete_construkted_asset: delete_construkted_asset
-
-    }, function(data) {
-        if ( data.response == '-1' )
-        {
-            alert('something wrong!');
-            return false;
-        }
-
-        var $alert = '<div class="airkit_alert fixed-top-right alert-'+ data.alert +' alert-dismissible" role="alert"><button type="button" class="close"><span aria-hidden="true">&times</span></button><p>'+ data.message +'</p></div>';
-
-        $body.find('.airkit_alert').remove();
-
-        $($alert).appendTo('body');
-
-        setTimeout(function(){
-            $('.alert-'+ data.alert +'').addClass('in');
-        }, 100);
-
-        setTimeout(function(){
-            $('.alert-'+ data.alert +'').fadeOut(function(){
-                $(this).remove();
-            });
-        }, 3500);
-
-        jQuery('.airkit_alert').append(data);
-
-        // Redirect the client if delete was successful
-        setTimeout(function(){
-
-            if ( data['redirect'] != '' ) {
-                window.location.href = data['redirect'];
-            }
-
-        },1500);
-
-    });
 }
 
 function showErrorMessage(message) {
