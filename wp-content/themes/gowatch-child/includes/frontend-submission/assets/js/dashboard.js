@@ -34,6 +34,7 @@ function updateState() {
             setTimeout(function(){ updateState(); }, 1000);
         },
         error: function(xhr, status, error) {
+            doUpdateState(null);
             console.error(error);
             setTimeout(function(){ updateState(); }, 1000);
         }
@@ -58,16 +59,20 @@ function doUpdateState(data) {
         var taskInfo = getTaskInfo(data, postId);
 
         if(taskInfo === null) {
-            // postStateDiv.innerHTML = "Unknown";
-            postStateDiv.innerHTML = wpPostState;
+            if(wpPostState === 'pending')
+                postStateDiv.innerHTML = 'ERROR Please contact support@construkted.com';
+            else
+                postStateDiv.innerHTML = wpPostState;
+
             continue;
         }
 
         var statusCode = taskInfo.status.code;
         var runningStatus = taskInfo.runningStatus;
 
-        if(statusCode === statusCodes.FAILED && runningStatus === runningStatusCodes.TILING) {
+        if(statusCode === statusCodes.FAILED) {
             postStateDiv.innerHTML = 'ERROR Please contact support@construkted.com';
+            console.warn('task failed at running state: ' + runningStatus);
             continue;
         }
 
@@ -143,6 +148,9 @@ function getState(tilingJobInfo) {
 }
 
 function getTaskInfo(data, postId) {
+    if(data === null)
+        return null;
+
     for(var i = 0; i < data.length; i++) {
         if(data[i].postId === postId ){
             return data[i];
