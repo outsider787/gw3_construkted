@@ -184,6 +184,13 @@ function construkted_remove_post() {
     if($delete_construkted_asset) {
         $ret = construkted_delete_asset($post_ID);
 
+        /**
+         * from the point of view of a user, they just want the asset deleted.
+           I suggest that the code tries to delete the 3dtile and zip file,
+         * but if one or both don't exist, the code should continue with the removal of the asset.
+         */
+
+        /*
         if($ret['success'] == false) {
             $return['alert'] = 'error';
             $return['label'] = esc_html__( 'Delete', 'gowatch' );
@@ -195,6 +202,7 @@ function construkted_remove_post() {
 
             die();
         }
+        */
     }
 
     $deleted_post = wp_delete_post( $post_ID, false );
