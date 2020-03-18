@@ -6,14 +6,14 @@
 
         <div class="content-wrapper">
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="asset">
+                <input class="form-check-input" type="checkbox" value="" id="asset" checked>
                 <label class="form-check-label" for="asset">
-                    Displayed Asset
+                    Display Asset
                 </label>
             </div>
             <form action="">
-              <input type="radio" name="gender" value="terrain" checked="checked"> Terrian data(Cesium World)<br>
-              <input type="radio" name="gender" value="map"> Map data(Bing Maps)<br>
+              <input type="radio" name="map" value="terrain" checked="checked"> Terrian data(Cesium World)<br>
+              <input type="radio" name="map" value="map"> Map data(Bing Maps)<br>
             </form>
         </div>
     </div>
