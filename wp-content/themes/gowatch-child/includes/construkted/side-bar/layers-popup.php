@@ -8,21 +8,13 @@
             <div class="form-check">
                 <input class="form-check-input" type="checkbox" value="" id="asset">
                 <label class="form-check-label" for="asset">
-                    Asset that is displayed
+                    Displayed Asset
                 </label>
             </div>
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="terrian_data">
-                <label class="form-check-label" for="terrian_data">
-                    Terrian data(Cesium World)
-                </label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="map_data">
-                <label class="form-check-label" for="map_data">
-                    Map data(Bing Maps)
-                </label>
-            </div>
+            <form action="">
+              <input type="radio" name="gender" value="terrain" checked="checked"> Terrian data(Cesium World)<br>
+              <input type="radio" name="gender" value="map"> Map data(Bing Maps)<br>
+            </form>
         </div>
     </div>
 </div>
