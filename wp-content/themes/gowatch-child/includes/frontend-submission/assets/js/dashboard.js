@@ -95,7 +95,7 @@ function getProcessingProgress(taskInfo) {
     }
     // 20-70%
     else if(runningStatus === runningStatusCodes.TILING) {
-        if(isNaN(taskInfo.tilingProgress))
+        if(isNaN(taskInfo.tilingProgress) || taskInfo.tilingProgress === -1)
             return 20;
         else{
             var tilingPercent = taskInfo.tilingProgress;
