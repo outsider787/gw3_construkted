@@ -191,21 +191,21 @@ if ( !function_exists( 'construkted_single_sharing' ) ) {
 /**
  * Code to include tags in the website search
  */
-function custom_search_where($where){
+function construkted_search_where($where){
   global $wpdb;
   if (is_search())
-    $where .= "OR (t.name LIKE '%" . get_search_query() . "%' AND {$wpdb->posts}.post_status = 'publish')";
+    $where .= "OR (t.name LIKE '%" . get_search_query() . "%' AND {$wpdb->posts}.post_status = 'publish' AND {$wpdb->posts}.post_type != 'product')";
   return $where;
 }
 
-function custom_search_join($join){
+function construkted_search_join($join){
   global $wpdb;
   if ( is_search() )
     $join .= "LEFT JOIN {$wpdb->term_relationships} tr ON {$wpdb->posts}.ID = tr.object_id INNER JOIN {$wpdb->term_taxonomy} tt ON tt.term_taxonomy_id=tr.term_taxonomy_id INNER JOIN {$wpdb->terms} t ON t.term_id = tt.term_id";
   return $join;
 }
 
-function custom_search_groupby($groupby){
+function construkted_search_groupby($groupby){
   global $wpdb;
 
   // we need to group on post ID
@@ -219,9 +219,9 @@ function custom_search_groupby($groupby){
   return $groupby.", ".$groupby_id;
 }
 
-add_filter('posts_where','custom_search_where');
-add_filter('posts_join', 'custom_search_join');
-add_filter('posts_groupby', 'custom_search_groupby');
+add_filter('posts_where','construkted_search_where');
+add_filter('posts_join', 'construkted_search_join');
+add_filter('posts_groupby', 'construkted_search_groupby');
 
 
 
@@ -240,31 +240,14 @@ function tszf_allowed_extensions()
     return apply_filters('tszf_allowed_extensions', $extesions);
 }
 
+add_action( 'init', 'update_my_custom_type', 99 );
 
-function construkted_modify_search_query( $query ) {
-  // Make sure this isn't the admin or is the main query
-  if( is_admin() || ! $query->is_main_query() ) {
-    return;
-  }
+function update_my_custom_type() {
+    global $wp_post_types;
 
-  // Make sure this isn't the WooCommerce product search form
-  if( isset($_GET['post_type']) && ($_GET['post_type'] == 'product') ) {
-    return;
-  }
+    if ( post_type_exists( 'product' ) ) {
 
-  if( $query->is_search() ) {
-    $in_search_post_types = get_post_types( array( 'exclude_from_search' => false ) );
-
-    // The post types you're removing (example: 'product' and 'page')
-    $post_types_to_remove = array( 'product' );
-
-    foreach( $post_types_to_remove as $post_type_to_remove ) {
-      if( is_array( $in_search_post_types ) && in_array( $post_type_to_remove, $in_search_post_types ) ) {
-        unset( $in_search_post_types[ $post_type_to_remove ] );
-        $query->set( 'post_type', $in_search_post_types );
-      }
+        // exclude from search results
+        $wp_post_types['product']->exclude_from_search = true;
     }
-  }
-
 }
-add_action( 'pre_get_posts', 'construkted_modify_search_query' );
