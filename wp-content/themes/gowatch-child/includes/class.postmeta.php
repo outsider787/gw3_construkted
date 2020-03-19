@@ -987,6 +987,25 @@ if ( !class_exists('construkted_PostMeta') ) {
 
             }
 
+
+            // Check if item has geolocated information and add the badge on the top-right corner
+            $asset_geolocation = get_post_meta($post_ID, 'asset_geo-location', true);
+
+            // Decode the data we have in place
+            $asset_geolocation = json_decode( $asset_geolocation, true );
+
+            // Check if position exists in the metadata before checking the position values
+            if( !empty($asset_geolocation['position']) ) {
+                if( isset($asset_geolocation['position']['x']) && $asset_geolocation['position']['x'] != 0 && isset($asset_geolocation['position']['y']) && $asset_geolocation['position']['y'] != 0 && isset($asset_geolocation['position']['z']) && $asset_geolocation['position']['z'] != 0 ) {
+
+                    // Create the HTML for the badge
+                    $html = '<span class="has-geolocation"><i class="gwicon-global"></i></span>';
+
+                    // Add the badge here
+                    $output .= $html;
+                } 
+            }
+
             return $output;
         }
 

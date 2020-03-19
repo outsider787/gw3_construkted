@@ -240,9 +240,9 @@ function tszf_allowed_extensions()
     return apply_filters('tszf_allowed_extensions', $extesions);
 }
 
-add_action( 'init', 'update_my_custom_type', 99 );
+add_action( 'init', 'construkted_remove_products_from_search', 99 );
 
-function update_my_custom_type() {
+function construkted_remove_products_from_search() {
     global $wp_post_types;
 
     if ( post_type_exists( 'product' ) ) {
@@ -251,3 +251,388 @@ function update_my_custom_type() {
         $wp_post_types['product']->exclude_from_search = true;
     }
 }
+
+/**
+ * Function to overwrite the view featured image from base theme
+ */
+
+function airkit_featured_image( $options = array(), $exclude = array() )
+{
+    global $post;
+    $output = '';
+
+    // Only for single page
+    if ( isset($options['is-single']) && $options['is-single'] ) {
+        
+        // Options
+        $options['show-img']        = airkit_single_option( 'img' );
+        $options['thumbnail-url']   = wp_get_attachment_url(get_post_thumbnail_id($post->ID));
+        $video_embed = get_post_meta( $post->ID, 'video_embed', TRUE );
+        $video_URL = airkit_extract_iframe_src($video_embed);
+        $audio_embed = get_post_meta( $post->ID, 'audio_embed', TRUE );
+        $caption_align = 'text-left';
+
+        $post_format = get_post_format( $post->ID ) ? : 'standard';
+
+        $figure_attributes['class'][] = 'featured-image';
+
+        /**
+         *
+         * HTML for featured image
+         *
+        */
+        
+        // Post format: Standard & Image
+        if ( 'standard' == $post_format || 'image' == $post_format ) {
+
+            $output .= '<figure '. airkit_element_attributes( $figure_attributes, array(), $post->ID, false ) .'>';
+                
+                $output .= airkit_PostMeta::post_rating( $post->ID );
+
+                // Start tag for lighbox anchor
+                if ( 'y' === airkit_option_value( 'general', 'enable_lightbox' ) ) {
+                    $output .= '<a href="' . esc_url( $options['thumbnail-url'] ) . '" data-fancybox="' . $post->ID . '">';
+                }
+
+                // Post thumbnail
+                $output .= get_the_post_thumbnail( $post->ID, 'gowatch_single');
+                // Overlay effect
+                $output .= airkit_overlay_effect_type(false);
+
+                // End tag for lightbox anchor
+                if ( 'y' === airkit_option_value( 'general', 'enable_lightbox' ) ) {
+                    $output .= '</a>';
+                }
+
+            $output .= '</figure>';
+            
+        }
+
+        // Post format: Video
+        if ( 'video' == $post_format ) {
+
+            $output .= '<figure '. airkit_element_attributes( $figure_attributes, array(), $post->ID, false ) .'>';
+                
+                if ( empty($video_URL) ) {
+
+                    $output .= airkit_PostMeta::post_rating( $post->ID );
+
+                    // Start tag for lighbox anchor
+                    if ( 'y' === airkit_option_value( 'general', 'enable_lightbox' ) ) {
+                        $output .= '<a href="' . esc_url( $options['thumbnail-url'] ) . '" data-fancybox="' . $post->ID . '">';
+                    }
+
+                    // Post thumbnail
+                    $output .= get_the_post_thumbnail( $post->ID, 'gowatch_single');
+                    // Overlay effect
+                    $output .= airkit_overlay_effect_type(false);
+
+                    // End tag for lightbox anchor
+                    if ( 'y' === airkit_option_value( 'general', 'enable_lightbox' ) ) {
+                        $output .= '</a>';
+                    }
+
+                } else {
+                    $output .= '<div class="embedded_videos">' . apply_filters( 'the_content', $video_embed ) . '</div>';
+                }
+
+            $output .= '</figure>';
+            
+        }
+
+        // Post format: Gallery
+        if ( 'gallery' == $post_format ) {
+
+            if ( has_shortcode( $post->post_content, 'gallery' ) ) {
+                
+                $galleries = get_post_galleries( $post->ID, false );
+                $gallery_ids = explode(',', $galleries[0]['ids']);
+
+                $output .= '
+                    <div id="post-format-galleryid-'. $post->ID .'" class="airkit_post-gallery format-gallery-carousel carousel-post-gallery">
+                        <ul class="carousel-nav">
+                            <li class="carousel-nav-left"><i class="icon-left"></i></li>
+                            <li class="carousel-nav-right"><i class="icon-right"></i></li>
+                        </ul>
+                        <div class="gallery-items">';
+
+                $i = 0;
+
+                foreach ( $gallery_ids as $key => $id ) {
+
+                    $attachment = get_post($id);
+                    $caption = wptexturize($attachment->post_excerpt);
+                    $description = wptexturize($attachment->post_content);
+                    $title = get_the_title($id);
+                    $image_full = wp_get_attachment_image_src( $id, 'full' );
+                    $src_full = esc_attr($image_full[0]);
+
+                    $link = '<a href="'. $src_full .'" title="'. $caption .'" data-fancybox="group">'. wp_get_attachment_image( $id, 'gowatch_single' ) .'</a>';
+
+                    $output .= '<figure class="gallery-item">';
+                    $output .= '<div class="gallery-icon">'. $link .'</div>';
+
+                    if ( ( trim($attachment->post_excerpt) || $title ) ) {
+                        $output .= '
+                            <figcaption class="gallery-caption">
+                                <h4 class="title">'. $title .'</h4>
+                                '. (!empty($caption) ? '<p class="caption">' . $caption . '</p>' : '') .'
+                                '. (!empty($description) ? '<p class="description">'. $description .'</p>' : '') .'
+                            </figcaption>';
+                    }
+
+                    $output .= '</figure>';
+
+                    $i++;
+                }
+
+                $output .= '
+                        </div>
+                    </div><!-- / post-format-galleryid-'. $post->ID .' -->';
+
+            } else {
+
+                $output .= '<figure '. airkit_element_attributes( $figure_attributes, array(), $post->ID, false ) .'>';
+                    
+                    $output .= airkit_PostMeta::post_rating( $post->ID );
+
+                    // Start tag for lighbox anchor
+                    if ( 'y' === airkit_option_value( 'general', 'enable_lightbox' ) ) {
+                        $output .= '<a href="' . esc_url( $options['thumbnail-url'] ) . '" data-fancybox="' . $post->ID . '">';
+                    }
+
+                    // Post thumbnail
+                    $output .= get_the_post_thumbnail( $post->ID, 'gowatch_single');
+                    // Overlay effect
+                    $output .= airkit_overlay_effect_type(false);
+
+                    // End tag for lightbox anchor
+                    if ( 'y' === airkit_option_value( 'general', 'enable_lightbox' ) ) {
+                        $output .= '</a>';
+                    }
+
+                $output .= '</figure>';
+
+            }
+
+        }
+
+        // Post format: Audio
+        if ( 'audio' == $post_format ) {
+
+            $output .= '<figure '. airkit_element_attributes( $figure_attributes, array(), $post->ID, false ) .'>';
+                
+                if ( empty( $audio_embed ) ) {
+                    
+                    $output .= airkit_PostMeta::post_rating( $post->ID );
+
+                    // Start tag for lighbox anchor
+                    if ( 'y' === airkit_option_value( 'general', 'enable_lightbox' ) ) {
+                        $output .= '<a href="' . esc_url( $options['thumbnail-url'] ) . '" data-fancybox="' . $post->ID . '">';
+                    }
+
+                    // Post thumbnail
+                    $output .= get_the_post_thumbnail( $post->ID, 'gowatch_single');
+                    // Overlay effect
+                    $output .= airkit_overlay_effect_type(false);
+
+                    // End tag for lightbox anchor
+                    if ( 'y' === airkit_option_value( 'general', 'enable_lightbox' ) ) {
+                        $output .= '</a>';
+                    }
+
+                } else {
+                    $output .= '<div class="embedded_audio">' . apply_filters( 'the_content', $audio_embed ) . '</div>';
+                }
+
+            $output .= '</figure>';
+            
+        }
+
+
+        // Don't show featured image for password protected posts
+        if( !post_password_required() ) {
+
+            // If Show featured image from Single options is set to Yes
+            // and post has thumbnail
+            if ( 'y' === $options['show-img'] && has_post_thumbnail( $post->ID ) ) {
+
+                echo force_balance_tags( $output );
+
+            }
+
+        }
+
+    }
+
+    // Only for view articles
+    if ( isset($options['is-view-article']) && $options['is-view-article'] ) {
+
+        // Define variables
+        $figure_attributes = array();
+        $element_type   = isset( $options['element-type'] ) ? $options['element-type'] : '';
+        $title_position = isset( $options['title-position'] ) ? $options['title-position'] : 'below-image';
+        $enable_featimg = isset( $options['featimg'] ) ? $options['featimg'] : 'y';
+        $image_size     = airkit_Compilator::view_get_image_size( $options );
+        $has_feat_img   = 'y' == $enable_featimg && has_post_thumbnail( $post->ID ) ? true : false;
+        $allow_post_thumbnail = airkit_Compilator::view_get_allowed_post_thumbnail( $options );
+        $ignore_element = array('playlist');
+
+        // for mosaic view
+        if ( 'mosaic' == $element_type ) {
+            $layout_mosaic  = isset( $options['layout'] ) ? $options['layout'] : 'rectangles';
+
+            if ( 'style-4' !== $layout_mosaic ) {
+                $exclude[] = 'hover_style';
+            }
+        }
+
+        if ( ! in_array($element_type, $ignore_element) && $has_feat_img ) {
+
+            $output .= '
+                <figure '. airkit_element_attributes( $figure_attributes, array_merge( $options, array('element' => 'figure') ), $post->ID, false ) . '>'
+
+                    . ( ! in_array('post_format', $exclude) ? airkit_PostMeta::post_format ( $post->ID, array('url' => 'y') ) : '' )
+                    . ( 'big' == $element_type ? '<div class="big-holder"></div>' : '' )
+                    . ( ! in_array('post_is_featured', $exclude) ? construkted_PostMeta::post_is_featured( $post->ID ) : '' )
+                    . ( ! in_array('post_rating', $exclude) ? airkit_PostMeta::post_rating( $post->ID ) : '' )
+
+                    . ( in_array( $element_type, $allow_post_thumbnail ) ? sprintf( '<a href="%s" title="%s">%s</a>', get_the_permalink(), get_the_title(), get_the_post_thumbnail( $post->ID, $image_size ) ) : '')
+
+                    . ( ! in_array('overlay_effect', $exclude) ? airkit_overlay_effect_type(false) : '' )
+                    . ( ! in_array('post_link', $exclude ) ? '<a href="'. get_the_permalink() .'" class="post-link"></a>' : '' )
+                    . ( ! in_array('hover_style', $exclude) ? airkit_hover_style( $post->ID, $options ) : '' )
+                    . ( ! in_array('post_sticky', $exclude) ? airkit_PostMeta::post_is_sticky( $post->ID ) : '' )
+
+                . '</figure>';
+            
+        }
+
+        // For Playlist view articles
+        if ( $element_type == 'playlist' ) {
+
+            // Get posts from playlist
+            $post_ids   = get_post_meta( $post->ID, '_post_ids', true );
+            $ajax_nonce = wp_create_nonce( 'ajax_airkit_remove_playlist_nonce' );
+            $playlist_posts_count = 0;
+
+            if ( is_array($post_ids) ) {
+                $playlist_posts_count = count($post_ids);
+                // Get ID of last added post in playlist
+                $last_post_ID = end($post_ids);
+            }
+
+            if ( isset($last_post_ID) ) {
+                $redirect_url = add_query_arg( array('playlist_ID' => $post->ID), get_permalink($last_post_ID) );
+            } else {
+                $redirect_url = '#';
+            }
+
+            $output .= '
+                <figure '. airkit_element_attributes( $figure_attributes, array_merge( $options, array('element' => 'figure') ), $post->ID, false ) . '>'
+
+                    . ( ! in_array('post_link', $exclude ) ? '<a href="'. esc_url($redirect_url) .'" class="post-link"></a>' : '' )
+                    . ( sprintf( '<span class="playlist-blur-img">%s</span>', get_the_post_thumbnail( $post->ID, $image_size ) ) )
+                    . ( current_user_can('delete_post', $post->ID) ? sprintf( '<button id="button-remove-playlist-%1$s" class="playlist-remove" title="%2$s" data-playlist-id="%1$s" data-ajax-nonce="%3$s"><i class="icon-delete"></i></button>', $post->ID, esc_html__('Remove playlist', 'gowatch'), $ajax_nonce ) : '' )
+
+                    . '<figcaption>'
+                    . '<div class="playlist-caption">'
+
+                        . ( sprintf( '<span class="playlist-count"><i class="icon-list-add"></i> %d</span>', (int)$playlist_posts_count ) )
+                        . ( sprintf( '<a class="playlist-thumbnail" href="%s" title="%s">%s</a>', esc_url($redirect_url), get_the_title(), get_the_post_thumbnail( $post->ID, $image_size ) ) )
+
+                    . '</div>'
+                    . '</figcaption>'
+
+                . '</figure>';
+        }
+
+        echo force_balance_tags( $output );
+        
+    }
+
+}
+
+
+
+/**
+ * Function to get the  extra information for the assets
+ */
+
+function construkted_asset_info() {
+
+    ob_start();
+    ob_clean();
+
+    $post_ID = get_the_ID();
+
+    // Check if item has geolocated information and add the badge on the top-right corner
+    $asset_geolocation = get_post_meta($post_ID, 'default_camera_position_direction', true);
+
+    // Decode the data we have in place
+    $asset_geolocation = json_decode( $asset_geolocation, true );
+
+    $asset_type        = get_post_meta($post_ID, 'asset_type', true);
+    $polygon_count     = get_post_meta($post_ID, 'mesh_polygon_count', true);
+    $date_capture      = get_post_meta($post_ID, 'date_capture', true);
+    $photogrammetry_software      = get_post_meta($post_ID, 'photogrammetry_software', true);
+    $pointcloud_software      = get_post_meta($post_ID, 'pointcloud_software', true);
+    $cad_software      = get_post_meta($post_ID, 'cad_software', true);
+
+    $processing_software = explode($photogrammetry_software);
+    array_push($photogrammetry_software, explode($pointcloud_software));
+    array_push($photogrammetry_software, explode($cad_software));
+    ?>
+
+    <div class="asset-metadata">
+        <h4><?php esc_html_e('Asset metadata', 'gowatch-child'); ?></h4>
+        <div class="metadata-list">
+
+            <?php if( !empty($date_capture) ): ?>
+            <div class="metadata-item">
+                <strong><?php esc_html_e('Date of capture', 'gowatch-child'); ?></strong>
+                <?php echo esc_html($date_capture); ?>
+            </div>
+            <?php endif; ?>
+
+            <?php if( !empty($asset_geolocation['latitude']) && !empty($asset_geolocation['longitude']) ): ?>
+                <div class="metadata-item">
+                    <strong><?php esc_html_e('Asset location', 'gowatch-child'); ?></strong>
+                    <b><?php esc_html_e('Latitude', 'gowatch-child'); ?>:</b> <?php echo esc_html($asset_geolocation['latitude']); ?>
+                    <b><?php esc_html_e('Longitude', 'gowatch-child'); ?>:</b> <?php echo esc_html($asset_geolocation['longitude']); ?>
+                </div>
+            <?php endif; ?>
+
+            <?php if( !empty($asset_type) ): ?>
+                <div class="metadata-item">
+                    <strong><?php esc_html_e('Geometry Type', 'gowatch-child'); ?></strong>
+                    <?php echo TSZF_Frontend_Form_Post::convert_asset_type_from_gowatch_to_edd6($asset_type); ?>
+                </div>
+            <?php endif; ?>
+
+            <?php if( $asset_type == 'polygon-mesh' && !empty($polygon_count) || $asset_type == '3d-cad-model' && !empty($polygon_count) ) : ?>
+                <div class="metadata-item">
+                    <strong><?php esc_html_e('Polygon Count', 'gowatch-child'); ?></strong>
+                    <?php echo esc_html($polygon_count); ?>
+                </div>
+            <?php endif; ?>
+
+            <?php if( !empty($processing_software) ): ?>
+                <div class="metadata-item">
+                    <strong><?php esc_html_e('Processing Software', 'gowatch-child'); ?></strong>
+                    <?php
+                        echo implode(',', $processing_software);
+                    ?>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <?php
+
+    $output = ob_get_clean();
+
+    echo $output;
+}
+
+add_action( 'airkit_below_single_content', 'construkted_asset_info');

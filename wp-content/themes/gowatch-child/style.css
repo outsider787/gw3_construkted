@@ -78,7 +78,32 @@ article .read-more {
 /* Hide custom fields from being displayed */
 .tszf_customs{display: none;}
 
-
+.has-geolocation {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    width: 60px;
+    height: 60px;
+    color: #FFF;
+    z-index: 55;
+}
+.has-geolocation i {
+    position: absolute;
+    right: 3px;
+    top: 8px;
+    font-size: 16px;
+}
+.has-geolocation::before {
+    content: '';
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 50px 50px 0;
+    border-color: transparent rgba(55,105,150,1) transparent transparent;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
 
 input[type="range"] {
   -webkit-appearance: none;
@@ -115,6 +140,36 @@ input[type="range"]::-moz-range-thumb {
 
 .single-content {
     margin-top: -30px;
+}
+
+.asset-metadata {
+    padding: 25px 30px;
+    background: #f9f9f9;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+.asset-metadata h4 {
+    font-size: 15px;
+    text-transform: uppercase;
+    margin: 0 0 15px 0;
+    font-weight: 600;
+    opacity: 0.7;
+}
+.asset-metadata .metadata-item {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+.asset-metadata .metadata-item:last-child {
+    margin-bottom: 0;
+}
+.asset-metadata .metadata-item strong {
+    flex-basis: 100%;
+    margin-bottom: 5px;
+}
+.asset-metadata .metadata-item b:last-of-type {
+    display: inline-block;
+    margin-left: 10px;
 }
 
 /* Start of part for custom posts in Dashboard */
@@ -347,7 +402,7 @@ navbar buttons
     
 }
 .bst4-wrapper #navbar-right .nav-item {
-    margin-top: 10px;
+    margin-top: 10px !important;
 }
 .bst4-wrapper #navbar-right .nav-item.active .btn {
     color: rgba(55,105,150,1);
