@@ -902,6 +902,49 @@
   };
   var TransformAxis$1 = cesium.freezeObject(TransformAxis);
 
+  var scratchPlaneCenter = new cesium.Cartesian3();
+  var scratchPixelSize = new cesium.Cartesian2();
+  var scratchOldScale = new cesium.Cartesian3();
+  var scratchNetScale = new cesium.Cartesian3();
+
+  function getPixelSize(frameState, position, pixelSize) {
+      var context = frameState.context;
+      var cameraPositionWC = frameState.camera.positionWC;
+
+      var distance = cesium.Cartesian3.distance(position, cameraPositionWC);
+      var drawingBufferWidth = context.drawingBufferWidth;
+      var drawingBufferHeight = context.drawingBufferHeight;
+
+      return frameState.camera.frustum.getPixelDimensions(drawingBufferWidth, drawingBufferHeight, distance, frameState.pixelRatio, pixelSize);
+  }
+
+  function getNetScaleFactor(pixelSizeTermsOf2D, maximumSizeInMeter, pixelSizeTermsOf3D, oldScale, result) {
+      var x = 1,
+          y = 1,
+          z,
+          tmp;
+
+      if (pixelSizeTermsOf2D.x > 0) {
+          tmp = pixelSizeTermsOf2D.x * pixelSizeTermsOf3D.x;
+          x = Math.min(tmp, maximumSizeInMeter.x) / oldScale.x;
+      }
+
+      if (pixelSizeTermsOf2D.y > 0) {
+          tmp = pixelSizeTermsOf2D.y * pixelSizeTermsOf3D.y;
+          y = Math.min(tmp, maximumSizeInMeter.y) / oldScale.y;
+      }
+
+      z = (x + y) / 2;
+
+      return cesium.Cartesian3.fromElements(x, y, z, result);
+  }
+
+  function getScreenSpaceScalingMatrix(pixelSize, maximumSizeInMeter, frameState, modelMatrix, modelMatrix1) {
+      var netScaleFactor = getNetScaleFactor(pixelSize, maximumSizeInMeter, getPixelSize(frameState, cesium.Matrix4.getTranslation(modelMatrix, scratchPlaneCenter), scratchPixelSize), cesium.Matrix4.getScale(modelMatrix, scratchOldScale), scratchNetScale);
+
+      return cesium.Matrix4.multiplyByScale(modelMatrix, netScaleFactor, modelMatrix1);
+  }
+
   var noScale$1 = new cesium.Cartesian3(1.0, 1.0, 1.0);
   var offsetScratch = new cesium.Cartesian3();
   var widgetOriginScratch = new cesium.Cartesian3();
@@ -917,6 +960,8 @@
   var intersectionScratch = new cesium.Cartesian3();
   var quaternionScratch = new cesium.Quaternion();
   var matrix3Scratch = new cesium.Matrix3();
+  var defaultPixelSize = 100;
+  var defaultMaximumMeterSize = 1 / 0;
 
   function getUnitCirclePositions() {
       var xAxis = [];
@@ -994,6 +1039,8 @@
    * @param {Function} options.setPosition
    * @param {Matrix4} options.transform
    * @param {Number} options.radius
+   * @param {Number} options.pixelSize
+   * @param {Number} options.maximumSizeInMeters
    */
   function RotationEditor(options) {
       options = cesium.defaultValue(options, cesium.defaultValue.EMPTY_OBJECT);
@@ -1035,7 +1082,8 @@
       this._rotationAxis = undefined;
       this._rotationPlane = new cesium.Plane(cesium.Cartesian3.UNIT_X, 0.0);
       this._rotationStartPoint = new cesium.Cartesian3();
-
+      this._pixelSize = cesium.defined(options.pixelSize) ? new cesium.Cartesian2(options.pixelSize, options.pixelSize) : new cesium.Cartesian2(defaultPixelSize, defaultPixelSize);
+      this._maximumSizeInMeters = cesium.defined(options.maximumSizeInMeters) ? new cesium.Cartesian2(options.maximumSizeInMeters, options.maximumSizeInMeters) : new cesium.Cartesian2(defaultMaximumMeterSize, defaultMaximumMeterSize);
       this.update();
   }
 
@@ -1057,6 +1105,16 @@
                   this._dragging = false;
               }
           }
+      },
+      pixelSize: {
+          get: function () {
+              return this._pixelSize.x;
+          }
+      },
+      maximumSizeInMeters: {
+          get: function () {
+              return this._maximumSizeInMeters.x;
+          }
       }
   });
 
@@ -1070,6 +1128,8 @@
 
       var radius = this._radius * cesium.Matrix4.getMaximumScale(this._transform) * 1.25;
       modelMatrix = cesium.Matrix4.multiplyByUniformScale(modelMatrix, radius, modelMatrix);
+
+      if (this._pixelSize.x > 0) modelMatrix = getScreenSpaceScalingMatrix(this._pixelSize, this._maximumSizeInMeters, this._scene.frameState, modelMatrix, modelMatrix);
 
       this._polylineX.modelMatrix = modelMatrix;
       this._polylineY.modelMatrix = modelMatrix;
@@ -1196,6 +1256,9 @@
   var offsetScratch$1 = new cesium.Cartesian3();
   var rayScratch$1 = new cesium.Ray();
   var noScale$2 = new cesium.Cartesian3(1.0, 1.0, 1.0);
+  var nonUniformScalingScratch = new cesium.Cartesian3();
+  var defaultPixelSize$1 = 100;
+  var defaultMaximumMeterSize$1 = 1 / 0;
 
   function getPoint(axis) {
       return {
@@ -1229,6 +1292,8 @@
    * @param {Function} options.setPosition
    * @param {Function} options.setScale
    * @param {Number} options.radius
+   * @param {Number} options.pixelSize
+   * @param {Number} options.maximumSizeInMeters
    */
   function ScaleEditor(options) {
       options = cesium.defaultValue(options, cesium.defaultValue.EMPTY_OBJECT);
@@ -1268,6 +1333,8 @@
 
       this._transform = transform;
       this._lineLength = options.radius * 1.5;
+      this._pixelSize = cesium.defined(options.pixelSize) ? new cesium.Cartesian2(options.pixelSize, options.pixelSize) : new cesium.Cartesian2(defaultPixelSize$1, defaultPixelSize$1);
+      this._maximumSizeInMeters = cesium.defined(options.maximumSizeInMeters) ? new cesium.Cartesian2(options.maximumSizeInMeters, options.maximumSizeInMeters) : new cesium.Cartesian2(defaultMaximumMeterSize$1, defaultMaximumMeterSize$1);
 
       this.update();
   }
@@ -1295,6 +1362,16 @@
                   this._polylineZ.show = false;
                   this._dragging = false;
               }
+          }
+      },
+      pixelSize: {
+          get: function () {
+              return this._pixelSize.x;
+          }
+      },
+      maximumSizeInMeters: {
+          get: function () {
+              return this._maximumSizeInMeters.x;
           }
       }
   });
@@ -1411,10 +1488,17 @@
   };
 
   ScaleEditor.prototype.update = function () {
+      var modelMatrix = this._modelMatrix;
+
       var transform = this._transform;
       var widgetOrigin = getWidgetOrigin(transform, this.originOffset, widgetOriginScratch$1);
-      var modelMatrix = cesium.Matrix4.multiplyByUniformScale(transform, this._lineLength, this._modelMatrix);
-      modelMatrix = cesium.Matrix4.setTranslation(modelMatrix, widgetOrigin, modelMatrix);
+
+      modelMatrix = cesium.Matrix4.multiplyByUniformScale(transform, this._lineLength, modelMatrix);
+      modelMatrix = cesium.Matrix4.setTranslation(this._modelMatrix, widgetOrigin, modelMatrix);
+
+      var flag = 0 < this._pixelSize.x;
+
+      flag && (modelMatrix = getScreenSpaceScalingMatrix(this._pixelSize, this._maximumSizeInMeters, this._scene.frameState, modelMatrix, modelMatrix)), flag && this._enableNonUniformScaling && ((nonUniformScalingScratch = cesium.Matrix4.getScale(modelMatrix, nonUniformScalingScratch)).x >= nonUniformScalingScratch.y ? (nonUniformScalingScratch.y = nonUniformScalingScratch.x, nonUniformScalingScratch.z = nonUniformScalingScratch.x) : nonUniformScalingScratch.y >= nonUniformScalingScratch.x && (nonUniformScalingScratch.x = nonUniformScalingScratch.y, nonUniformScalingScratch.z = nonUniformScalingScratch.y), modelMatrix = cesium.Matrix4.setScale(modelMatrix, nonUniformScalingScratch, modelMatrix));
 
       this._polylineX.modelMatrix = modelMatrix;
       this._polylineY.modelMatrix = modelMatrix;
@@ -1445,6 +1529,8 @@
   var moveScratch$1 = new cesium.Cartesian3();
   var offsetProjectedScratch = new cesium.Cartesian3();
   var rayScratch$2 = new cesium.Ray();
+  var defaultPixelSize$2 = 100;
+  var defaultMaximumMeterSize$2 = 1 / 0;
 
   function getLinePrimitive$2(axis) {
       return new AxisLinePrimitive({
@@ -1466,6 +1552,8 @@
    * @param {Function} options.setPosition
    * @param {Matrix4} options.transform
    * @param {Number} options.radius
+   * @param {Number} options.pixelSize
+   * @param {Number} options.maximumSizeInMeters
    */
   function TranslationEditor(options) {
       options = cesium.defaultValue(options, cesium.defaultValue.EMPTY_OBJECT);
@@ -1492,6 +1580,8 @@
 
       this._transform = options.transform;
       this._radius = options.radius;
+      this._pixelSize = cesium.defined(options.pixelSize) ? new cesium.Cartesian2(options.pixelSize, options.pixelSize) : new cesium.Cartesian2(defaultPixelSize$2, defaultPixelSize$2);
+      this._maximumSizeInMeters = cesium.defined(options.maximumSizeInMeters) ? new cesium.Cartesian2(options.maximumSizeInMeters, options.maximumSizeInMeters) : new cesium.Cartesian2(defaultMaximumMeterSize$2, defaultMaximumMeterSize$2);
       this.update();
   }
 
@@ -1512,6 +1602,16 @@
                   this._polylineZ.show = false;
                   this._dragging = false;
               }
+          },
+          pixelSize: {
+              get: function () {
+                  return this._pixelSize.x;
+              }
+          },
+          maximumSizeInMeters: {
+              get: function () {
+                  return this._maximumSizeInMeters.x;
+              }
           }
       }
   });
@@ -1531,6 +1631,8 @@
       var hprToFF = cesium.Transforms.headingPitchRollToFixedFrame(modelOrigin, hpr, ellipsoid, undefined, this._fixedFrame);
       hprToFF = cesium.Matrix4.setTranslation(hprToFF, widgetOrigin, hprToFF);
       var modelMatrix = cesium.Matrix4.multiplyByUniformScale(hprToFF, length, this._modelMatrix);
+
+      if (this._pixelSize.x > 0) modelMatrix = getScreenSpaceScalingMatrix(this._pixelSize, this._maximumSizeInMeters, this._scene.frameState, modelMatrix, modelMatrix);
 
       this._polylineX.modelMatrix = modelMatrix;
       this._polylineY.modelMatrix = modelMatrix;
