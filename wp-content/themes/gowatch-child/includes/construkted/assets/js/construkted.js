@@ -55,10 +55,16 @@ var theApp = (function () {
 
             var carto = Cesium.Cartographic.fromCartesian(new Cesium.Cartesian3(position.x , position.y, position.z));
 
-            jQuery('#tileset_latitude').val(Cesium.Math.toDegrees(carto.latitude));
-            jQuery('#tileset_longitude').val(Cesium.Math.toDegrees(carto.longitude));
-            jQuery('#tileset_altitude').val(carto.height);
-            jQuery('#tileset_heading').val(tileset_model_matrix.headingPitchRoll.heading);
+            // Create the new formatted numbers
+            var newLat = parseFloat(carto.latitude).toFixed(8);
+            var newLon = parseFloat(carto.longitude).toFixed(8);
+            var newAltitude = parseFloat(carto.height).toFixed(3);
+            var newHeading  = parseFloat(tileset_model_matrix.headingPitchRoll.heading).toFixed(3);
+
+            jQuery('#tileset_latitude').val(Cesium.Math.toDegrees(newLat).toFixed(8));
+            jQuery('#tileset_longitude').val(Cesium.Math.toDegrees(newLon).toFixed(8));
+            jQuery('#tileset_altitude').val(newAltitude);
+            jQuery('#tileset_heading').val(newHeading);
         }
         else{
             jQuery('#tileset_latitude').val(0);
@@ -108,7 +114,7 @@ var theApp = (function () {
 
         jQuery('#tileset_latitude').change(function () {
             var latitude = jQuery('#tileset_latitude').val();
-            latitude = parseFloat(latitude);
+            latitude = parseFloat(latitude).toFixed(8);
 
             if(isNaN(latitude) || latitude > 90 || latitude < -90) {
                 jQuery('#tileset_latitude').val('');
@@ -137,7 +143,7 @@ var theApp = (function () {
 
         jQuery('#tileset_altitude').change(function () {
             var altitude = jQuery('#tileset_altitude').val();
-            altitude = parseFloat(altitude);
+            altitude = parseFloat(altitude).toFixed(8);
 
             if(isNaN(altitude) || altitude > 15000 || altitude < -1000) {
                 jQuery('#tileset_altitude').val('');
@@ -166,7 +172,7 @@ var theApp = (function () {
 
         jQuery('#tileset_heading').change(function () {
             var heading = jQuery('#tileset_heading').val();
-            heading = parseFloat(heading);
+            heading = parseFloat(heading).toFixed(3);
 
             if(isNaN(heading) || heading > 180 || heading < -180) {
                 jQuery('#tileset_heading').val('');

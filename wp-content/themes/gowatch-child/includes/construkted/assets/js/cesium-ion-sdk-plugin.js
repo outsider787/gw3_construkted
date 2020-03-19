@@ -1792,9 +1792,9 @@
               var longitude = Cesium.Math.toDegrees(carto.longitude);
               var latitude = Cesium.Math.toDegrees(carto.latitude);
 
-              $('#tileset_longitude').val(longitude);
-              $('#tileset_latitude').val(latitude);
-              $('#tileset_altitude').val(carto.height);
+              $('#tileset_longitude').val(longitude.toFixed(8));
+              $('#tileset_latitude').val(latitude.toFixed(8));
+              $('#tileset_altitude').val(carto.height.toFixed(3));
           }
       });
 
