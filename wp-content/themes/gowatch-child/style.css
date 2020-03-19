@@ -113,6 +113,10 @@ input[type="range"]::-moz-range-thumb {
   border-radius: 50%;
 }
 
+.single-content {
+    margin-top: -30px;
+}
+
 /* Start of part for custom posts in Dashboard */
 
 .onsen-table {

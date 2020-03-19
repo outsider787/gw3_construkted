@@ -60,7 +60,7 @@ function doUpdateState(data) {
 
         if(taskInfo === null) {
             if(wpPostState === 'pending')
-                postStateDiv.innerHTML = 'ERROR Please contact support@construkted.com';
+                postStateDiv.innerHTML = 'ERROR<br>Please contact<br>support@construkted.com';
             else
                 postStateDiv.innerHTML = wpPostState;
 
@@ -71,7 +71,7 @@ function doUpdateState(data) {
         var runningStatus = taskInfo.runningStatus;
 
         if(statusCode === statusCodes.FAILED) {
-            postStateDiv.innerHTML = 'ERROR Please contact support@construkted.com';
+            postStateDiv.innerHTML = 'ERROR<br>Please contact<br>support@construkted.com';
             console.warn('task failed at running state: ' + runningStatus);
             continue;
         }

@@ -166,11 +166,11 @@
              
             function bytesConvert(bytes,to){
                 if(to=="kb"){
-                    return Math.round((bytes/1024)*1)/1;
+                    return Math.round((bytes/1024)*10)/10;
                 }else if(to=="mb"){
-                    return Math.round((bytes/1024/1024)*1)/1;
+                    return Math.round((bytes/1024/1024)*10)/10;
                 }else if(to=="gb"){
-                    return Math.round((bytes/1024/1024/1024)*1)/1;
+                    return Math.round((bytes/1024/1024/1024)*10)/10;
                 }
             }
 
@@ -189,7 +189,7 @@
                 keepTrack = 0;
             }
             jQuery('.upload-timing').html('Estimated time to complete upload: ' + rectime(ETA));
-            jQuery('.upload-speed').html('Uploading speed: ' + bytesConvert(up.total.bytesPerSec,'mb') + ' mb/s');
+            jQuery('.upload-speed').html('Uploading speed: ' + bytesConvert(up.total.bytesPerSec,'mb') + ' Mb/s');
         },
 
         error: function (up, error) {

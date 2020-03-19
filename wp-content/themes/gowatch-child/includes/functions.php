@@ -191,21 +191,21 @@ if ( !function_exists( 'construkted_single_sharing' ) ) {
 /**
  * Code to include tags in the website search
  */
-function custom_search_where($where){
+function construkted_search_where($where){
   global $wpdb;
   if (is_search())
-    $where .= "OR (t.name LIKE '%" . get_search_query() . "%' AND {$wpdb->posts}.post_status = 'publish')";
+    $where .= "OR (t.name LIKE '%" . get_search_query() . "%' AND {$wpdb->posts}.post_status = 'publish' AND {$wpdb->posts}.post_type != 'product')";
   return $where;
 }
 
-function custom_search_join($join){
+function construkted_search_join($join){
   global $wpdb;
   if ( is_search() )
     $join .= "LEFT JOIN {$wpdb->term_relationships} tr ON {$wpdb->posts}.ID = tr.object_id INNER JOIN {$wpdb->term_taxonomy} tt ON tt.term_taxonomy_id=tr.term_taxonomy_id INNER JOIN {$wpdb->terms} t ON t.term_id = tt.term_id";
   return $join;
 }
 
-function custom_search_groupby($groupby){
+function construkted_search_groupby($groupby){
   global $wpdb;
 
   // we need to group on post ID
@@ -219,9 +219,9 @@ function custom_search_groupby($groupby){
   return $groupby.", ".$groupby_id;
 }
 
-add_filter('posts_where','custom_search_where');
-add_filter('posts_join', 'custom_search_join');
-add_filter('posts_groupby', 'custom_search_groupby');
+add_filter('posts_where','construkted_search_where');
+add_filter('posts_join', 'construkted_search_join');
+add_filter('posts_groupby', 'construkted_search_groupby');
 
 
 
@@ -238,4 +238,16 @@ function tszf_allowed_extensions()
     );
 
     return apply_filters('tszf_allowed_extensions', $extesions);
+}
+
+add_action( 'init', 'update_my_custom_type', 99 );
+
+function update_my_custom_type() {
+    global $wp_post_types;
+
+    if ( post_type_exists( 'product' ) ) {
+
+        // exclude from search results
+        $wp_post_types['product']->exclude_from_search = true;
+    }
 }
