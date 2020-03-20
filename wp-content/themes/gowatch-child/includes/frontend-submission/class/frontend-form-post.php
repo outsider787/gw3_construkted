@@ -974,6 +974,8 @@ class TSZF_Frontend_Form_Post extends TSZF_Render_Form {
         $command = $command . '"' . $attachment_id . '"';
         $command = $command . " > /dev/null 2>/dev/null &";
 
+        error_log('tiling request command: ' . $command);
+
         shell_exec($command);
     }
 

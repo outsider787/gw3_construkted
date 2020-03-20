@@ -453,10 +453,28 @@ var theApp = (function () {
     }
 
     function _saveTilesetModelMatrix() {
-        var position = transformEditor.viewModel.position;
-        var headingPitchRoll = transformEditor.viewModel.headingPitchRoll;
-        var scale = transformEditor.viewModel.scale;
+        if(transformEditor && transformEditor.active) {
+            var position = transformEditor.viewModel.position;
+            var headingPitchRoll = transformEditor.viewModel.headingPitchRoll;
+            var scale = transformEditor.viewModel.scale;
 
+            _doSaveTilesetModelMatrix(position, headingPitchRoll, scale);
+        } else {
+            var currentModelMatrix = tilesets.modelMatrix;
+
+            var position = Cesium.Matrix4.getTranslation(currentModelMatrix, new Cesium.Cartesian3());
+
+            var scene = viewer.scene;
+
+            var headingPitchRoll = Cesium.Transforms.fixedFrameToHeadingPitchRoll(currentModelMatrix, scene.mapProjection.ellipsoid, undefined, new Cesium.HeadingPitchRoll());
+
+            var scale = Cesium.Matrix4.getScale(currentModelMatrix, new Cesium.Cartesian3());
+
+            _doSaveTilesetModelMatrix(position, headingPitchRoll, scale);
+        }
+    }
+
+    function _doSaveTilesetModelMatrix(position, headingPitchRoll, scale) {
         var data = {
             position: position,
             headingPitchRoll: headingPitchRoll,
