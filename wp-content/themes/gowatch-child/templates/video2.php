@@ -115,102 +115,104 @@ $article_atts['class'] = get_post_class( $article_classes );
 				echo '<div class="row">'. airkit_var_sanitize( $airkit_sidebar['left'], 'true' ) .'<div class="'. implode(' ', $section_classes) .'">';
 			}
 		?>
+			
+		<?php airkit_progress_scroll(); ?>
 
 		<article <?php airkit_element_attributes( $article_atts, array('element' => 'article', 'is-single' => true), $post->ID ) ?>>
+			<div class="asset-main-info">
+				<header class="post-header">
+					<?php
+						echo airkit_PostMeta::categories( $post->ID, array( 'wrap-class' => 'post-categories entry-categories' ) );
+						echo airkit_PostMeta::title( $post->ID, array( 'wrap' => 'h2', 'class' => 'post-title single-video-title', 'url' => 'n', 'single' => 'y' ) );
+					?>
+					<?php if ( 'y' == airkit_option_value('single', 'video_meta') && 'n' != airkit_single_option('views') ) : ?>
+						<div class="entry-meta entry-meta-views">
+							<span><?php esc_html_e('Views', 'gowatch') ?></span>
+							<strong><?php airkit_get_views($post->ID) ?></strong>
+						</div>
+					<?php endif; ?>
+				</header>
 
-			<?php airkit_progress_scroll(); ?>
-			
-			<header class="post-header">
-				<?php
-					echo airkit_PostMeta::categories( $post->ID, array( 'wrap-class' => 'post-categories entry-categories' ) );
-					echo airkit_PostMeta::title( $post->ID, array( 'wrap' => 'h2', 'class' => 'post-title single-video-title', 'url' => 'n', 'single' => 'y' ) );
-				?>
-				<?php if ( 'y' == airkit_option_value('single', 'video_meta') && 'n' != airkit_single_option('views') ) : ?>
-					<div class="entry-meta entry-meta-views">
-						<span><?php esc_html_e('Views', 'gowatch') ?></span>
-						<strong><?php airkit_get_views($post->ID) ?></strong>
+				<aside class="post-meta">
+					<div class="post-meta-author">
+						<?php
+							$date_published = airkit_PostMeta::date( $post->ID, array('wrap' => 'span', 'prefix' => esc_html__('Published', 'gowatch') ) );
+							if ( 'y' == airkit_option_value('single', 'video_meta') ) {
+								echo airkit_PostMeta::author( $post->ID, array('wrap' => 'div', 'prefix' => '<span class="post-author-avatar">' . airkit_get_avatar( get_the_author_meta('ID'), 50 ) . '</span>', 'postfix' => $date_published ) );
+							}
+						?>
 					</div>
-				<?php endif; ?>
-			</header>
+	                <div class="post-meta-actions">
+	                    <?php
+	                        echo html_for_asset_download_button( $post->ID, array( 'single' => 'y' ) );
+	                    ?>
+	                </div>
+					<div class="post-meta-actions">
+						<?php
+							echo airkit_PostMeta::add_to_favorite( $post->ID, array( 'label' => true, 'single' => 'y' ) );
+							echo airkit_PostMeta::add_to_playlist( $post->ID, array( 'label' => false, 'single' => 'y' ) );
+							construkted_single_sharing( array('label' => 'y', 'tooltip-popover' => 'y') );
+							if ( 'y' == airkit_option_value('single', 'video_meta') ) {
+								echo airkit_PostMeta::rating( $post->ID, array( 'type' => 'form', 'wrap' => 'div' ) );
+							}
+						?>
+					</div>
+				</aside>
 
-			<aside class="post-meta">
-				<div class="post-meta-author">
-					<?php
-						$date_published = airkit_PostMeta::date( $post->ID, array('wrap' => 'span', 'prefix' => esc_html__('Published', 'gowatch') ) );
-						if ( 'y' == airkit_option_value('single', 'video_meta') ) {
-							echo airkit_PostMeta::author( $post->ID, array('wrap' => 'div', 'prefix' => '<span class="post-author-avatar">' . airkit_get_avatar( get_the_author_meta('ID'), 50 ) . '</span>', 'postfix' => $date_published ) );
-						}
-					?>
-				</div>
-                <div class="post-meta-actions">
-                    <?php
-                        echo html_for_asset_download_button( $post->ID, array( 'single' => 'y' ) );
-                    ?>
-                </div>
-				<div class="post-meta-actions">
-					<?php
-						echo airkit_PostMeta::add_to_favorite( $post->ID, array( 'label' => true, 'single' => 'y' ) );
-						echo airkit_PostMeta::add_to_playlist( $post->ID, array( 'label' => false, 'single' => 'y' ) );
-						construkted_single_sharing( array('label' => 'y', 'tooltip-popover' => 'y') );
-						if ( 'y' == airkit_option_value('single', 'video_meta') ) {
-							echo airkit_PostMeta::rating( $post->ID, array( 'type' => 'form', 'wrap' => 'div' ) );
-						}
-					?>
-				</div>
-			</aside>
+				<aside class="post-container">
 
-			<aside class="post-container">
+					<div class="post-content <?php echo $content_size_class; ?>">
+						<?php
 
-				<div class="post-content <?php echo $content_size_class; ?>">
-					<?php
+							echo airkit_PostMeta::subtitle( $post->ID, array( 'single' => 'y' ) );
 
-						echo airkit_PostMeta::subtitle( $post->ID, array( 'single' => 'y' ) );
+							do_action( 'airkit_above_single_content' );
 
-						do_action( 'airkit_above_single_content' );
+							$content = apply_filters( 'the_content', get_the_content() );
+							airkit_check_subscribers_only($content);
 
-						$content = apply_filters( 'the_content', get_the_content() );
-						airkit_check_subscribers_only($content);
+							do_action( 'airkit_below_single_content' );
 
-						do_action( 'airkit_below_single_content' );
+							airkit_post_user_actions();
+						?>
+					</div>
+					
+					<?php if ( $content_size_class == 'less-content' ): ?>
+						<div class="content-toggler"><span><em><?php echo esc_html__('Show more', 'gowatch') ?></em> <i class="icon-down"></i></span></div>
+					<?php endif ?>
+				</aside>
+			</div>
+			<?php echo construkted_asset_info(); ?>
+			<div class="post-footer">
+			<?php 
+				echo airkit_PostMeta::rating_single( $post->ID );
 
-						airkit_post_user_actions();
-					?>
-				</div>
-				
-				<?php if ( $content_size_class == 'less-content' ): ?>
-					<div class="content-toggler"><span><em><?php echo esc_html__('Show more', 'gowatch') ?></em> <i class="icon-down"></i></span></div>
-				<?php endif ?>
+				if( !isset( $airkit_is_ajax_loading ) || false == $airkit_is_ajax_loading ) {
+					airkit_PostMeta::single_pagination( $post->ID );
+				}
 
-				<div class="post-footer">
-				<?php 
-					echo airkit_PostMeta::rating_single( $post->ID );
+				//  SOF Ad area 2 -->
+				if( airkit_option_value('advertising','ad_area_2') != '' ) {
+					echo '<div class="container airkit_advertising-container">' . airkit_option_value('advertising','ad_area_2') . '</div>';
+				}
+				// EOF Ad area 2 -->
 
-					if( !isset( $airkit_is_ajax_loading ) || false == $airkit_is_ajax_loading ) {
-						airkit_PostMeta::single_pagination( $post->ID );
-					}
+				airkit_PostMeta::author_box( $post, array('single' => true) );
 
-					//  SOF Ad area 2 -->
-					if( airkit_option_value('advertising','ad_area_2') != '' ) {
-						echo '<div class="container airkit_advertising-container">' . airkit_option_value('advertising','ad_area_2') . '</div>';
-					}
-					// EOF Ad area 2 -->
+				//comments and relates posts should not be displayed when ajax loading
+				if( !isset( $airkit_is_ajax_loading ) || false == $airkit_is_ajax_loading ) {
 
-					airkit_PostMeta::author_box( $post, array('single' => true) );
-
-					//comments and relates posts should not be displayed when ajax loading
-					if( !isset( $airkit_is_ajax_loading ) || false == $airkit_is_ajax_loading ) {
-
-						comments_template( '', true );
-						
-						do_action( 'airkit_related_posts' );
-						
-					}
-				?>
-				</div>
-			</aside>
+					comments_template( '', true );
+					
+					do_action( 'airkit_related_posts' );
+					
+				}
+			?>
+			</div>
+		
 
 			<?php echo airkit_PostMeta::add_to_playlist( $post->ID, array( 'show_modal' => 'y', 'single' => 'y' ) ); ?>
-
+		
 		</article>
 
 		<?php

@@ -574,14 +574,20 @@ function construkted_asset_info() {
 
     $asset_type        = get_post_meta($post_ID, 'asset_type', true);
     $polygon_count     = get_post_meta($post_ID, 'mesh_polygon_count', true);
+    $point_cloud_size     = get_post_meta($post_ID, 'point_cloud_size', true);
     $date_capture      = get_post_meta($post_ID, 'date_capture', true);
     $photogrammetry_software      = get_post_meta($post_ID, 'photogrammetry_software', true);
     $pointcloud_software      = get_post_meta($post_ID, 'pointcloud_software', true);
     $cad_software      = get_post_meta($post_ID, 'cad_software', true);
 
-    $processing_software = explode($photogrammetry_software);
-    array_push($photogrammetry_software, explode($pointcloud_software));
-    array_push($photogrammetry_software, explode($cad_software));
+    // Process the data from the meta
+
+    $photogrammetry_software = array_map('trim', array_filter(explode('|', $photogrammetry_software)));
+    $pointcloud_software = array_map('trim', array_filter(explode('|', $pointcloud_software)));
+    $cad_software = array_map('trim', array_filter(explode('|', $cad_software)));
+
+    $processing_software = array_merge($photogrammetry_software ,$cad_software, $pointcloud_software);
+
     ?>
 
     <div class="asset-metadata">
@@ -598,8 +604,8 @@ function construkted_asset_info() {
             <?php if( !empty($asset_geolocation['latitude']) && !empty($asset_geolocation['longitude']) ): ?>
                 <div class="metadata-item">
                     <strong><?php esc_html_e('Asset location', 'gowatch-child'); ?></strong>
-                    <b><?php esc_html_e('Latitude', 'gowatch-child'); ?>:</b> <?php echo esc_html($asset_geolocation['latitude']); ?>
-                    <b><?php esc_html_e('Longitude', 'gowatch-child'); ?>:</b> <?php echo esc_html($asset_geolocation['longitude']); ?>
+                    <b><?php esc_html_e('Latitude', 'gowatch-child'); ?>:</b> <?php echo esc_html(number_format($asset_geolocation['latitude']), 8); ?>
+                    <b><?php esc_html_e('Longitude', 'gowatch-child'); ?>:</b> <?php echo esc_html(number_format($asset_geolocation['longitude']), 8); ?>
                 </div>
             <?php endif; ?>
 
@@ -617,11 +623,18 @@ function construkted_asset_info() {
                 </div>
             <?php endif; ?>
 
+            <?php if( $asset_type == 'point-cloud' && !empty($point_cloud_size) && !empty($point_cloud_size) ) : ?>
+                <div class="metadata-item">
+                    <strong><?php esc_html_e('Point Count', 'gowatch-child'); ?></strong>
+                    <?php echo esc_html($point_cloud_size); ?>
+                </div>
+            <?php endif; ?>
+
             <?php if( !empty($processing_software) ): ?>
                 <div class="metadata-item">
                     <strong><?php esc_html_e('Processing Software', 'gowatch-child'); ?></strong>
                     <?php
-                        echo implode(',', $processing_software);
+                        echo implode(', ', $processing_software);
                     ?>
                 </div>
             <?php endif; ?>
@@ -632,7 +645,5 @@ function construkted_asset_info() {
 
     $output = ob_get_clean();
 
-    echo $output;
+    return $output;
 }
-
-add_action( 'airkit_below_single_content', 'construkted_asset_info');
