@@ -570,15 +570,15 @@ function construkted_asset_info() {
     $asset_geolocation = get_post_meta($post_ID, 'default_camera_position_direction', true);
 
     // Decode the data we have in place
-    $asset_geolocation = json_decode( $asset_geolocation, true );
+    $asset_geolocation       = json_decode( $asset_geolocation, true );
 
-    $asset_type        = get_post_meta($post_ID, 'asset_type', true);
-    $polygon_count     = get_post_meta($post_ID, 'mesh_polygon_count', true);
-    $point_cloud_size     = get_post_meta($post_ID, 'point_cloud_size', true);
-    $date_capture      = get_post_meta($post_ID, 'date_capture', true);
-    $photogrammetry_software      = get_post_meta($post_ID, 'photogrammetry_software', true);
-    $pointcloud_software      = get_post_meta($post_ID, 'pointcloud_software', true);
-    $cad_software      = get_post_meta($post_ID, 'cad_software', true);
+    $asset_type              = get_post_meta($post_ID, 'asset_type', true);
+    $polygon_count           = get_post_meta($post_ID, 'mesh_polygon_count', true);
+    $point_cloud_size        = get_post_meta($post_ID, 'point_cloud_size', true);
+    $date_capture            = get_post_meta($post_ID, 'date_capture', true);
+    $photogrammetry_software = get_post_meta($post_ID, 'photogrammetry_software', true);
+    $pointcloud_software     = get_post_meta($post_ID, 'pointcloud_software', true);
+    $cad_software            = get_post_meta($post_ID, 'cad_software', true);
 
     // Process the data from the meta
 
@@ -591,53 +591,55 @@ function construkted_asset_info() {
     ?>
 
     <div class="asset-metadata">
-        <h4><?php esc_html_e('Asset metadata', 'gowatch-child'); ?></h4>
-        <div class="metadata-list">
+        <div class="asset-metadata-inner">
+            <h4><?php esc_html_e('Asset metadata', 'gowatch-child'); ?></h4>
+            <div class="metadata-list">
 
-            <?php if( !empty($date_capture) ): ?>
-            <div class="metadata-item">
-                <strong><?php esc_html_e('Date of capture', 'gowatch-child'); ?></strong>
-                <?php echo esc_html($date_capture); ?>
+                <?php if( !empty($date_capture) ): ?>
+                <div class="metadata-item">
+                    <strong><?php esc_html_e('Date of capture', 'gowatch-child'); ?></strong>
+                    <?php echo esc_html($date_capture); ?>
+                </div>
+                <?php endif; ?>
+
+                <?php if( !empty($asset_geolocation['latitude']) && !empty($asset_geolocation['longitude']) ): ?>
+                    <div class="metadata-item">
+                        <strong><?php esc_html_e('Asset location', 'gowatch-child'); ?></strong>
+                        <?php esc_html_e('Lat', 'gowatch-child'); ?>: <?php echo number_format($asset_geolocation['latitude'],8); ?><br/>
+                        <?php esc_html_e('Long', 'gowatch-child'); ?>: <?php echo number_format($asset_geolocation['longitude'], 8); ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php if( !empty($asset_type) ): ?>
+                    <div class="metadata-item">
+                        <strong><?php esc_html_e('Geometry Type', 'gowatch-child'); ?></strong>
+                        <?php echo TSZF_Frontend_Form_Post::convert_asset_type_from_gowatch_to_edd6($asset_type); ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php if( $asset_type == 'polygon-mesh' && !empty($polygon_count) || $asset_type == '3d-cad-model' && !empty($polygon_count) ) : ?>
+                    <div class="metadata-item">
+                        <strong><?php esc_html_e('Polygon Count', 'gowatch-child'); ?></strong>
+                        <?php echo esc_html($polygon_count); ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php if( $asset_type == 'point-cloud' && !empty($point_cloud_size) && !empty($point_cloud_size) ) : ?>
+                    <div class="metadata-item">
+                        <strong><?php esc_html_e('Point Count', 'gowatch-child'); ?></strong>
+                        <?php echo esc_html($point_cloud_size); ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php if( !empty($processing_software) ): ?>
+                    <div class="metadata-item">
+                        <strong><?php esc_html_e('Processing Software', 'gowatch-child'); ?></strong>
+                        <?php
+                            echo implode(', ', $processing_software);
+                        ?>
+                    </div>
+                <?php endif; ?>
             </div>
-            <?php endif; ?>
-
-            <?php if( !empty($asset_geolocation['latitude']) && !empty($asset_geolocation['longitude']) ): ?>
-                <div class="metadata-item">
-                    <strong><?php esc_html_e('Asset location', 'gowatch-child'); ?></strong>
-                    <?php esc_html_e('Lat', 'gowatch-child'); ?>: <?php echo number_format($asset_geolocation['latitude'],8); ?><br/>
-                    <?php esc_html_e('Long', 'gowatch-child'); ?>: <?php echo number_format($asset_geolocation['longitude'], 8); ?>
-                </div>
-            <?php endif; ?>
-
-            <?php if( !empty($asset_type) ): ?>
-                <div class="metadata-item">
-                    <strong><?php esc_html_e('Geometry Type', 'gowatch-child'); ?></strong>
-                    <?php echo TSZF_Frontend_Form_Post::convert_asset_type_from_gowatch_to_edd6($asset_type); ?>
-                </div>
-            <?php endif; ?>
-
-            <?php if( $asset_type == 'polygon-mesh' && !empty($polygon_count) || $asset_type == '3d-cad-model' && !empty($polygon_count) ) : ?>
-                <div class="metadata-item">
-                    <strong><?php esc_html_e('Polygon Count', 'gowatch-child'); ?></strong>
-                    <?php echo esc_html($polygon_count); ?>
-                </div>
-            <?php endif; ?>
-
-            <?php if( $asset_type == 'point-cloud' && !empty($point_cloud_size) && !empty($point_cloud_size) ) : ?>
-                <div class="metadata-item">
-                    <strong><?php esc_html_e('Point Count', 'gowatch-child'); ?></strong>
-                    <?php echo esc_html($point_cloud_size); ?>
-                </div>
-            <?php endif; ?>
-
-            <?php if( !empty($processing_software) ): ?>
-                <div class="metadata-item">
-                    <strong><?php esc_html_e('Processing Software', 'gowatch-child'); ?></strong>
-                    <?php
-                        echo implode(', ', $processing_software);
-                    ?>
-                </div>
-            <?php endif; ?>
         </div>
     </div>
 

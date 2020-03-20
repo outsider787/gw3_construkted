@@ -149,7 +149,7 @@ input[type="range"]::-moz-range-thumb {
     font-size: 11px;
 }
 
-.asset-metadata {
+.asset-metadata .asset-metadata-inner {
     padding: 18px;
     background: #f9f9f9;
     font-size: 14px;
