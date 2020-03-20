@@ -604,8 +604,8 @@ function construkted_asset_info() {
             <?php if( !empty($asset_geolocation['latitude']) && !empty($asset_geolocation['longitude']) ): ?>
                 <div class="metadata-item">
                     <strong><?php esc_html_e('Asset location', 'gowatch-child'); ?></strong>
-                    <b><?php esc_html_e('Latitude', 'gowatch-child'); ?>:</b> <?php echo number_format($asset_geolocation['latitude'],8); ?>
-                    <b><?php esc_html_e('Longitude', 'gowatch-child'); ?>:</b> <?php echo number_format($asset_geolocation['longitude'], 8); ?>
+                    <b><?php esc_html_e('Lat', 'gowatch-child'); ?>:</b> <?php echo number_format($asset_geolocation['latitude'],8); ?>
+                    <b><?php esc_html_e('Long', 'gowatch-child'); ?>:</b> <?php echo number_format($asset_geolocation['longitude'], 8); ?>
                 </div>
             <?php endif; ?>
 
