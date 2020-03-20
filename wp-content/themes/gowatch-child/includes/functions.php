@@ -605,7 +605,7 @@ function construkted_asset_info() {
                 <div class="metadata-item">
                     <strong><?php esc_html_e('Asset location', 'gowatch-child'); ?></strong>
                     <?php esc_html_e('Lat', 'gowatch-child'); ?>: <?php echo number_format($asset_geolocation['latitude'],8); ?><br/>
-                    <?php esc_html_e('Lon', 'gowatch-child'); ?>: <?php echo number_format($asset_geolocation['longitude'], 8); ?>
+                    <?php esc_html_e('Long', 'gowatch-child'); ?>: <?php echo number_format($asset_geolocation['longitude'], 8); ?>
                 </div>
             <?php endif; ?>
 
