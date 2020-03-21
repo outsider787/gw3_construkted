@@ -1,5 +1,6 @@
 var viewer = null;
 var cameraController = null;
+var tileset_model_matrix = null;
 
 var theApp = (function () {
     var tilesets = null;
@@ -13,7 +14,24 @@ var theApp = (function () {
     }
 
     function _initGeoLocationPopup() {
-        var tileset_model_matrix = CONSTRUKTED_AJAX.tileset_model_matrix;
+        if(CONSTRUKTED_AJAX.asset_geo_location) {
+            var assetGeoLocationData = CONSTRUKTED_AJAX.asset_geo_location;
+
+            var carto = new Cesium.Cartographic(
+                Cesium.Math.toRadians(assetGeoLocationData.longitude),
+                Cesium.Math.toRadians(assetGeoLocationData.latitude),
+                assetGeoLocationData.height);
+
+            tileset_model_matrix = {
+                position:  viewer.scene.globe.ellipsoid.cartographicToCartesian(carto),
+                headingPitchRoll: {
+                    heading: Cesium.Math.toRadians(assetGeoLocationData.heading),
+                    pitch: Cesium.Math.toRadians(assetGeoLocationData.pitch),
+                    roll: Cesium.Math.toRadians(assetGeoLocationData.roll)
+                },
+                scale: assetGeoLocationData.scale
+            };
+        }
 
         var setHprQuaternion = new Cesium.Quaternion();
         var setHprQuaternion2 = new Cesium.Quaternion();
@@ -51,20 +69,10 @@ var theApp = (function () {
         }
 
         if(tileset_model_matrix){
-            var position = tileset_model_matrix.position;
-
-            var carto = Cesium.Cartographic.fromCartesian(new Cesium.Cartesian3(position.x , position.y, position.z));
-
-            // Create the new formatted numbers
-            var newLat = parseFloat(carto.latitude).toFixed(8);
-            var newLon = parseFloat(carto.longitude).toFixed(8);
-            var newAltitude = parseFloat(carto.height).toFixed(3);
-            var newHeading  = parseFloat(tileset_model_matrix.headingPitchRoll.heading).toFixed(3);
-
-            jQuery('#tileset_latitude').val(Cesium.Math.toDegrees(newLat).toFixed(8));
-            jQuery('#tileset_longitude').val(Cesium.Math.toDegrees(newLon).toFixed(8));
-            jQuery('#tileset_altitude').val(newAltitude);
-            jQuery('#tileset_heading').val(newHeading);
+            jQuery('#tileset_latitude').val(assetGeoLocationData.latitude);
+            jQuery('#tileset_longitude').val(assetGeoLocationData.longitude);
+            jQuery('#tileset_altitude').val(assetGeoLocationData.height);
+            jQuery('#tileset_heading').val(assetGeoLocationData.heading);
         }
         else{
             jQuery('#tileset_latitude').val(0);
@@ -114,7 +122,7 @@ var theApp = (function () {
 
         jQuery('#tileset_latitude').change(function () {
             var latitude = jQuery('#tileset_latitude').val();
-            latitude = parseFloat(latitude).toFixed(8);
+            latitude = parseFloat(latitude);
 
             if(isNaN(latitude) || latitude > 90 || latitude < -90) {
                 jQuery('#tileset_latitude').val('');
@@ -143,7 +151,7 @@ var theApp = (function () {
 
         jQuery('#tileset_altitude').change(function () {
             var altitude = jQuery('#tileset_altitude').val();
-            altitude = parseFloat(altitude).toFixed(8);
+            altitude = parseFloat(altitude);
 
             if(isNaN(altitude) || altitude > 15000 || altitude < -1000) {
                 jQuery('#tileset_altitude').val('');
@@ -157,7 +165,7 @@ var theApp = (function () {
 
             var origCartographic = Cesium.Cartographic.fromCartesian(origPosition);
 
-            origCartographic.altitude = altitude;
+            origCartographic.height = altitude;
 
             var newPosition = viewer.scene.globe.ellipsoid.cartographicToCartesian(origCartographic);
 
@@ -172,7 +180,7 @@ var theApp = (function () {
 
         jQuery('#tileset_heading').change(function () {
             var heading = jQuery('#tileset_heading').val();
-            heading = parseFloat(heading).toFixed(3);
+            heading = parseFloat(heading);
 
             if(isNaN(heading) || heading > 180 || heading < -180) {
                 jQuery('#tileset_heading').val('');
@@ -475,9 +483,17 @@ var theApp = (function () {
     }
 
     function _doSaveTilesetModelMatrix(position, headingPitchRoll, scale) {
+        var cartographic = Cesium.Cartographic.fromCartesian(position);
+
+        var precision = 8;
+
         var data = {
-            position: position,
-            headingPitchRoll: headingPitchRoll,
+            longitude: Cesium.Math.toDegrees(cartographic.longitude).toFixed(precision),
+            latitude: Cesium.Math.toDegrees(cartographic.latitude).toFixed(precision),
+            height: cartographic.height.toFixed(precision),
+            heading: Cesium.Math.toDegrees(headingPitchRoll.heading).toFixed(precision),
+            pitch: Cesium.Math.toDegrees(headingPitchRoll.pitch).toFixed(precision),
+            roll: Cesium.Math.toDegrees(headingPitchRoll.roll).toFixed(precision),
             scale: scale
         };
 
@@ -485,9 +501,9 @@ var theApp = (function () {
             url : CONSTRUKTED_AJAX.ajaxurl,
             type : 'post',
             data : {
-                action : 'set_tileset_model_matrix_json',
+                action : 'set_asset_geo_location_json',
                 post_id : CONSTRUKTED_AJAX.post_id,
-                tileset_model_matrix_json: JSON.stringify(data)
+                asset_geo_location_json: JSON.stringify(data)
             },
             success : function( response ) {
                 var data = JSON.parse(response);
@@ -594,8 +610,8 @@ var theApp = (function () {
 
             if(tilesets.asset.extras != null) {
                 if (tilesets.asset.extras.ion.georeferenced !== true) {
-                    if (CONSTRUKTED_AJAX.tileset_model_matrix) {
-                        _setTilesetModelMatrix(tilesets, CONSTRUKTED_AJAX.tileset_model_matrix);
+                    if (tileset_model_matrix) {
+                        _setTilesetModelMatrix(tilesets, tileset_model_matrix);
 
                         if(CONSTRUKTED_AJAX.is_owner) {
                             transformEditor = new Cesium.TransformEditor({
@@ -716,8 +732,9 @@ var theApp = (function () {
 jQuery(document).ready(function(){
     window.$ = jQuery;
 
-    if(CONSTRUKTED_AJAX.tileset_model_matrix && CONSTRUKTED_AJAX.tileset_model_matrix !== '')
-        CONSTRUKTED_AJAX.tileset_model_matrix = JSON.parse(CONSTRUKTED_AJAX.tileset_model_matrix);
+    if(CONSTRUKTED_AJAX.asset_geo_location && CONSTRUKTED_AJAX.asset_geo_location !== '') {
+        CONSTRUKTED_AJAX.asset_geo_location = JSON.parse(CONSTRUKTED_AJAX.asset_geo_location);
+    }
 
     CONSTRUKTED_AJAX.is_owner = Boolean(CONSTRUKTED_AJAX.is_owner);
 

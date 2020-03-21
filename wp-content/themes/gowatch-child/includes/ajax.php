@@ -230,23 +230,12 @@ function construkted_remove_post() {
     die();
 }
 
-add_action( 'wp_ajax_nopriv_get_tileset_model_matrix_json', 'get_tileset_model_matrix_json');
-add_action( 'wp_ajax_get_tileset_model_matrix_data_json', 'get_tileset_model_matrix_json');
+add_action( 'wp_ajax_nopriv_set_asset_geo_location_json', 'set_asset_geo_location_json');
+add_action( 'wp_ajax_set_asset_geo_location_json', 'set_asset_geo_location_json');
 
-function get_tileset_model_matrix_json() {
+function set_asset_geo_location_json() {
     $post_id = $_REQUEST['post_id'];
-
-    $tileset_model_matrix_json = get_post_meta( $post_id, 'asset_geo-location', true );
-
-    echo $tileset_model_matrix_json;
-}
-
-add_action( 'wp_ajax_nopriv_set_tileset_model_matrix_json', 'set_tileset_model_matrix_json');
-add_action( 'wp_ajax_set_tileset_model_matrix_json', 'set_tileset_model_matrix_json');
-
-function set_tileset_model_matrix_json() {
-    $post_id = $_REQUEST['post_id'];
-    $tileset_model_matrix_json = $_REQUEST['tileset_model_matrix_json'];
+    $tileset_model_matrix_json = $_REQUEST['asset_geo_location_json'];
 
     $ret = update_post_meta( $post_id, 'asset_geo-location', $tileset_model_matrix_json );
 
