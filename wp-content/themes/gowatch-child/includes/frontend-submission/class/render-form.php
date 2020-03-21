@@ -685,9 +685,12 @@ class TSZF_Render_Form {
             }
 
         } //end foreach
-
+        
         if ( $hidden_fields ) {
             foreach($hidden_fields as $field) {
+                if ( $field['is_meta'] == 'yes' ) {
+                    $field['meta_value'] = $this->get_meta( $post_id, $field['name'], 'post', true );
+                }
                 printf( '<input type="hidden" name="%s" value="%s">', esc_attr( $field['name'] ), esc_attr( $field['meta_value'] ) );
                 echo "\r\n";
             }
