@@ -567,7 +567,7 @@ function construkted_asset_info() {
     $post_ID = get_the_ID();
 
     // Check if item has geolocated information and add the badge on the top-right corner
-    $asset_geolocation = get_post_meta($post_ID, 'default_camera_position_direction', true);
+    $asset_geolocation = get_post_meta($post_ID, 'asset_geo-location', true);
 
     // Decode the data we have in place
     $asset_geolocation       = json_decode( $asset_geolocation, true );
