@@ -60,7 +60,7 @@ function doUpdateState(data) {
 
         if(taskInfo === null) {
             if(wpPostState === 'pending')
-                postStateDiv.innerHTML = 'ERROR<br>Please contact<br>support@construkted.com';
+                postStateDiv.innerHTML = 'Initializing...';
             else
                 postStateDiv.innerHTML = wpPostState;
 
