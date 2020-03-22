@@ -620,7 +620,7 @@ function construkted_asset_info() {
                 <?php if( $asset_type == 'polygon-mesh' && !empty($polygon_count) || $asset_type == '3d-cad-model' && !empty($polygon_count) ) : ?>
                     <div class="metadata-item">
                         <strong><?php esc_html_e('Polygon Count', 'gowatch-child'); ?></strong>
-                        <?php echo esc_html($polygon_count); ?>
+                        <?php echo esc_html($polygon_count/1000); ?>
                     </div>
                 <?php endif; ?>
 
