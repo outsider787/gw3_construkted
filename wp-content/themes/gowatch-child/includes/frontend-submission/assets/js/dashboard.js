@@ -110,8 +110,16 @@ function getProcessingProgress(taskInfo) {
             return percent.toFixed(2);
         }
     }
-    else if(runningStatus === runningStatusCodes.DOWNLOADING)
-        return 70;
+    else if(runningStatus === runningStatusCodes.DOWNLOADING) {
+        var downloadProgress = taskInfo.downloadProgress; // (0 ~ 1)
+
+        if(downloadProgress === -1)
+            return 70;
+
+        var percent = 70 + downloadProgress * (80 - 70);
+
+        return percent.toFixed(2);
+    }
     else if(runningStatus === runningStatusCodes.PACKAGING)
         return 80;
     else if(runningStatus === runningStatusCodes.PUBLISHING_CONSTRUKTED_ASSET)
