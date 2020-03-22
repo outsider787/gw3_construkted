@@ -65,7 +65,7 @@ class CONSTRUKTED_Admin {
         </a>
 
         <a class="nav-tab <?php echo $constructed_active_tab == 'processing-state' ? 'nav-tab-active' : ''; ?>"
-            href="<?php echo admin_url( 'options-general.php?page=construkted_page&tab=tiling-state' ); ?>">
+            href="<?php echo admin_url( 'options-general.php?page=construkted_page&tab=processing-state' ); ?>">
             <?php _e( 'Processing State', 'construkted' ); ?>
         </a>
 
