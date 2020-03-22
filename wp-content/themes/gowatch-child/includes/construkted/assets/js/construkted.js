@@ -525,6 +525,7 @@ var theApp = (function () {
         Cesium.Ion.defaultAccessToken = CONSTRUKTED_AJAX.cesium_access_token;
 
         viewer = new Cesium.Viewer('cesiumContainer', {
+            terrainProvider: Cesium.createWorldTerrain(),
             animation: false,
             homeButton: false, //  the HomeButton widget will not be created.
             baseLayerPicker: false, // If set to false, the BaseLayerPicker widget will not be created.
