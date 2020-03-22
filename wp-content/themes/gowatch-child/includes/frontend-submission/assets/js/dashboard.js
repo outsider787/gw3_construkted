@@ -118,7 +118,7 @@ function getProcessingProgress(taskInfo) {
 
         var percent = 70 + downloadProgress * (80 - 70);
 
-        return percent.toFixed(2);
+        return percent.toFixed(1);
     }
     else if(runningStatus === runningStatusCodes.PACKAGING)
         return 80;
