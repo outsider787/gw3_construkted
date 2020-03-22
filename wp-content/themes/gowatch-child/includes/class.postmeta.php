@@ -996,7 +996,8 @@ if ( !class_exists('construkted_PostMeta') ) {
 
             // Check if position exists in the metadata before checking the position values
             if( !empty($asset_geolocation['position']) ) {
-                if( isset($asset_geolocation['position']['x']) && $asset_geolocation['position']['x'] != 0 && isset($asset_geolocation['position']['y']) && $asset_geolocation['position']['y'] != 0 && isset($asset_geolocation['position']['z']) && $asset_geolocation['position']['z'] != 0 ) {
+                //if( isset($asset_geolocation['position']['x']) && $asset_geolocation['position']['x'] != 0 && isset($asset_geolocation['position']['y']) && $asset_geolocation['position']['y'] != 0 && isset($asset_geolocation['position']['z']) && $asset_geolocation['position']['z'] != 0 ) {
+		if( isset($asset_geolocation['longitude']) && $asset_geolocation['longitude'] != 0 && isset($asset_geolocation['latitude']) && $asset_geolocation['latitude'] != 0 ) {
 
                     // Create the HTML for the badge
                     $html = '<span class="has-geolocation"><i class="gwicon-global"></i></span>';
