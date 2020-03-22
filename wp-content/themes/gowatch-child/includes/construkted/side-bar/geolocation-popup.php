@@ -43,6 +43,12 @@
                 </div>
             </div>
 
+            <?php
+            if($is_owner) { ?>
+                <button type="button" id = "" class="btn btn-light">Estimate Altitude</button>
+            <?php } ?>
+            
+            
             <div class="text-input-group">
                 <div class="input-group">
                     <label for="heading">Heading:</label>
@@ -53,7 +59,6 @@
             <!-- These buttons should only be visible to the asset owner (logged in) -->
 
             <?php
-
             if($is_owner) { ?>
                 <button type="button" id = "save_tileset_model_matrix_button" class="btn btn-light">Save</button>
             <?php } ?>
