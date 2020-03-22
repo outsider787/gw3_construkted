@@ -64,7 +64,7 @@ class CONSTRUKTED_Admin {
             <?php _e( 'Amazon S3 Settings', 'construkted' ); ?>
         </a>
 
-        <a class="nav-tab <?php echo $constructed_active_tab == 'tiling-state' ? 'nav-tab-active' : ''; ?>"
+        <a class="nav-tab <?php echo $constructed_active_tab == 'processing-state' ? 'nav-tab-active' : ''; ?>"
             href="<?php echo admin_url( 'options-general.php?page=construkted_page&tab=tiling-state' ); ?>">
             <?php _e( 'Processing State', 'construkted' ); ?>
         </a>
