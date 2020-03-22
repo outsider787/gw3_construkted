@@ -96,7 +96,7 @@ function getProcessingProgress(taskInfo) {
 
         var percent = 5 + uploadingPercent / 100 * 15;
 
-        return percent.toFixed(2);
+        return percent.toFixed(1);
     }
     // 20-70%
     else if(runningStatus === runningStatusCodes.TILING) {
@@ -107,7 +107,7 @@ function getProcessingProgress(taskInfo) {
 
             var percent = 20 + tilingPercent / 100 * 50;
 
-            return percent.toFixed(2);
+            return percent.toFixed(1);
         }
     }
     else if(runningStatus === runningStatusCodes.DOWNLOADING) {
