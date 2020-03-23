@@ -1,0 +1,44 @@
+.flex-item {
+	display: flex;
+}
+
+.processing-item {
+	display: flex;
+	flex-direction: column;
+	background: #FFF;
+	border-radius: 4px;
+	margin-bottom: 10px;
+	position: relative;
+}
+.processing-item .item-title {
+	font-size: 1.1em;
+	padding: 30px;
+	font-weight: bold;
+	cursor: pointer;
+}
+.processing-item .item-title:hover {
+	background: #f5f6f7;
+}
+.processing-item .item-content {
+	display: none;
+	padding: 0 30px 30px 30px;
+}
+.processing-item.opened .item-content {
+	display: block;
+}
+.processing-item .flex-item {
+	padding: 12px 0;
+	border-top: 1px solid #f1f1f1;
+}
+.processing-item .flex-item > div:nth-child(1) {
+	flex: 0 0 20%;
+}
+.processing-item > .dashicons {
+	position: absolute;
+	right: 20px;
+	top: 30px;
+}
+.processing-item.opened > .dashicons {
+	transform: rotate(180deg);
+	top: 28px;
+}
