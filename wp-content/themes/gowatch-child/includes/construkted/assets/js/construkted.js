@@ -658,7 +658,27 @@ var theApp = (function () {
                             transformEditor.viewModel.deactivate();
                         }
                     } else {
-                        tilesets.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(Cesium.Cartesian3.fromDegrees(0, 0));
+                        var modelMatrixIsDetermined = false;
+
+
+                        viewer.scene.globe.tileLoadProgressEvent.addEventListener(function (queuedTileCount) {
+                            if(!modelMatrixIsDetermined && viewer.scene.globe.tilesLoaded){
+                                var cartographic = new Cesium.Cartographic(0, 0);
+
+                                var terrainHeight = viewer.scene.globe.getHeight(cartographic);
+
+                                if(terrainHeight) {
+                                    tilesets.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(Cesium.Cartesian3.fromDegrees(0, 0, terrainHeight));
+                                    jQTilesetAltitude.val(terrainHeight);
+                                }
+                                else {
+                                    console.warn('failed to get terrain height 0/0');
+                                    tilesets.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(Cesium.Cartesian3.fromDegrees(0, 0));
+                                }
+
+                                modelMatrixIsDetermined = true;
+                            }
+                        });
                     }
                 }
                 else {
