@@ -45,7 +45,7 @@
 
             <?php
             if($is_owner) { ?>
-                <button type="button" id = "" class="btn btn-light">Estimate Altitude</button>
+                <button type="button" id = "tileset_estimate_altitude" class="btn btn-light">Estimate Altitude</button>
             <?php } ?>
             
             

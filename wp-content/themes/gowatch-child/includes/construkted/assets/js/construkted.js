@@ -14,6 +14,10 @@ var theApp = (function () {
     }
 
     function _initGeoLocationPopup() {
+        var jqTilesetLatitude = jQuery('#tileset_latitude');
+        var jQTilesetLongitude = jQuery('#tileset_longitude');
+        var jQTilesetAltitude = jQuery('#tileset_altitude');
+
         if(CONSTRUKTED_AJAX.asset_geo_location) {
             var assetGeoLocationData = CONSTRUKTED_AJAX.asset_geo_location;
 
@@ -211,6 +215,31 @@ var theApp = (function () {
             });
 
             viewer.scene.requestRender();
+        });
+
+        jQuery('#tileset_estimate_altitude').click(function () {
+            var longitude = jQTilesetLongitude.val();
+            var latitude = jqTilesetLatitude.val();
+
+            longitude = parseFloat(longitude);
+            latitude = parseFloat(latitude);
+
+            if(longitude === 0 && latitude === 0) {
+                alert('Please input valid Latitude and Longitude!');
+                return;
+            }
+
+            var globe = viewer.scene.globe;
+            var cartographic = new Cesium.Cartographic(Cesium.Math.toRadians(longitude), Cesium.Math.toRadians(latitude));
+
+            var terrainHeight = globe.getHeight(cartographic);
+
+            if (terrainHeight === undefined) {
+                alert('failed to get height!');
+                return;
+            }
+
+            jQTilesetAltitude.val(terrainHeight);
         });
     }
 
