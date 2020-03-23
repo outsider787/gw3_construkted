@@ -124,7 +124,7 @@ function gw3_processing_retrieve_data() {
         $body = "something wrong. failed to connect construkted API";
     }
     else {
-        $body = json_decode($ret['body'], true);
+        $body = array_reverse(json_decode($ret['body'], true));
     }
 
     return $body;
