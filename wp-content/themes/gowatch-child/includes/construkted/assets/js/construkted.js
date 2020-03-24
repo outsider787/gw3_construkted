@@ -1,6 +1,7 @@
 var viewer = null;
 var cameraController = null;
 var tileset_model_matrix = null;
+var originalBoundingSphereCenterHeight = 0;
 
 var theApp = (function () {
     var tilesets = null;
@@ -79,13 +80,13 @@ var theApp = (function () {
         if(tileset_model_matrix){
             jQuery('#tileset_latitude').val(assetGeoLocationData.latitude);
             jQuery('#tileset_longitude').val(assetGeoLocationData.longitude);
-            jQuery('#tileset_altitude').val(assetGeoLocationData.height);
+            jqTilesetAltitude.val(assetGeoLocationData.height);
             jQuery('#tileset_heading').val(assetGeoLocationData.heading);
         }
         else{
             jQuery('#tileset_latitude').val(0);
             jQuery('#tileset_longitude').val(0);
-            jQuery('#tileset_altitude').val(0);
+            jqTilesetAltitude.val(0);
             jQuery('#tileset_heading').val(0);
         }
 
@@ -158,6 +159,21 @@ var theApp = (function () {
         });
 
         function changeTilesetHeight(height) {
+            if(tilesets.asset.extras && tilesets.asset.extras.ion.georeferenced) {
+                doChangeTilesetHeightForGeoReferencedTileset(height);
+            }
+            else {
+                doChangeTilesetHeightForNonGeoReferencedTileset(height);
+            }
+        }
+
+        function doChangeTilesetHeightForGeoReferencedTileset(height) {
+            var heightDifference = originalBoundingSphereCenterHeight - height;
+
+            tilesets.modelMatrix = Cesium.Matrix4.fromTranslation(new Cesium.Cartesian3(0, 0, heightDifference));
+        }
+
+        function doChangeTilesetHeightForNonGeoReferencedTileset(height) {
             var origModelMatrix = tilesets.modelMatrix;
 
             var origPosition = Cesium.Matrix4.getTranslation(origModelMatrix, new Cesium.Cartesian3());
@@ -173,15 +189,14 @@ var theApp = (function () {
             var headingPitchRoll = Cesium.Transforms.fixedFrameToHeadingPitchRoll(origModelMatrix, scene.mapProjection.ellipsoid, undefined, new Cesium.HeadingPitchRoll());
 
             changeTilesetModelMatrix(newPosition, headingPitchRoll);
-            viewer.zoomTo(tilesets);
         }
 
-        jQuery('#tileset_altitude').change(function () {
-            var altitude = jQuery('#tileset_altitude').val();
+        jqTilesetAltitude.change(function () {
+            var altitude = jqTilesetAltitude.val();
             altitude = parseFloat(altitude);
 
             if(isNaN(altitude) || altitude > 15000 || altitude < -1000) {
-                jQuery('#tileset_altitude').val('');
+                jqTilesetAltitude.val('');
                 alert('invalid altitude: ' + altitude);
                 return;
             }
@@ -500,7 +515,21 @@ var theApp = (function () {
         });
     }
 
-    function _saveTilesetModelMatrix() {
+    function _saveTilesetModelMatrixForGeoReferencedTileset() {
+        var data = {
+            longitude: 0,
+            latitude: 0,
+            height: jqTilesetAltitude.val(),
+            heading: 0,
+            pitch: 0,
+            roll: 0,
+            scale: 0
+        };
+
+        _doDoSaveTilesetModelMatrix(data);
+    }
+
+    function _saveTilesetModelMatrixForNonGeoReferencedTileset() {
         if(transformEditor && transformEditor.active) {
             var position = transformEditor.viewModel.position;
             var headingPitchRoll = transformEditor.viewModel.headingPitchRoll;
@@ -522,6 +551,15 @@ var theApp = (function () {
         }
     }
 
+    function _saveTilesetModelMatrix() {
+        if(tilesets.asset.extras && tilesets.asset.extras.ion.georeferenced) {
+            _saveTilesetModelMatrixForGeoReferencedTileset();
+        }
+        else {
+            _saveTilesetModelMatrixForNonGeoReferencedTileset();
+        }
+    }
+
     function _doSaveTilesetModelMatrix(position, headingPitchRoll, scale) {
         var cartographic = Cesium.Cartographic.fromCartesian(position);
 
@@ -537,6 +575,10 @@ var theApp = (function () {
             scale: scale
         };
 
+        _doDoSaveTilesetModelMatrix(data);
+    }
+
+    function _doDoSaveTilesetModelMatrix(data) {
         jQuery.ajax({
             url : CONSTRUKTED_AJAX.ajaxurl,
             type : 'post',
@@ -701,19 +743,31 @@ var theApp = (function () {
                 else {
                     jqTilesetLatitude.prop('disabled', true);
                     jqTilesetLongitude.prop('disabled', true);
-                    jqTilesetAltitude.prop('disabled', true);
                     jqTilesetHeading.prop('disabled', true);
                     jqEditAssetGeoLocationButton.prop('disabled', true);
                     jqTilesetEstimateAltitude.prop('disabled', true);
-                    jqSaveTilesetModelMatrixButton.prop('disabled', true);
 
                     var position = tilesets.boundingSphere.center;
 
                     var carto = Cesium.Cartographic.fromCartesian(position);
 
-                    jqTilesetLongitude.val(Cesium.Math.toDegrees(carto.longitude));
-                    jqTilesetLatitude.val(Cesium.Math.toDegrees(carto.latitude));
-                    jqTilesetAltitude.val(carto.height);
+                    originalBoundingSphereCenterHeight = carto.height;
+
+                    if(CONSTRUKTED_AJAX.asset_geo_location) {
+                        var assetGeoLocationData = CONSTRUKTED_AJAX.asset_geo_location;
+
+                        var heightDifference = originalBoundingSphereCenterHeight - parseFloat(assetGeoLocationData.height);
+
+                        tilesets.modelMatrix = Cesium.Matrix4.fromTranslation(new Cesium.Cartesian3(0, 0, heightDifference));
+
+                        jqTilesetAltitude.val(assetGeoLocationData.height);
+                    }
+                    else
+                    {
+                        jqTilesetLongitude.val(Cesium.Math.toDegrees(carto.longitude));
+                        jqTilesetLatitude.val(Cesium.Math.toDegrees(carto.latitude));
+                        jqTilesetAltitude.val(carto.height);
+                    }
                 }
             }
 
