@@ -48,7 +48,7 @@ if ( isset( $airkit_breadcrumbs['breadcrumbs'] ) && $airkit_breadcrumbs['breadcr
 	</div>
 <?php endif; ?>
 
-<section id="main" class="ts-single-post ts-single-page airkit_frontend-forms">
+<section id="main" class="ts-single-post add-new-page ts-single-page airkit_frontend-forms">
 	<div class="container">
 		<div class="row">
 			<?php echo airkit_var_sanitize( $airkit_sidebar['left'], 'true' ); ?>

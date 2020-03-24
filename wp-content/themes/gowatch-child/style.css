@@ -629,3 +629,30 @@ popups
         padding-right: 0;
     }
 }
+
+.upload-notification {
+    display: flex;
+    flex-direction: column;
+    font-size: 20px;
+    justify-content: center;
+    text-align: center;
+    min-height: 30vh;
+}
+.upload-notification i {
+    font-size: 80px;
+    line-height: 80px;
+    margin-bottom: 20px;
+    color: rgba(9,49,84,1);
+    align-self: center;
+}
+.upload-notification button {
+    height: 40px;
+    line-height: 40px;
+    padding: 0 20px;
+    color: #FFF;
+    background-color: rgba(9,49,84,1);
+    border: 0 none;
+    max-width: 180px;
+    align-self: center;
+    margin-top: 20px;
+}

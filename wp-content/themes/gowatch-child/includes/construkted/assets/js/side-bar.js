@@ -4,6 +4,7 @@ jQuery(function ($) {
 
     function hideAllPopup() {
         jQuery('.popup-wrapper').hide();
+        jQuery('#end-measurement').trigger('click');
     }
 
     openBtn.click(function () {
@@ -20,6 +21,7 @@ jQuery(function ($) {
 
     closeBtn.click(function () {
         jQuery(this).parents('.popup-wrapper').hide();
+        jQuery('#end-measurement').trigger('click')
     });
 
 });
