@@ -1,9 +1,7 @@
 <?php
 function enqueue_styles_for_side_bar(){
-    $css_dir = '/wp-content/themes/gowatch-child/includes/construkted/assets/css/';
-
     wp_enqueue_style(
-        'bootstrap-4.1.3', $css_dir . 'bootstrap-4.1.3.css',
+        'bootstrap-4.1.3', get_stylesheet_directory_uri() . '/includes/construkted/assets/css/bootstrap-4.1.3.css',
         array('gowatch-child-style')
     );
 

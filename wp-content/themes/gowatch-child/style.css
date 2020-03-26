@@ -142,7 +142,7 @@ input[type="range"]::-moz-range-thumb {
     margin-top: -30px;
 }
 .single .post-meta .entry-meta-author .post-author-avatar img {
-    width: 30px;
+    width: 38px;
 }
 .single .post-meta .entry-meta-author>.entry-meta-date,
 .single .post-meta .entry-meta-author>a[rel="author"] {
@@ -655,4 +655,122 @@ popups
     max-width: 180px;
     align-self: center;
     margin-top: 20px;
+}
+
+
+.single .post-meta .entry-meta-author {
+    display: flex;
+    align-items: center;
+}
+.single .post-meta .entry-meta-author .entry-meta-date a::after {
+    display: none;
+}
+.single .post-meta .entry-meta-author > a[rel="author"] {
+    display: inline;
+}
+.single.single-video .post-meta {
+    display: flex;
+    align-items: center;
+    padding: 18px 0;
+}
+.single.single-video .post-meta .entry-meta-author a {
+    margin: 0;
+}
+.single.single-video .post-meta .author_name {
+    margin-left: 8px;
+}
+.single.single-video .post-meta .entry-meta-author {
+    margin-bottom: 0;
+}
+.single-video .post-meta .post-meta-actions {
+    transform: translate(0);
+    float: none;
+    margin-left: auto;
+}
+.tooltip-sharing .airkit_sharing .btn-share span.btn-icon-wrap {
+    width: 38px;
+    height: 38px;
+    line-height: 36px;
+}
+.tooltip-sharing .airkit_sharing .popover-content-footer {
+    display: none;
+}
+.single-video .post-content {
+    padding-left: 0;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+.gw3-button {
+    height: 40px;
+    line-height: 40px;
+    display: inline-flex;
+    padding: 0 18px;
+    border-radius: 25px;
+    background: rgba(55,105,150,1);
+    color: #FFF;
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: 500;
+}
+.gw3-button:hover {
+    background: rgba(9,49,84,1);
+    color: #FFF;
+}
+.gw3-button.outline {
+    background: transparent;
+    border: 1px solid rgba(55,105,150,1);
+    line-height: 38px;
+    color: rgba(55,105,150,1);
+}
+.gw3-button.outline:hover {
+    background: rgba(55,105,150,1);
+    color: #FFF;
+}
+.single .single-post-tags h5 {
+    border: 0 none;
+    padding: 0 5px 0 0;
+    font-style: normal;
+    font-size: 14px;
+}
+.single-video .tags-container a[rel="tag"] {
+    border: 0 none;
+    height: auto;
+    padding: 0;
+    background: transparent;
+    text-transform: none;
+    font-size: inherit;
+    font-weight: normal;
+    color: inherit;
+    font-size: 14px;
+    letter-spacing: 0;
+}
+.single-video .tags-container a[rel="tag"]::before {
+    content: '#';
+}
+
+.single.single-video .post-content p:last-of-type {
+    margin-bottom: 0;
+}
+.single.single-video .post-header {
+    margin-bottom: 14px;
+}
+.asset-action-buttons {
+    margin-top: 14px;
+}
+.embed-content {
+    display: none;
+}
+.embed-content h4 {
+    font-size: 15px;
+    text-transform: uppercase;
+    margin: 15px 0 5px 0;
+    font-weight: 600;
+    opacity: 0.7;
+}
+.embed-content textarea {
+    border: 1px solid #f3f3f3;
+    border-radius: 10px;
+    padding: 10px;
+    width: 100%;
+    height: 60px;
 }

@@ -802,20 +802,21 @@
             el.parents('li').find('.tszf-payment-instruction').slideDown(250);
         }
     });
+    $(window).on('load', function(){
+        if ( jQuery('.add-new-page').length > 0 ) {
+            var url = "https://tile01.construkted.com:5000/task/all";
 
-    if ( jQuery('.add-new-page').length > 0 ) {
-        var url = "https://tile01.construkted.com:5000/task/all";
-
-        $.ajax({
-            url : url,
-            type : 'get',
-            data : {
-            },
-            timeout: 1000,
-            error: function(xhr, status, error) {
-                jQuery('.add-new-page > .container').html('<div class="upload-notification"><i class="icon-attention"></i> The processing server is currently down. Please return back later. <button onClick="window.history.back()">Back</button></div>');
-            }
-        });
-    }
+            $.ajax({
+                url : url,
+                type : 'get',
+                data : {
+                },
+                timeout: 1000,
+                error: function(xhr, status, error) {
+                    jQuery('.add-new-page > .container').html('<div class="upload-notification"><i class="icon-attention"></i> The processing server is currently down. Please return back later. <button onClick="window.history.back()">Back</button></div>');
+                }
+            });
+        }
+    });
 
 })(jQuery);

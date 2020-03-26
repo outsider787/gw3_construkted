@@ -1695,11 +1695,9 @@ class TSZF_Render_Form {
         wp_dequeue_script( ' tszf-form' );
         wp_deregister_script('tszf-form');
 
-        $css_path = '/wp-content/themes/gowatch-child/includes/frontend-submission/assets/js/frontend-form.css';
-        wp_enqueue_style( 'tszf-form-post-css', $css_path);
+        wp_enqueue_style( 'tszf-form-post-css', get_stylesheet_directory_uri() . '/includes/frontend-submission/assets/js/frontend-form.css');
 
-        $js_path = '/wp-content/themes/gowatch-child/includes/frontend-submission/assets/js/frontend-form.js';
-        wp_enqueue_script( 'tszf-form-custom', $js_path, array('jquery'), false, true );
+        wp_enqueue_script( 'tszf-form-custom', get_stylesheet_directory_uri() . '/includes/frontend-submission/assets/js/frontend-form.js', array('jquery'), false, true );
 
         wp_localize_script( 'tszf-form-custom', 'tszf_frontend', array(
             'ajaxurl'       => admin_url( 'admin-ajax.php' ),

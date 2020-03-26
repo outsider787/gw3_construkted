@@ -358,9 +358,12 @@ if ( !class_exists('construkted_PostMeta') ) {
 
             $options['prefix'] = (isset($options['prefix']) && !empty($options['prefix'])) ? $options['prefix'] : '';
 
-            $meta = '<a href="' .  get_author_posts_url( $author ) . '" rel="author">
-						<span class="vcard author author_name"><span class="fn">' . get_the_author_meta( 'display_name', $author ) . '</span></span>
-					</a>';
+            $meta = (!empty($options['avatar']) ? '<span class="post-author-avatar">' . airkit_get_avatar( get_the_author_meta('ID'), 50 ) . '</span>' : '') . '
+						<span class="vcard author author_name">
+                            <a href="' .  get_author_posts_url( $author ) . '" rel="author">
+                            <span class="fn">' . get_the_author_meta( 'display_name', $author ) . '</span></a>' . esc_html__(' on ', 'gowatch-child') . (!empty($options['date']) ? self::date($post_ID, array('wrap' => 'span')) : '') . '
+                        </span>
+					';
 
             return self::wrap_meta( $meta, $options );
         }

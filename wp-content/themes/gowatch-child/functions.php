@@ -47,11 +47,11 @@ require(CONSTRUKTED_PATH . '/includes/functions.php');
 require(CONSTRUKTED_PATH . '/includes/ajax.php');
 require(CONSTRUKTED_PATH . '/includes/admin/admin.php');
 require(CONSTRUKTED_PATH . '/includes/frontend-submission/includes/construkted/loader.php');
-require (CONSTRUKTED_PATH . '/includes/class.compilator.php' );
+require(CONSTRUKTED_PATH . '/includes/class.compilator.php' );
 require(CONSTRUKTED_PATH . '/includes/construkted/construkted.php');
 
 // Post Meta
-require ( CONSTRUKTED_PATH . '/includes/class.postmeta.php' );
+require(CONSTRUKTED_PATH . '/includes/class.postmeta.php' );
 
 add_action('wp_enqueue_scripts', 'gowatch_child_enqueue_styles');
 
@@ -93,11 +93,10 @@ function html_for_asset_download_button($post_ID, $options = array())
 
     $href = $s3_server_url . '/' . $author_display_name . '/' . $post_slug . '-' . $original_3d_file_base_name;
 
-    return '<div class="airkit_add-to-favorite ' . implode(' ', $wrap_classes) . '"> 
-                    <a class="btn-download ' . implode(' ', $btn_classes) . '" href="' . esc_url($href) . '" title="' . $label_text . '">
+    return '<a class="btn-download gw3-button' . implode(' ', $btn_classes) . '" href="' . esc_url($href) . '" title="' . $label_text . '">
+        <i class="icon-download-full"></i> 
                         ' . $download_label . '
-                    </a>
-            </div>';
+            </a>';
 }
 
 $construkted_admin = new CONSTRUKTED_Admin();
@@ -251,9 +250,7 @@ function override_upload_script() {
     function dequeue_parent_script() {
         wp_dequeue_script( 'tszf-upload' );
 
-        $js_path = '/wp-content/themes/gowatch-child/includes/frontend-submission/assets/js/upload.js';
-
-        wp_enqueue_script( 'construkted-upload', $js_path, array('jquery', 'plupload-handlers'), false, true );
+        wp_enqueue_script( 'construkted-upload', get_stylesheet_directory_uri() . '/includes/frontend-submission/assets/js/upload.js', array('jquery', 'plupload-handlers'), false, true );
 
         wp_localize_script( 'construkted-upload', 'tszf_frontend_upload', array(
             'confirmMsg' => __( 'Are you sure?', 'gowatch' ),

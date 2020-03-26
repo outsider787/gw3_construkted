@@ -98,10 +98,9 @@ class CONSTRUKTED_Admin {
         add_action( 'construkted_settings_content', array( $this, 'construkted_settings_content' ) );
     }
 
-    function enqueue_custom_scripts_styles() {
-        $js_path = '/wp-content/themes/gowatch-child/includes/admin/js/construkted.js';
+    function enqueue_custom_scripts_styles() {;
 
-        wp_enqueue_script( 'construkted-admin-script', $js_path, array('jquery'), false, true );
+        wp_enqueue_script( 'construkted-admin-script', get_stylesheet_directory_uri() . '/includes/admin/js/construkted.js', array('jquery'), false, true );
         wp_enqueue_style('construkted-admin-css', get_stylesheet_directory_uri() . '/includes/admin/css/gw3-admin-css.css' );
 
         wp_localize_script( 'construkted-admin-script', 'construktedAdminParam', array(

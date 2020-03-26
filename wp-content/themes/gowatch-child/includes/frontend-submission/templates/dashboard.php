@@ -309,9 +309,8 @@ $shown_ids = array();
 <?php if( $post_type_obj ) { do_action( 'tszf_dashboard_top', $userdata->ID, $post_type_obj ); } ?>
 
 <?php
-$script_dir = '/wp-content/themes/gowatch-child/includes/frontend-submission/assets/js';
 
-wp_enqueue_script( 'dashboard-js', $script_dir . '/dashboard.js', array('jquery'), false, true );
+wp_enqueue_script( 'dashboard-js', get_stylesheet_directory_uri() . '/includes/frontend-submission/assets/js/dashboard.js', array('jquery'), false, true );
 ?>
 
 

@@ -133,7 +133,7 @@ function try_render_embed_cesium_viewer() {
 
     $post = $posts[0];
 
-    $server_url = home_url();
+    $server_url = get_stylesheet_directory_uri();
 
     echo '
         <style>
@@ -144,11 +144,11 @@ function try_render_embed_cesium_viewer() {
         ';
 
     echo '<link rel="stylesheet" href="https://cesiumjs.org/releases/' . CESIUMJS_VER . '/Build/Cesium/Widgets/widgets.css" type="text/css">';
-    echo '<link rel="stylesheet" href="' . $server_url. '/wp-content/themes/gowatch-child/css/construkted.css" type="text/css">';
+    echo '<link rel="stylesheet" href="' . $server_url. '/css/construkted.css" type="text/css">';
     echo '<script type="text/javascript" src="' . $server_url . '/wp-includes/js/jquery/jquery.js"></script>';
     echo '<script type="text/javascript" src="https://cesiumjs.org/releases/' . CESIUMJS_VER . '/Build/Cesium/Cesium.js"></script>';
-    echo '<script type="text/javascript" src="' . $server_url . '/wp-content/themes/gowatch-child/js/cesium-ion-sdk-plugin.js"></script>';
-    echo '<script type="text/javascript" src="' . $server_url . '/wp-content/themes/gowatch-child/js/cs-camera-controller.js"></script>';
+    echo '<script type="text/javascript" src="' . $server_url . '/js/cesium-ion-sdk-plugin.js"></script>';
+    echo '<script type="text/javascript" src="' . $server_url . '/js/cs-camera-controller.js"></script>';
 
     // prepare javascript parameters
     echo '<script>';
@@ -163,7 +163,7 @@ function try_render_embed_cesium_viewer() {
 
     echo '</script>';
 
-    echo '<script type="text/javascript" src="' . $server_url . '/wp-content/themes/gowatch-child/js/construkted.js"></script>';
+    echo '<script type="text/javascript" src="' . $server_url . '/js/construkted.js"></script>';
 
     echo '<div id="cesiumContainer"></div>';
     echo '<div id="toolbar"><button id="exitFPVModeButton" style="display: none" class="cesium-button">EXIT FPV MODE</button></div>';

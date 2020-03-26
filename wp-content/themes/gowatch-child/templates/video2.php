@@ -136,21 +136,15 @@ $article_atts['class'] = get_post_class( $article_classes );
 				<aside class="post-meta">
 					<div class="post-meta-author">
 						<?php
-							$date_published = airkit_PostMeta::date( $post->ID, array('wrap' => 'span', 'prefix' => esc_html__('Published', 'gowatch') ) );
 							if ( 'y' == airkit_option_value('single', 'video_meta') ) {
-								echo airkit_PostMeta::author( $post->ID, array('wrap' => 'div', 'prefix' => '<span class="post-author-avatar">' . airkit_get_avatar( get_the_author_meta('ID'), 50 ) . '</span>', 'postfix' => $date_published ) );
+								echo construkted_PostMeta::author( $post->ID, array('wrap' => 'div', 'avatar' => true, 'date' => true) );
 							}
 						?>
 					</div>
-	                <div class="post-meta-actions">
-	                    <?php
-	                        echo html_for_asset_download_button( $post->ID, array( 'single' => 'y' ) );
-	                    ?>
-	                </div>
 					<div class="post-meta-actions">
 						<?php
-							echo airkit_PostMeta::add_to_favorite( $post->ID, array( 'label' => true, 'single' => 'y' ) );
-							echo airkit_PostMeta::add_to_playlist( $post->ID, array( 'label' => false, 'single' => 'y' ) );
+							// echo airkit_PostMeta::add_to_favorite( $post->ID, array( 'label' => true, 'single' => 'y' ) );
+							//echo airkit_PostMeta::add_to_playlist( $post->ID, array( 'label' => false, 'single' => 'y' ) );
 							construkted_single_sharing( array('label' => 'y', 'tooltip-popover' => 'y') );
 							if ( 'y' == airkit_option_value('single', 'video_meta') ) {
 								echo airkit_PostMeta::rating( $post->ID, array( 'type' => 'form', 'wrap' => 'div' ) );
@@ -171,15 +165,24 @@ $article_atts['class'] = get_post_class( $article_classes );
 							$content = apply_filters( 'the_content', get_the_content() );
 							airkit_check_subscribers_only($content);
 
-							do_action( 'airkit_below_single_content' );
-
-							airkit_post_user_actions();
 						?>
 					</div>
 					
 					<?php if ( $content_size_class == 'less-content' ): ?>
 						<div class="content-toggler"><span><em><?php echo esc_html__('Show more', 'gowatch') ?></em> <i class="icon-down"></i></span></div>
 					<?php endif ?>
+					<div class="asset-action-buttons">
+						<?php
+	                        echo html_for_asset_download_button( $post->ID, array( 'single' => 'y' ) );
+	                    ?>
+	                     <a href="#" class="gw3-button embed-code-link outline" data-action="show-embed-code-link"><i class="icon-website-code"></i> <?php esc_html_e('Embed', 'gowatch'); ?></a>
+						<div class="embed-content show-embed-code-link">
+							<h4><?php esc_html_e( 'Embed Asset', $domain = 'default' ) ?></h4>
+							<textarea id="video-embed-code"><?php echo construkted_PostMeta::video_embed_code( $post_ID ); ?></textarea>
+						</div>
+					</div>
+					<?php do_action( 'airkit_below_single_content' ); ?>
+					<?php airkit_post_user_actions(); ?>
 				</aside>
 			</div>
 			<?php echo construkted_asset_info(); ?>

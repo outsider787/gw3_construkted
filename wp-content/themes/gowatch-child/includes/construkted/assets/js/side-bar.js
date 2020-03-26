@@ -31,3 +31,9 @@ jQuery('#scroll-down-btn').on('click', function(){
 
     $("html, body").animate({ scrollTop: toScroll }, 600);
 });
+
+
+jQuery('.embed-code-link').on('click', function(){
+    jQuery('.embed-content').slideToggle();
+    return false;
+});
