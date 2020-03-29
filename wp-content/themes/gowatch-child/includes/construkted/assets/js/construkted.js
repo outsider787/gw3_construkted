@@ -619,6 +619,8 @@ var theApp = (function () {
             navigationHelpButton: false
         });
 
+        viewer.scene.globe.depthTestAgainstTerrain = true;
+
         viewer.extend(Cesium.viewerMeasureMixin, {
             units: new Cesium.MeasureUnits({
                 distanceUnits : Cesium.DistanceUnits.METERS,
