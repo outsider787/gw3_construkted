@@ -781,6 +781,9 @@ popups
     padding: 10px;
     width: 100%;
     height: 60px;
+    background: #f5f6f7;
+    font-size: 14px;
+    color: #555;
 }
 .single-video .post-event-links {
     margin-top: 15px;
@@ -801,6 +804,13 @@ popups
     border-color: transparent !important;
     color: #FFF !important;
     background: rgba(55,105,150,1) !important;
+}
+
+article .entry-meta-date a::after {
+    display: none;
+}
+.airkit_widget_stats .list-stats {
+    text-align: center;
 }
 
 @media only screen and (max-width: 768px) {
