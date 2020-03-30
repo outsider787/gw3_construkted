@@ -81,7 +81,8 @@ function html_for_asset_download_button($post_ID, $options = array())
     }
 
     // prepare download link
-    $s3_server_url = 'https://uploads-construkted.s3.us-east-2.amazonaws.com';
+    //$s3_server_url = 'https://uploads-construkted.s3.us-east-2.amazonaws.com';  //OLD S3 path
+    $s3_server_url = 'https://s3.us-east-2.wasabisys.com/construkted-uploads';  // New Wasabi path
 
     global $post;
 
