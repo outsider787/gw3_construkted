@@ -1,3 +1,9 @@
+/**
+ * external dependency
+ * {Object} theApp
+ *
+ */
+
 jQuery(function ($) {
     var openBtn = $('.bst4-wrapper li.nav-item span.btn');
     var closeBtn = $('.popup-wrapper .close-btn');
@@ -9,19 +15,24 @@ jQuery(function ($) {
 
     openBtn.click(function () {
         hideAllPopup();
+
         if( !jQuery(this).parent().hasClass('active') ) {
             let itemDivID = jQuery(this).attr('id');
             let popupID = itemDivID.replace('-btn', '');
             jQuery('#' + popupID).show();
         }
+
         $(this).parent().toggleClass('active').siblings().not(this).removeClass('active');
 
+        theApp.tryDeactivateTransformEditor();
     });
 
 
     closeBtn.click(function () {
         jQuery(this).parents('.popup-wrapper').hide();
-        jQuery('#end-measurement').trigger('click')
+        jQuery('#end-measurement').trigger('click');
+
+        theApp.tryDeactivateTransformEditor();
     });
 
 });
@@ -35,5 +46,6 @@ jQuery('#scroll-down-btn').on('click', function(){
 
 jQuery('.embed-code-link').on('click', function(){
     jQuery('.embed-content').slideToggle();
+
     return false;
 });

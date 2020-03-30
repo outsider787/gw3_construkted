@@ -669,14 +669,14 @@ var theApp = (function () {
         //tilesets.pointCloudShading.attenuation = true;
         //tilesets.pointCloudShading.maximumAttenuation = 5;
 
-		tilesets.pointCloudShading.maximumAttenuation = 1.2; // Don't allow points larger than 4 pixels.
-		tilesets.pointCloudShading.baseResolution = 0.44; // Assume an original capture resolution of 5 centimeters between neighboring points.
-		tilesets.pointCloudShading.geometricErrorScale = 0.3; // Applies to both geometric error and the base resolution.
-		tilesets.pointCloudShading.attenuation = true;
-		tilesets.pointCloudShading.eyeDomeLighting = true;
-		tilesets.pointCloudShading.eyeDomeLightingStrength = 0.5;
-		tilesets.pointCloudShading.eyeDomeLightingRadius = 0.5;
-		
+        tilesets.pointCloudShading.maximumAttenuation = 1.2; // Don't allow points larger than 4 pixels.
+        tilesets.pointCloudShading.baseResolution = 0.44; // Assume an original capture resolution of 5 centimeters between neighboring points.
+        tilesets.pointCloudShading.geometricErrorScale = 0.3; // Applies to both geometric error and the base resolution.
+        tilesets.pointCloudShading.attenuation = true;
+        tilesets.pointCloudShading.eyeDomeLighting = true;
+        tilesets.pointCloudShading.eyeDomeLightingStrength = 0.5;
+        tilesets.pointCloudShading.eyeDomeLightingRadius = 0.5;
+
         tilesets.readyPromise.then(function(){
             var options = {
                 exitFPVModeButtonId: 'exitFPVModeButton',
@@ -855,10 +855,18 @@ var theApp = (function () {
         });
     }
 
+    function tryDeactivateTransformEditor() {
+        if(!transformEditor)
+            return;
+
+        transformEditor.viewModel.deactivate();
+    }
+
     return {
         viewer: viewer,
         cameraController: cameraController,
-        start: start
+        start: start,
+        tryDeactivateTransformEditor: tryDeactivateTransformEditor
     };
 })();
 
