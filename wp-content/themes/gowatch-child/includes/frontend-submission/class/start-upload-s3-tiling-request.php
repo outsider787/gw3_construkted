@@ -43,18 +43,22 @@ $file_name = $post_slug  . '-' . basename($asset_file_path);
 
 require dirname( __FILE__ ) . '/amazon-s3/vendor/autoload.php';
 
-$s3 = new Aws\S3\S3MultiRegionClient( array(
-    'version'           => '2006-03-01',
+use Aws\S3\S3Client;
+use Aws\S3\Exception\S3Exception;
+
+// Instantiate the S3 client using your Wasabi profile
+$s3Client = S3Client::factory(array(
     'credentials'       => array(
         'key'    => $s3_access_id,
         'secret' => $s3_secret_key,
     ),
-    'signature_version' => 'v4',
-    'scheme'            => $schema
-) );
+    'endpoint' => 'http://s3.us-east-2.wasabisys.com',
+    'region' => 'us-east-1',
+    'version' => 'latest',
+));
 
 try {
-    $s3->putObject( array(
+    $s3Client->putObject( array(
         'Bucket'     => $s3_bucket,
         'Key'        => $folder . $file_name,
         'SourceFile' => $asset_file_path,

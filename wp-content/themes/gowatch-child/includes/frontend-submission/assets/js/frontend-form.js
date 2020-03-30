@@ -811,7 +811,7 @@
                 type : 'get',
                 data : {
                 },
-                timeout: 1000,
+                timeout: 3000,
                 error: function(xhr, status, error) {
                     jQuery('.add-new-page > .container').html('<div class="upload-notification"><i class="icon-attention"></i> The processing server is currently down. Please return back later. <button onClick="window.history.back()">Back</button></div>');
                 }
