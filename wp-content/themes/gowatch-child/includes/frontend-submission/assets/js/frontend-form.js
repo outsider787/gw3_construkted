@@ -811,7 +811,11 @@
                 type : 'get',
                 data : {
                 },
-                timeout: 3000,
+                timeout: 8000,
+                success: function(xhr, status, error) {
+                    jQuery('.api-verify').hide();
+                    jQuery('.add-new-contents').removeClass('hidden');
+                },
                 error: function(xhr, status, error) {
                     jQuery('.add-new-page > .container').html('<div class="upload-notification"><i class="icon-attention"></i> The processing server is currently down. Please return back later. <button onClick="window.history.back()">Back</button></div>');
                 }

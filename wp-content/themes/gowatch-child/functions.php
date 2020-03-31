@@ -285,3 +285,8 @@ function construkted_upload_mimes($mime_types) {
 }
 
 add_action('upload_mimes', 'construkted_upload_mimes');
+
+
+function construkted_preloader(){
+    return '<div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>';
+}

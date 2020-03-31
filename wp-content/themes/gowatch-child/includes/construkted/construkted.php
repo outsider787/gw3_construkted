@@ -31,9 +31,12 @@ function enqueue_construkted_scripts(){
 
     error_log('saved tileset_model_matrix_json :' . $tileset_model_matrix_json);
 
+    // Get Cesium Settings from the admin panel
+    $cesium_options = get_option( 'cesium_options' );
+
     wp_localize_script( 'construkted-script', 'CONSTRUKTED_AJAX',
         array(
-            'cesium_access_token' => CONSTRUKTED_CESIUM_ACCESS_TOKEN,
+            'cesium_access_token' => $cesium_options['construkted-cesium-access-token'],
             'ajaxurl' => admin_url( 'admin-ajax.php' ),
             'post_id' => $post_id,
             'post_slug' => $post_slug,
