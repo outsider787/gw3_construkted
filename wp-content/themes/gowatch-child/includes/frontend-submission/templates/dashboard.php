@@ -113,22 +113,25 @@ unset($frontend_dashboard->profile_tabs['playlists']);
                                             }
                                         ?>
                                     </div>
-                                    <h3 class="tszf-section-title"><?php echo esc_html__('Favorites', 'gowatch'); ?></h3>
-                                    <div class="row">
-                                        <?php
-                                            if ( is_object($favorites_query) ) {
-                                                echo airkit_Compilator::view_articles( $view_options, $favorites_query );
-                                            }
-                                        ?>
-                                    </div>
-                                    <h3 class="tszf-section-title"><?php echo esc_html__('Created playlists', 'gowatch'); ?></h3>
-                                    <div class="row">
-                                        <?php
-                                            if ( is_object($playlists_query) ) {
-                                                echo airkit_Compilator::playlists( $playlist_view_options, $playlists_query );
-                                            }
-                                        ?>
-                                    </div>
+                                    <!-- This for removing favorites and playlists for this specific setup -->
+                                    <?php if( 1 == 2  ): ?>
+                                        <h3 class="tszf-section-title"><?php echo esc_html__('Favorites', 'gowatch'); ?></h3>
+                                        <div class="row">
+                                            <?php
+                                                if ( is_object($favorites_query) ) {
+                                                    echo airkit_Compilator::view_articles( $view_options, $favorites_query );
+                                                }
+                                            ?>
+                                        </div>
+                                        <h3 class="tszf-section-title"><?php echo esc_html__('Created playlists', 'gowatch'); ?></h3>
+                                        <div class="row">
+                                            <?php
+                                                if ( is_object($playlists_query) ) {
+                                                    echo airkit_Compilator::playlists( $playlist_view_options, $playlists_query );
+                                                }
+                                            ?>
+                                        </div>
+                                    <?php endif; ?>
 
                                 <?php elseif ( 'posts' == $key ): ?>
                                     <div class="row">

@@ -921,6 +921,13 @@ article .entry-meta-date a::after {
     color: #000;
 }
 
+.add-new-contents {
+    width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 100%;
+}
+
 @media only screen and (max-width: 768px) {
     .single-video .post-header .entry-meta-views {
         margin-top: 0;
