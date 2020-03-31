@@ -77,7 +77,7 @@ unset($frontend_dashboard->profile_tabs['playlists']);
                             <?php else: ?>
                                 <?php if ( $is_my_profile ): ?>
                                     <li class="<?php echo esc_attr($tab['class']); ?>">
-                                        <a href="<?php echo esc_url($tab['url']); ?>"><?php echo airkit_var_sanitize($tab['title'], 'the_kses'); ?></a>
+                                        <a href="<?php echo esc_url($tab['url']); ?>"><?php echo airkit_var_sanitize($tab['title'], 'the_kses') . esc_html__('Settings', 'gowatch-child');; ?></a>
                                     </li>
                                 <?php endif ?>
                             <?php endif ?>

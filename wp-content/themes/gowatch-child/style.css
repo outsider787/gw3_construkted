@@ -928,6 +928,21 @@ article .entry-meta-date a::after {
     max-width: 100%;
 }
 
+.has-background-img {
+    background-position: center center;
+}
+
+.tszf-author-tabs .nav li.ts-item-tab-settings > a {
+    padding: 5px 14px;
+}
+
+.single-post-navigation .navigation > li [class^="page-"] {
+    border-radius: 100px;
+}
+.single-post-navigation .navigation > li [class^="page-"] > h4 {
+    margin-top: 0;
+}
+
 @media only screen and (max-width: 768px) {
     .single-video .post-header .entry-meta-views {
         margin-top: 0;
