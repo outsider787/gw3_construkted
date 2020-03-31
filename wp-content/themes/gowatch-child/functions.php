@@ -1,9 +1,5 @@
 <?php
 
-if (!defined('CONSTRUKTED_CESIUM_ACCESS_TOKEN')) {
-    define('CONSTRUKTED_CESIUM_ACCESS_TOKEN', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2MzJlNDI2ZC1hMmE5LTQ4MjEtYmQwYS1iMDRlNTNjM2JiZTkiLCJpZCI6MjkyMSwiaWF0IjoxNTM1MjE4Mjk1fQ.jMg72t7Gnkk4-E9G7zhd_CoTJBUJ39hHALmxGBRL1ok');
-}
-
 if (!defined('CONSTRUKTED_PATH')) {
     define('CONSTRUKTED_PATH', get_stylesheet_directory());
 }

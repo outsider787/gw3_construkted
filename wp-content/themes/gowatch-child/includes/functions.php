@@ -699,7 +699,7 @@ function custom_user_element_function( $options ) {
                         </div>
                         <ul class="user-menu">
                             <li class="add-post">
-                                <a href="'. esc_url( get_frontend_submit_url() ) .'"><i class="icon-small-upload-button-with-an-arrow"></i>'. esc_html__( 'Add new post', 'gowatch' ) .'</a>
+                                <a href="'. esc_url( get_frontend_submit_url() ) .'"><i class="icon-small-upload-button-with-an-arrow"></i>'. esc_html__( 'Add new asset', 'gowatch' ) .'</a>
                             </li>
                             <li class="profile">
                                 <a href="'. esc_url( $dashboard_url ) .'"><i class="icon-user"></i>'. esc_html__( 'Profile', 'gowatch' ) .'</a>

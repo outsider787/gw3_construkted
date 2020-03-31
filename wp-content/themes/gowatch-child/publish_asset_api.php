@@ -62,46 +62,89 @@ else {
     exit;
 }
 
-function set_default_thumbnail_of_no_thumbnail($post_id, $slug) {
-    $thumbnailFileName = 'thumbnail_' . $slug . '.png';
-    $wordpress_upload_dir = wp_upload_dir();
-    $thumbnail_file_path = $wordpress_upload_dir['path'] . '/' . $thumbnailFileName;
-    $orig_thumbnail_file_path = get_stylesheet_directory() . '/images/default_image-noThumbnail-flat.png';
+if( ! ( function_exists( 'wp_get_attachment_by_post_name' ) ) ) {
+    function wp_get_attachment_by_post_name( $post_name ) {
+            $args           = array(
+                'posts_per_page' => 1,
+                'post_type'      => 'attachment',
+                'name'           => trim( $post_name ),
+            );
 
-    $ret = copy($orig_thumbnail_file_path, $thumbnail_file_path);
+            $get_attachment = new WP_Query( $args );
 
-    if($ret == false)
-        wp_die('failed to copy image');
+            if ( ! $get_attachment || ! isset( $get_attachment->posts, $get_attachment->posts[0] ) ) {
+                return false;
+            }
 
-    $attachment = array(
-        'post_author' => 1,
-        'post_date' => current_time('mysql'),
-        'post_date_gmt' => current_time('mysql'),
-        'post_title' => preg_replace( '/\.[^.]+$/', '', basename(  $thumbnail_file_path) ),
-        'post_status' => 'inherit',
-        'comment_status' => 'open',
-        'ping_status' => 'closed',
-        'post_name' => sanitize_title_with_dashes(str_replace("_", "-", $thumbnail_file_path)),
-        'post_modified' => current_time('mysql'),
-        'post_modified_gmt' => current_time('mysql'),
-        'post_parent' => $post_id,
-        'post_type' => 'attachment',
-        'guid' => $thumbnail_file_path,
-        'post_mime_type' => 'image/png',
-        'post_excerpt' => '',
-        'post_content' => ''
-    );
-
-    //insert the database record
-    $attachment_id = wp_insert_attachment( $attachment, $thumbnail_file_path, $post_id );
-
-    if($attachment_id == 0) {
-        wp_die('failed to insert attachment!');
+            return $get_attachment->posts[0];
     }
+}
 
-    $attachment_meta_data = wp_generate_attachment_metadata( $attachment_id, $thumbnail_file_path);
+function set_default_thumbnail_of_no_thumbnail($post_id, $slug) {
 
-    wp_update_attachment_metadata($attachment_id, $attachment_meta_data);
+    // Check if we have the ID of the thumbnail stored in the object cache
+    $noimage_thumbnail_id = wp_cache_get('construkted_noimage', 'construkted');
+
+    if( !empty($noimage_thumbnail_id) && $noimage_thumbnail_id == true ) {
+        // Found something in object cache
+        $attachment_id = $noimage_thumbnail_id;
+
+    } else {
+
+        // If nothing was found in object cache, try to get it by the post title
+        $default_image = wp_get_attachment_by_post_name('default_nothumbnail_image');
+        if( $default_image ) {
+            $default_image = wp_get_attachment_by_post_name('default_nothumbnail_image');
+            $attachment_id = $default_image->ID;
+
+        } else {
+
+
+            // If nothing is found in object cache and no media ID with that title if found, upload a new one
+            $thumbnailFileName = 'thumbnail_' . $slug . '.png';
+            $wordpress_upload_dir = wp_upload_dir();
+            $thumbnail_file_path = $wordpress_upload_dir['path'] . '/' . $thumbnailFileName;
+            $orig_thumbnail_file_path = get_stylesheet_directory() . '/images/default_image-noThumbnail-flat.png';
+
+            $ret = copy($orig_thumbnail_file_path, $thumbnail_file_path);
+
+            if($ret == false)
+                wp_die('failed to copy image');
+
+            $attachment = array(
+                'post_author' => 1,
+                'post_date' => current_time('mysql'),
+                'post_date_gmt' => current_time('mysql'),
+                'post_title' => 'default_nothumbnail_image',
+                'post_status' => 'inherit',
+                'comment_status' => 'open',
+                'ping_status' => 'closed',
+                'post_name' => sanitize_title_with_dashes(str_replace("_", "-", $thumbnail_file_path)),
+                'post_modified' => current_time('mysql'),
+                'post_modified_gmt' => current_time('mysql'),
+                'post_parent' => $post_id,
+                'post_type' => 'attachment',
+                'guid' => $thumbnail_file_path,
+                'post_mime_type' => 'image/png',
+                'post_excerpt' => '',
+                'post_content' => ''
+            );
+
+            //insert the database record
+            $attachment_id = wp_insert_attachment( $attachment, $thumbnail_file_path, $post_id );
+
+            if($attachment_id == 0) {
+                wp_die('failed to insert attachment!');
+            }
+
+            $attachment_meta_data = wp_generate_attachment_metadata( $attachment_id, $thumbnail_file_path);
+
+            wp_update_attachment_metadata($attachment_id, $attachment_meta_data);
+
+        }
+        wp_cache_set('construkted_noimage', $attachment_id, 'construkted');
+    }
+    
 
     $ret = update_post_meta( $post_id, '_thumbnail_id', $attachment_id );
 
