@@ -40,6 +40,11 @@ $airkit_sidebar = airkit_Compilator::build_sidebar( 'page', get_the_ID() );
 
 global $shown_ids;
 $shown_ids = array();
+
+// Get rid of the favorites and playlists for this specific setup
+unset($frontend_dashboard->profile_tabs['favorites']);
+unset($frontend_dashboard->profile_tabs['playlists']);
+
 ?>
 
 <div class="tszf-author" itemscope itemtype="https://schema.org/ProfilePage">

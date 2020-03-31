@@ -823,6 +823,16 @@ article .entry-meta-date a::after {
     font-size: 22px;
 }
 
+.tszf-section-title {
+    font-size: 1.1em;
+    color: #b3b3b3;
+    text-transform: uppercase;
+    border-bottom: 1px solid #f8f8f8;
+    font-weight: 600;
+}
+.airkit_frontend-dashboard {
+    margin-top: -30px;
+}
 
 /* Start of Preloader */
 .lds-spinner {
@@ -906,6 +916,10 @@ article .entry-meta-date a::after {
   }
 }
 /* End of preloader */
+
+.user-element.text-left .user-dropdown {
+    color: #000;
+}
 
 @media only screen and (max-width: 768px) {
     .single-video .post-header .entry-meta-views {
