@@ -747,3 +747,21 @@ function custom_user_element_function( $options ) {
     return $output;
 
 }
+
+
+if( ! ( function_exists( 'wp_get_attachment_by_post_name' ) ) ) {
+    function wp_get_attachment_by_post_name( $title ) {
+        $attachment = get_page_by_title($title, OBJECT, 'attachment');
+        //print_r($attachment);
+
+        if ( $attachment ){
+
+        $attachment_url = $attachment->ID;
+
+        }else{
+            return false;
+        }
+
+        return $attachment_url;
+    }
+}
