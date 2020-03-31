@@ -993,7 +993,7 @@ class TSZF_Frontend_Form_Post extends TSZF_Render_Form {
             $default_image = wp_get_attachment_by_post_name('default_processing_image');
             if( $default_image ) {
                 $default_image = wp_get_attachment_by_post_name('default_processing_image');
-                $attachment_id = $default_image->ID;
+                $attachment_id = $default_image;
 
             } else {
 
@@ -1037,14 +1037,13 @@ class TSZF_Frontend_Form_Post extends TSZF_Render_Form {
 
                 wp_update_attachment_metadata($attachment_id, $attachment_meta_data);
 
-                $ret = update_post_meta( $post_id, '_thumbnail_id', $attachment_id );
-
-                if($ret == false)
-                   wp_die('failed to update post meta!');
-
             }
+            wp_cache_set('construkted_processingimage', $attachment_id, 'construkted');
         }
-        wp_cache_set('construkted_processingimage', $attachment_id, 'construkted');
+        $ret = update_post_meta( $post_id, '_thumbnail_id', $attachment_id );
+
+        if($ret == false)
+           wp_die('failed to update post meta!');
     }
 
     static function convert_asset_type_from_gowatch_to_edd6($asset_type) {

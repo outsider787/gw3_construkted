@@ -77,7 +77,7 @@ function set_default_thumbnail_of_no_thumbnail($post_id, $slug) {
         $default_image = wp_get_attachment_by_post_name('default_nothumbnail_image');
         if( $default_image ) {
             $default_image = wp_get_attachment_by_post_name('default_nothumbnail_image');
-            $attachment_id = $default_image->ID;
+            $attachment_id = $default_image;
 
         } else {
 

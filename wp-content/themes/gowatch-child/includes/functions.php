@@ -650,113 +650,16 @@ function construkted_asset_info() {
     return $output;
 }
 
-
 /**
- * Function to overwrite the parent theme user element
+ * Function to retrieve the attachment by the title
  */
-
-function custom_user_element_function( $options ) {
-
-    $align = isset( $options['align'] ) ? strip_tags( $options['align'] ) : '';
-    $column = isset( $options['columns'] ) && !empty( $options['columns'] ) ? $options['columns'] : 'col-lg-12';
-
-    $dropdown = '';
-    $links = '';
-
-    // Generate output for logged in users.
-    if( is_user_logged_in() ) {
-
-        $userdata = wp_get_current_user();
-
-        $dashboard_url = get_frontend_dashboard_url();
-        $my_posts_url = add_query_arg( 'active_tab', 'posts', $dashboard_url );
-        $settings_url = add_query_arg( 'active_tab', 'settings', $dashboard_url );
-
-        /*
-         | If BuddyPress is enabled, get BuddyPress URLs.
-         */
-        if( method_exists('Airkit_BP_Extend', 'overwrite_user_permalinks') ) {
-
-            $bp_extend = new Airkit_BP_Extend();
-
-            /*
-             | List returned array fields to variables.
-             */
-            list( $dashboard_url, $my_posts_url, $favorites_url, $settings_url ) = $bp_extend->overwrite_user_permalinks();
-
-        }
-
-        $image_with_link = '<a href="'. esc_url( $dashboard_url ) .'">'. airkit_get_avatar( $userdata->ID, 60 ) .'</a>';
-        $username        = '<a href="'. esc_url( $dashboard_url ) .'" class="username">'. $userdata->display_name .'</a>';
-        $role            = '<span class="role">'. $userdata->user_email .'</span>';
-        
-        // Build dropdown menu.
-
-        $dropdown = '<div class="user-dropdown text-left">
-                        <div class="user-image">'. $image_with_link .'</div>
-                        <div class="user-info">
-                            '. $username . $role .'
-                        </div>
-                        <ul class="user-menu">
-                            <li class="add-post">
-                                <a href="'. esc_url( get_frontend_submit_url() ) .'"><i class="icon-small-upload-button-with-an-arrow"></i>'. esc_html__( 'Add new asset', 'gowatch' ) .'</a>
-                            </li>
-                            <li class="profile">
-                                <a href="'. esc_url( $dashboard_url ) .'"><i class="icon-user"></i>'. esc_html__( 'Profile', 'gowatch' ) .'</a>
-                            </li>
-                            <li class="profile">
-                                <a href="'. esc_url( $my_posts_url ) .'"><i class="icon-play"></i>'. esc_html__( 'My assets', 'gowatch' ) .'</a>
-                            </li>                                                
-                            <li class="settings">
-                                <a href="'. esc_url( $settings_url  ) .'"><i class="icon-settings"></i>'. esc_html__( 'Account Settings', 'gowatch' ) .'</a>
-                            </li>                           
-                            <li class="logout">
-                                <a href="'. wp_logout_url() .'"><i class="icon-logout"></i>'. esc_html__( 'Sign out', 'gowatch' ) .'</a>
-                            </li>
-                        </ul>
-                    </div>';
-
-        $links  = '<a href="'. esc_url( get_frontend_submit_url() ) .'" class="user-upload"><i class="icon-small-upload-button-with-an-arrow"></i></a><div class="user-image">'. $image_with_link .'<i class="icon-down"></i></div>';
-
-    } else {
-
-        $register_url = $login_url = get_frontend_registration_url();
-
-        if( function_exists('bp_is_active') ){  
-            // Only registration URL can ber overwritten
-            $register_url = wp_registration_url();
-            $login_url  = wp_login_url();
-
-        }
-
-        // Generate output for not logged in users.
-        $links           = '<a href="'. esc_url( get_frontend_submit_url() ) .'" class="user-upload"><i class="icon-small-upload-button-with-an-arrow"></i></a>';
-        $links          .= '<a class="btn small btn-primary" href="'. esc_url( $login_url ) .'?action=login">'. esc_html__( 'Sign in', 'gowatch' ) .'</a>';
-        $links          .= '<a class="btn small" href="'. esc_url( $register_url ) .'?action=signup">'. esc_html__( 'Sign up', 'gowatch' ) .'</a>';
-        $links          .= '<a class="mini-user-login" href="'. esc_url( $login_url ) .'?action=login"><i class="icon-user-full"></i></a>';
-
-    }
-
-    $output  = '<div class="'. $column .'">
-                    <div class="user-element clearfix '. $align .'">
-                        '. $links .'
-                        '. $dropdown .'
-                    </div>
-                </div>';
-
-    return $output;
-
-}
-
-
 if( ! ( function_exists( 'wp_get_attachment_by_post_name' ) ) ) {
     function wp_get_attachment_by_post_name( $title ) {
         $attachment = get_page_by_title($title, OBJECT, 'attachment');
-        //print_r($attachment);
 
         if ( $attachment ){
 
-        $attachment_url = $attachment->ID;
+            $attachment_url = $attachment->ID;
 
         }else{
             return false;

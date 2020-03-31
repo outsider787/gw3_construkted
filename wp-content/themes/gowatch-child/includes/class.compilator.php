@@ -2240,13 +2240,7 @@ public static function user_element( $options = array( ))
 							</li>
 							<li class="profile">
 								<a href="'. esc_url( $my_posts_url ) .'"><i class="icon-play"></i>'. esc_html__( 'My assets', 'gowatch' ) .'</a>
-							</li>
-							<li class="profile">
-								<a href="'. esc_url( $favorites_url ) .'"><i class="icon-heart"></i>'. esc_html__( 'Favorites', 'gowatch' ) .'</a>
-							</li>
-							<li class="profile">
-								<a href="'. esc_url( $my_playlists_url ) .'"><i class="icon-list-add"></i>'. esc_html__( 'My collections', 'gowatch' ) .'</a>
-							</li>													
+							</li>											
 							<li class="settings">
 								<a href="'. esc_url( $settings_url  ) .'"><i class="icon-settings"></i>'. esc_html__( 'Account Settings', 'gowatch' ) .'</a>
 							</li>							
