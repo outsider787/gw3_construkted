@@ -668,3 +668,36 @@ if( ! ( function_exists( 'wp_get_attachment_by_post_name' ) ) ) {
         return $attachment_url;
     }
 }
+
+
+/**
+ * Function to add specific products in cart and redirect to checkout
+ */
+function construkted_package_purchase() {
+
+    // Check if the do purchase parameter is in URL and go
+    if( !empty($_GET['construkted_do_purchase']) ) {
+
+        $product_id = intval(sanitize_key($_GET['construkted_do_purchase']));
+
+        // Double check if the product ID is integer and product is not in CART
+        $product_cart_id = WC()->cart->generate_cart_id( $product_id );
+        $in_cart = WC()->cart->find_product_in_cart( $product_cart_id );
+
+        if( is_numeric($product_id) && !$in_cart ) {
+
+            WC()->cart->add_to_cart( $product_id, 1 );
+
+        }
+        $location = wc_get_checkout_url();
+
+        wp_redirect( $location, $status = 302 );
+
+        return false;
+
+    } else {
+        return false;
+    }
+
+}
+add_action('wp', 'construkted_package_purchase');
