@@ -2205,6 +2205,7 @@ public static function user_element( $options = array( ))
 		$my_playlists_url = add_query_arg( 'active_tab', 'playlists', $dashboard_url );
 		$favorites_url = add_query_arg( 'active_tab', 'favorites', $dashboard_url );
 		$settings_url = add_query_arg( 'active_tab', 'settings', $dashboard_url );
+		$billing_url = add_query_arg( 'active_tab', 'billing', $dashboard_url );
 
 		/*
 		 | If BuddyPress is enabled, get BuddyPress URLs.
@@ -2240,6 +2241,9 @@ public static function user_element( $options = array( ))
 							</li>
 							<li class="profile">
 								<a href="'. esc_url( $my_posts_url ) .'"><i class="icon-play"></i>'. esc_html__( 'My assets', 'gowatch' ) .'</a>
+							</li>
+							<li class="billing">
+								<a href="'. esc_url( $my_posts_url ) .'"><i class="icon-money"></i>'. esc_html__( 'Billing', 'gowatch' ) .'</a>
 							</li>											
 							<li class="settings">
 								<a href="'. esc_url( $settings_url  ) .'"><i class="icon-settings"></i>'. esc_html__( 'Account Settings', 'gowatch' ) .'</a>

@@ -86,7 +86,6 @@ $article_atts['class'] = get_post_class( $article_classes );
 				echo '<span id="scroll-down-btn">' . esc_html__('Details', 'gowatch-child') . ' <i class="icon-down"></i></span>';
 			echo '</div>';
 
-            enqueue_construkted_scripts();
 		echo '</figure>';
 
 		echo airkit_Compilator::playlist_panel($playlist_ID);

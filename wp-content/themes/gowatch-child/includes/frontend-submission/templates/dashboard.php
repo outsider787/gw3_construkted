@@ -21,10 +21,11 @@
  * Configure options for posts listings.
  */
 
-$home_active_tab      = ( 'home' == $active_tab )     ? 'active' : '';
+$home_active_tab      = ( 'home' == $active_tab )      ? 'active' : '';
 $posts_active_tab     = ( 'posts' == $active_tab )     ? 'active' : '';
 $favorites_active_tab = ( 'favorites' == $active_tab ) ? 'active' : '';
 $settings_active_tab  = ( 'settings' == $active_tab )  ? 'active' : '';
+$billing_active_tab   = ( 'billing' == $active_tab )    ? 'active' : '';
 
 $edit_profile = new TSZF_Edit_Profile();
 $frontend_dashboard = new TSZF_Frontend_Dashboard();
@@ -44,6 +45,18 @@ $shown_ids = array();
 // Get rid of the favorites and playlists for this specific setup
 unset($frontend_dashboard->profile_tabs['favorites']);
 unset($frontend_dashboard->profile_tabs['playlists']);
+
+// Create a new tab for the billing
+$billing = array('billing' => array('title' => 'Billing', 'class' => 'billing ' . $billing_active_tab, 'url' => remove_query_arg( 'sortby', add_query_arg( array('active_tab' => 'billing') ) )));
+
+function array_insert_after( array $array, $key, array $new ) {
+    $keys = array_keys( $array );
+    $index = array_search( $key, $keys );
+    $pos = false === $index ? count( $array ) : $index + 1;
+
+    return array_merge( array_slice( $array, 0, $pos ), $new, array_slice( $array, $pos ) );
+}
+$frontend_dashboard->profile_tabs = array_insert_after($frontend_dashboard->profile_tabs, 'posts', $billing);
 
 ?>
 
@@ -132,11 +145,150 @@ unset($frontend_dashboard->profile_tabs['playlists']);
                                             ?>
                                         </div>
                                     <?php endif; ?>
+                                
+                                <?php elseif ( 'billing' == $key ): ?>
+                                    <div class="woocommerce">
+                                    <?php
+                                        $subscription = 0;
+                                        $subscriptions = wcs_get_users_subscriptions($current_user->ID);
+                                        foreach ($subscriptions as $key => $item) {
+                                            if( $item->status == 'active' || $item->status == 'pending-cancel' ){
+                                                $subscription = wc_get_order($item->ID);
+                                            }
+                                        }
 
+                                        wc_print_notices();
+                                    ?>
+                                    <?php if( $subscription != 0): ?>
+                                        <h4><?php esc_html_e( 'Subscription details', 'woocommerce-subscriptions' ); ?></h4>
+                                        <table class="shop_table subscription_details">
+                                            <tbody>
+                                                <tr>
+                                                    <td><?php esc_html_e( 'Status', 'woocommerce-subscriptions' ); ?></td>
+                                                    <td><?php echo esc_html( wcs_get_subscription_status_name( $subscription->get_status() ) ); ?></td>
+                                                </tr>
+                                                <?php do_action( 'wcs_subscription_details_table_before_dates', $subscription ); ?>
+                                                <?php
+                                                $dates_to_display = apply_filters( 'wcs_subscription_details_table_dates_to_display', array(
+                                                    'start_date'              => _x( 'Start date', 'customer subscription table header', 'woocommerce-subscriptions' ),
+                                                    'last_order_date_created' => _x( 'Last order date', 'customer subscription table header', 'woocommerce-subscriptions' ),
+                                                    'next_payment'            => _x( 'Next payment date', 'customer subscription table header', 'woocommerce-subscriptions' ),
+                                                    'end'                     => _x( 'End date', 'customer subscription table header', 'woocommerce-subscriptions' ),
+                                                    'trial_end'               => _x( 'Trial end date', 'customer subscription table header', 'woocommerce-subscriptions' ),
+                                                ), $subscription );
+                                                foreach ( $dates_to_display as $date_type => $date_title ) : ?>
+                                                    <?php $date = $subscription->get_date( $date_type ); ?>
+                                                    <?php if ( ! empty( $date ) ) : ?>
+                                                        <tr>
+                                                            <td><?php echo esc_html( $date_title ); ?></td>
+                                                            <td><?php echo esc_html( $subscription->get_date_to_display( $date_type ) ); ?></td>
+                                                        </tr>
+                                                    <?php endif; ?>
+                                                <?php endforeach; ?>
+                                                <?php do_action( 'wcs_subscription_details_table_after_dates', $subscription ); ?>
+                                                <?php if ( WCS_My_Account_Auto_Renew_Toggle::can_user_toggle_auto_renewal( $subscription ) ) : ?>
+                                                    <tr>
+                                                        <td><?php esc_html_e( 'Auto renew', 'woocommerce-subscriptions' ); ?></td>
+                                                        <td>
+                                                            <div class="wcs-auto-renew-toggle">
+                                                                <?php
+
+                                                                $toggle_classes = array( 'subscription-auto-renew-toggle', 'subscription-auto-renew-toggle--hidden' );
+
+                                                                if ( $subscription->is_manual() ) {
+                                                                    $toggle_label     = __( 'Enable auto renew', 'woocommerce-subscriptions' );
+                                                                    $toggle_classes[] = 'subscription-auto-renew-toggle--off';
+
+                                                                    if ( WC_Subscriptions::is_duplicate_site() ) {
+                                                                        $toggle_classes[] = 'subscription-auto-renew-toggle--disabled';
+                                                                    }
+                                                                } else {
+                                                                    $toggle_label     = __( 'Disable auto renew', 'woocommerce-subscriptions' );
+                                                                    $toggle_classes[] = 'subscription-auto-renew-toggle--on';
+                                                                }?>
+                                                                <a href="#" class="<?php echo esc_attr( implode( ' ' , $toggle_classes ) ); ?>" aria-label="<?php echo esc_attr( $toggle_label ) ?>"><i class="subscription-auto-renew-toggle__i" aria-hidden="true"></i></a>
+                                                                <?php if ( WC_Subscriptions::is_duplicate_site() ) : ?>
+                                                                        <small class="subscription-auto-renew-toggle-disabled-note"><?php echo esc_html__( 'Using the auto-renewal toggle is disabled while in staging mode.', 'woocommerce-subscriptions' ); ?></small>
+                                                                <?php endif; ?>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                <?php endif; ?>
+                                                <?php do_action( 'wcs_subscription_details_table_before_payment_method', $subscription ); ?>
+                                                <?php if ( $subscription->get_time( 'next_payment' ) > 0 ) : ?>
+                                                    <tr>
+                                                        <td><?php esc_html_e( 'Payment', 'woocommerce-subscriptions' ); ?></td>
+                                                        <td>
+                                                            <span data-is_manual="<?php echo esc_attr( wc_bool_to_string( $subscription->is_manual() ) ); ?>" class="subscription-payment-method"><?php echo esc_html( $subscription->get_payment_method_to_display( 'customer' ) ); ?></span>
+                                                        </td>
+                                                    </tr>
+                                                <?php endif; ?>
+                                                <?php do_action( 'woocommerce_subscription_before_actions', $subscription ); ?>
+                                                <?php $actions = wcs_get_all_user_actions_for_subscription( $subscription, get_current_user_id() ); ?>
+                                                <?php if ( ! empty( $actions ) ) : ?>
+                                                    <tr>
+                                                        <td><?php esc_html_e( 'Actions', 'woocommerce-subscriptions' ); ?></td>
+                                                        <td>
+                                                            <?php foreach ( $actions as $key => $action ) : ?>
+                                                                <?php
+                                                                    if( $key == 'cancel' ) {
+                                                                        $action['url'] = str_replace('change_subscription_to','cancel_subscription' , $action['url']);
+                                                                    }
+
+                                                                    if( $key == 'reactivate' ) {
+                                                                        $action['url'] = str_replace('change_subscription_to','reactivate_subscription' , $action['url']);
+                                                                    }
+                                                                ?>
+                                                                <a href="<?php echo esc_url( $action['url'] ); ?>" class="button <?php echo sanitize_html_class( $key ) ?>"><?php echo esc_html( $action['name'] ); ?></a>
+                                                            <?php endforeach; ?>
+                                                        </td>
+                                                    </tr>
+                                                <?php endif; ?>
+                                                <?php do_action( 'woocommerce_subscription_after_actions', $subscription ); ?>
+                                            </tbody>
+                                        </table>
+
+                                        <?php if ( $notes = $subscription->get_customer_order_notes() ) : ?>
+                                            <h4><?php esc_html_e( 'Subscription updates', 'woocommerce-subscriptions' ); ?></h4>
+                                            <ol class="woocommerce-OrderUpdates commentlist notes">
+                                                <?php foreach ( $notes as $note ) : ?>
+                                                <li class="woocommerce-OrderUpdate comment note">
+                                                    <div class="woocommerce-OrderUpdate-inner comment_container">
+                                                        <div class="woocommerce-OrderUpdate-text comment-text">
+                                                            <p class="woocommerce-OrderUpdate-meta meta"><?php echo esc_html( date_i18n( _x( 'l jS \o\f F Y, h:ia', 'date on subscription updates list. Will be localized', 'woocommerce-subscriptions' ), wcs_date_to_time( $note->comment_date ) ) ); ?></p>
+                                                            <div class="woocommerce-OrderUpdate-description description">
+                                                                <?php echo wp_kses_post( wpautop( wptexturize( $note->comment_content ) ) ); ?>
+                                                            </div>
+                                                            <div class="clear"></div>
+                                                        </div>
+                                                        <div class="clear"></div>
+                                                    </div>
+                                                </li>
+                                                <?php endforeach; ?>
+                                            </ol>
+                                        <?php endif; ?>
+
+                                        <?php
+                                        $include_switch_links       = true;
+                                        $include_item_removal_links = wcs_can_items_be_removed( $subscription );
+                                        $totals                     = $subscription->get_order_item_totals();
+
+                                        // Don't display the payment method as it is included in the main subscription details table.
+                                        unset( $totals['payment_method'] );
+                                        ?>
+                                        <h4><?php esc_html_e( 'Subscription totals', 'woocommerce-subscriptions' ); ?></h4>
+
+                                        <?php do_action( 'woocommerce_subscription_totals', $subscription, $include_item_removal_links, $totals, $include_switch_links ); ?>
+                                    <?php else: ?>
+                                        <h4><?php esc_html_e( 'No subscription found.', 'gowatch-child' ); ?></h4>
+                                        <p><?php esc_html_e( 'We could not find any active subscriptions. If you want to activate a subscription please click the button below.', 'gowatch-child' ); ?></p>
+                                        <a class="button" href="<?php echo get_the_permalink( construkted_subscription_product() ); ?>"><?php esc_html_e( 'Upgrade now!', 'gowatch-child' ); ?></a>
+                                    <?php endif; ?>
+                                    </div>
                                 <?php elseif ( 'posts' == $key ): ?>
                                     <div class="row">
-                                        <div class="col-md-6 col-sm-6">Used Storage: <?php echo getTotalUploadedFileGBSizeOfCurrentUser()?> GB | Total Quota: <?php echo getDiskQuotaOfCurrentUser()?>GB <a href="/pricing"><?php esc_html_e( 'Get more storage space.', 'gowatch-child' ); ?></a></div>
-                                        <div class="col-md-6 col-sm-6"><?php $frontend_dashboard->sortby(); ?></div>
+                                        <div class="col-md-8 col-sm-8">Used Storage: <?php echo getTotalUploadedFileGBSizeOfCurrentUser()?> GB | Total Quota: <?php echo getDiskQuotaOfCurrentUser()?>GB <a href="/pricing"><?php esc_html_e( 'Get more storage space.', 'gowatch-child' ); ?></a></div>
+                                        <div class="col-md-4 col-sm-4"><?php $frontend_dashboard->sortby(); ?></div>
                                     </div>
                                     <?php
                                         if ( is_object($dashboard_query) && $dashboard_query->post_count > 0 ) {
@@ -243,7 +395,7 @@ unset($frontend_dashboard->profile_tabs['playlists']);
                                             }
                                         }
                                     ?>
-
+                                    
                                 <?php elseif ( 'favorites' == $key ): ?>
 
                                     <?php $frontend_dashboard->sortby(); ?>

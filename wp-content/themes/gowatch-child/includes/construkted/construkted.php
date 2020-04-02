@@ -3,11 +3,10 @@ require_once __DIR__ . '/asset-view.php';
 require_once __DIR__ . '/side-bar.php';
 
 function enqueue_construkted_scripts(){
-    $script_dir = $script_dir = get_stylesheet_directory_uri() . '/includes/construkted/assets/js/';
+    $script_dir = get_stylesheet_directory_uri() . '/includes/construkted/assets/js/';
 
     wp_enqueue_script('cesium-ion-sdk-plugin-script',  $script_dir . 'cesium-ion-sdk-plugin.js', array('jquery', 'cesiumjs'), CS_LIB_VER, true);
     wp_enqueue_script('cs-camera-controller-script',  $script_dir . 'cs-camera-controller.js', array('jquery', 'cesiumjs'), CS_LIB_VER, true);
-    wp_enqueue_script('side-bar-script',  $script_dir . 'side-bar.js', array('jquery'), CS_LIB_VER, true);
 
     // frontend starting point
     wp_register_script('construkted-script', $script_dir . 'construkted.js',

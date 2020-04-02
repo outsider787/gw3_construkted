@@ -50,53 +50,85 @@ function getDiskQuotaOfCurrentUser() {
         return 0;
     }
 
-    // get user orders (COMPLETED + PROCESSING)
-    $customer_orders = get_posts( array(
-        'numberposts' => -1,
-        'meta_key'    => '_customer_user',
-        'meta_value'  => $current_user->ID,
-        'post_type'   => wc_get_order_types(),
-        'post_status' => array_keys( wc_get_is_paid_statuses() ),
-    ) );
+    $user_quota = DEFAULT_DISK_QUOTA;
 
-    // LOOP THROUGH ORDERS AND GET PRODUCT IDS
-    if ( ! $customer_orders )
-        return DEFAULT_DISK_QUOTA;
+    // Get current user subscriptions
+    $subscriptions = wcs_get_users_subscriptions($current_user->ID);
+    foreach ($subscriptions as $key => $item) {
+        if( $item->status == 'active' ){
+            $subscription = wc_get_order($item->ID);
+            $order_items = $subscription->get_items();
+            foreach ($order_items as $k => $v) {
+                $item_disk_space = $v->get_meta('disk_space');
 
-    $product_ids = array();
+                if( $user_quota < $item_disk_space ) {
+                    $user_quota = $item_disk_space;
+                }
 
-    foreach ( $customer_orders as $customer_order ) {
-        $order = wc_get_order( $customer_order->ID );
-        $items = $order->get_items();
-
-        foreach ( $items as $item ) {
-            $product_id = $item->get_product_id();
-            $product_ids[] = $product_id;
+            }
         }
     }
 
-    $product_ids = array_unique( $product_ids );
+    return $user_quota;
 
-    for ($i = 0; $i < count($product_ids); $i++) {
-        $product = wc_get_product($product_ids[$i]);
+    // // get user orders (COMPLETED + PROCESSING)
+    // $customer_orders = get_posts( array(
+    //     'numberposts' => -1,
+    //     'meta_key'    => '_customer_user',
+    //     'meta_value'  => $current_user->ID,
+    //     'post_type'   => wc_get_order_types(),
+    //     'post_status' => array_keys( wc_get_is_paid_statuses() ),
+    // ) );
 
-        $sku = $product->get_sku();
+    // // LOOP THROUGH ORDERS AND GET PRODUCT IDS
+    // if ( ! $customer_orders )
+    //     return DEFAULT_DISK_QUOTA;
 
-        if (strpos($sku, 'disk_quota;') === false) {
-            continue;
-        }
+    // $product_ids = array();
 
-        $pieces = explode(";", $sku);
+    // foreach ( $customer_orders as $customer_order ) {
+    //     $order = wc_get_order( $customer_order->ID );
+    //     $items = $order->get_items();
 
-        if(count($pieces) < 2)
-            continue;
+    //     foreach ( $items as $item ) {
+    //         $product_id = $item->get_product_id();
+    //         $product_ids[] = $product_id;
+    //     }
+    // }
 
-        $disk_quota = $pieces[1];
+    // $product_ids = array_unique( $product_ids );
 
-        return intval($disk_quota);
-    }
+    // for ($i = 0; $i < count($product_ids); $i++) {
+    //     $product = wc_get_product($product_ids[$i]);
 
-    return DEFAULT_DISK_QUOTA;
+    //     $sku = $product->get_sku();
+
+    //     if (strpos($sku, 'disk_quota;') === false) {
+    //         continue;
+    //     }
+
+    //     $pieces = explode(";", $sku);
+
+    //     if(count($pieces) < 2)
+    //         continue;
+
+    //     $disk_quota = $pieces[1];
+
+    //     return intval($disk_quota);
+    // }
+
+    return ;
+}
+
+function has_active_subscription( $user_id='' ) {
+    // When a $user_id is not specified, get the current user Id
+    if( '' == $user_id && is_user_logged_in() ) 
+        $user_id = get_current_user_id();
+    // User not logged in we return false
+    if( $user_id == 0 ) 
+        return false;
+
+    return wcs_user_has_subscription( $user_id, '', 'active' );
 }
 
 function try_render_embed_cesium_viewer() {
@@ -701,3 +733,180 @@ function construkted_package_purchase() {
 
 }
 add_action('wp', 'construkted_package_purchase');
+
+function construkted_subscription_product() {
+
+    $tax_query   = WC()->query->get_tax_query();
+    $tax_query[] = array(
+        'taxonomy' => 'product_visibility',
+        'field'    => 'name',
+        'terms'    => 'featured',
+        'operator' => 'IN',
+        );
+
+    $args = array(
+        'post_type'   =>  'product',
+        'orderby'     =>  'date',
+        'order'       =>  'DESC',
+        'tax_query'   =>  $tax_query
+    );
+
+    $products = new WP_Query( $args );
+    
+    if( $products->post_count > 0 ) {
+        return $products->posts[0]->ID;
+    } else {
+        return false;
+    }
+
+}
+
+add_filter( 'woocommerce_add_to_cart_redirect', 'construkted_redirect_checkout_add_cart' );
+ 
+function construkted_redirect_checkout_add_cart() {
+   return wc_get_checkout_url();
+}
+
+add_filter( 'wc_add_to_cart_message_html', 'empty_wc_add_to_cart_message');
+function empty_wc_add_to_cart_message( $message ) { 
+    return ''; 
+}; 
+
+function construkted_change_users_subscription() {
+
+    if ( isset( $_GET['cancel_subscription'] ) && isset( $_GET['subscription_id'] ) && isset( $_GET['_wpnonce'] )  ) {
+
+        $user_id      = get_current_user_id();
+        $subscription = wcs_get_subscription( esc_attr($_GET['subscription_id']) );
+        $new_status   = esc_attr($_GET['cancel_subscription']);
+        $dashboard_url = get_frontend_dashboard_url();
+        $billing_url = add_query_arg( 'active_tab', 'billing', $dashboard_url );
+
+        if ( WCS_User_Change_Status_Handler::validate_request( $user_id, $subscription, $new_status, $_GET['_wpnonce'] ) ) {
+            WCS_User_Change_Status_Handler::change_users_subscription( $subscription, $new_status );
+
+            wp_safe_redirect( $billing_url );
+            exit;
+        }
+    }
+    if ( isset( $_GET['reactivate_subscription'] ) && isset( $_GET['subscription_id'] ) && isset( $_GET['_wpnonce'] )  ) {
+
+        $user_id      = get_current_user_id();
+        $subscription = wcs_get_subscription( esc_attr($_GET['subscription_id']) );
+        $new_status   = esc_attr($_GET['reactivate_subscription']);
+        $dashboard_url = get_frontend_dashboard_url();
+        $billing_url = add_query_arg( 'active_tab', 'billing', $dashboard_url );
+
+        if ( WCS_User_Change_Status_Handler::validate_request( $user_id, $subscription, $new_status, $_GET['_wpnonce'] ) ) {
+            WCS_User_Change_Status_Handler::change_users_subscription( $subscription, $new_status );
+
+            wp_safe_redirect( $billing_url );
+            exit;
+        }
+    }
+}
+
+add_action( 'wp_loaded', 'construkted_change_users_subscription', 100);
+
+
+
+function construkted_free_tier_on_registration($user_id){
+    global $woocommerce;
+
+    $subscription_product = construkted_subscription_product();
+    
+    // First make sure all required functions and classes exist
+    if( ! function_exists( 'wc_create_order' ) || ! function_exists( 'wcs_create_subscription' ) || ! class_exists( 'WC_Subscriptions_Product' ) ){
+        return false;
+    }
+
+    $order = wc_create_order( array( 'customer_id' => $user_id ) );
+
+    if( is_wp_error( $order ) ){
+        return false;
+    }
+    $parent_product = wc_get_product($subscription_product);
+
+    $attributes = array(
+        'attribute_disk_space' => '2',
+    );
+
+    $variation_id = $parent_product->get_matching_variation( $attributes );
+
+    $product = wc_get_product($variation_id);
+
+    $user = get_user_by( 'ID', $user_id );
+
+    $fname     = $user->first_name;
+    $lname     = $user->last_name;
+    $email     = $user->user_email;
+    $address_1 = get_user_meta( $user_id, 'billing_address_1', true );
+    $address_2 = get_user_meta( $user_id, 'billing_address_2', true );
+    $city      = get_user_meta( $user_id, 'billing_city', true );
+    $postcode  = get_user_meta( $user_id, 'billing_postcode', true );
+    $country   = get_user_meta( $user_id, 'billing_country', true );
+    $state     = get_user_meta( $user_id, 'billing_state', true );
+
+    $address         = array(
+        'first_name' => $fname,
+        'last_name'  => $lname,
+        'email'      => $email,
+        'address_1'  => $address_1,
+        'address_2'  => $address_2,
+        'city'       => $city,
+        'state'      => $state,
+        'postcode'   => $postcode,
+        'country'    => $country,
+    );
+
+    $order->set_address( $address, 'billing' );
+    $order->set_address( $address, 'shipping' );
+    $order->add_product( $product, 1 );
+
+    $sub = wcs_create_subscription(array(
+        'order_id' => $order->get_id(),
+        'status' => 'pending', // Status should be initially set to pending to match how normal checkout process goes
+        'billing_period' => WC_Subscriptions_Product::get_period( $product ),
+        'billing_interval' => WC_Subscriptions_Product::get_interval( $product )
+    ));
+
+    if( is_wp_error( $sub ) ){
+        return false;
+    }
+
+    // Modeled after WC_Subscriptions_Cart::calculate_subscription_totals()
+    $start_date = gmdate( 'Y-m-d H:i:s' );
+    // Add product to subscription
+    $sub->add_product( $product, 1 );
+
+    $dates = array(
+        'trial_end'    => WC_Subscriptions_Product::get_trial_expiration_date( $product, $start_date ),
+        'next_payment' => WC_Subscriptions_Product::get_first_renewal_payment_date( $product, $start_date ),
+        'end'          => WC_Subscriptions_Product::get_expiration_date( $product, $start_date ),
+    );
+
+    $sub->update_dates( $dates );
+    $sub->calculate_totals();
+
+    // Update order status with custom note
+    $note = ! empty( $note ) ? $note : __( 'Programmatically added order and subscription.' );
+    $order->update_status( 'completed', $note, true );
+    // Also update subscription status to active from pending (and add note)
+    $sub->update_status( 'active', $note, true );
+
+}
+
+add_action('user_register', 'construkted_free_tier_on_registration');
+
+
+add_action( 'woocommerce_thankyou', 'construkted_redirectcustom');
+  
+function construkted_redirectcustom( $order_id ){
+    $order = wc_get_order( $order_id );
+    $dashboard_url = get_frontend_dashboard_url();
+    $url = add_query_arg( 'active_tab', 'billing', $dashboard_url );
+    if ( ! $order->has_status( 'failed' ) ) {
+        wp_safe_redirect( $url );
+        exit;
+    }
+}

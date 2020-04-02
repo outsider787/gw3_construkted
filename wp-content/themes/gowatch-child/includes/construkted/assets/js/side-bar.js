@@ -49,3 +49,27 @@ jQuery('.embed-code-link').on('click', function(){
 
     return false;
 });
+
+jQuery(document).on('click', '.variation-action', function(){
+    let currentItem = jQuery(this);
+    let currentValue = jQuery(this).attr('data-value');
+    jQuery('.variations #disk_space').val(currentValue).trigger('change');
+
+    currentItem.parent().addClass('selected').siblings().removeClass('selected');
+});
+
+jQuery(document).ready(function(){
+    if( jQuery('table.variations').length > 0 ) {
+
+        let defaultValue = jQuery('#disk_space').val();
+
+        jQuery('.variation-action[data-value="'+defaultValue+'"]').trigger('click');
+
+        let currentSubValue = jQuery('.flex-row').data('current');
+
+        if( currentSubValue > 0 ) {
+            jQuery('.variation-action[data-value="'+currentSubValue+'"]').trigger('click');
+        }
+
+    }
+});
