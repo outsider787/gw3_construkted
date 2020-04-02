@@ -709,10 +709,12 @@ var theApp = (function () {
                             transformEditor.viewModel.deactivate();
                         }
                     } else {
-                        var modelMatrixIsDetermined = false;
+                        tilesets.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(Cesium.Cartesian3.fromDegrees(0, 0));
+
+                        var modelMatrixUpdateTried = false;
 
                         viewer.scene.globe.tileLoadProgressEvent.addEventListener(function (queuedTileCount) {
-                            if(!modelMatrixIsDetermined && viewer.scene.globe.tilesLoaded){
+                            if(!modelMatrixUpdateTried && viewer.scene.globe.tilesLoaded){
                                 var cartographic = new Cesium.Cartographic(0, 0);
 
                                 var terrainHeight = viewer.scene.globe.getHeight(cartographic);
@@ -723,10 +725,9 @@ var theApp = (function () {
                                 }
                                 else {
                                     console.warn('failed to get terrain height 0/0');
-                                    tilesets.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(Cesium.Cartesian3.fromDegrees(0, 0));
                                 }
 
-                                modelMatrixIsDetermined = true;
+                                modelMatrixUpdateTried = true;
                             }
                         });
                     }
