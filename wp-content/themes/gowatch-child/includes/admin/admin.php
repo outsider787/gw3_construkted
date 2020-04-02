@@ -112,7 +112,7 @@ class CONSTRUKTED_Admin {
         wp_enqueue_style('construkted-admin-css', get_stylesheet_directory_uri() . '/includes/admin/css/gw3-admin-css.css' );
 
         wp_localize_script( 'construkted-admin-script', 'construktedAdminParam', array(
-                'tilingStateEndPoint'       => admin_url("admin-ajax.php")
+                'ajaxUrl' => admin_url("admin-ajax.php")
             )
         );
     }
@@ -122,19 +122,67 @@ class CONSTRUKTED_Admin {
 
 // Create the AJAX functions for the processing state
 
-function gw3_processing_retrieve_data() {
+function construkted_get_all_task() {
     $url = CONSTRUKTED_EC2_API_TASK_ALL;
     $ret = wp_remote_get( $url );
 
+    $tasks = [];
+
     // check error
     if(is_wp_error($ret)) {
-        $body = "something wrong. failed to connect construkted API";
+        return null;
     }
     else {
         $body = array_reverse(json_decode($ret['body'], true));
+
+        foreach ($body as $task) {
+            $task['dateCreated'] = date('F j, Y, g:i a', $task['dateCreated'] / 1000);
+            $task['processingTime'] = date("H:i:s", $task['processingTime'] / 1000);
+            unset($task['uploadingProgress']);
+            unset($task['downloadProgress']);
+            // unset($task['status']);
+            unset($task['runningStatus']);
+            unset($task['progress']);
+
+            array_push($tasks, $task);
+        }
     }
 
-    return $body;
+    return $tasks;
+}
+
+function get_html_for_one_task($task) {
+    ob_start();
+    ob_clean();
+
+    ?>
+
+    <div class="processing-item">
+
+        <div class="item-title"><?php echo $task['name']; ?></div>
+
+        <div class="item-content">
+            <?php foreach( $task as $key => $attr ): ?>
+                <div class="flex-item">
+                    <div>
+                        <?php echo $key; ?>:
+                    </div>
+                    <div>
+                        <?php echo is_array($attr) ? $attr['code'] : $attr; ?>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+        <span class="dashicons dashicons-arrow-down-alt2"></span>
+
+    </div>
+
+    <?php
+
+    $output = ob_get_clean();
+
+    return $output;
+
 }
 
 function gw3_processing_generateItem($item) {
@@ -169,16 +217,13 @@ function gw3_processing_generateItem($item) {
     $output = ob_get_clean();
 
     return $output;
-
 }
 
-function gw3_processing_displayItems() {
-
-    $items  = gw3_processing_retrieve_data();
+function get_html_for_tasks($tasks) {
     $output = '';
 
-    foreach ($items as $item) {
-        $output .= gw3_processing_generateItem($item);
+    foreach ($tasks as $task) {
+        $output .= get_html_for_one_task($task);
     }
 
     if( isset($_POST['echo']) ) {
@@ -188,4 +233,41 @@ function gw3_processing_displayItems() {
 
     return $output;
 }
+
+function gw3_processing_displayItems() {
+    $all_tasks = construkted_get_all_task();
+
+    $tasks_being_processed = [];
+    $tasks_in_queue = [];
+    $tasks_failed = [];
+
+    if($all_tasks != null)
+        foreach ($all_tasks as $task) {
+            $status_code = $task['status']['code'];
+
+            if($status_code == 10) // queued
+                array_push($tasks_in_queue, $task);
+            else if ($status_code == 20) // running
+                array_push($tasks_being_processed, $task);
+            else if ($status_code == 40) // failed
+                array_push($tasks_failed, $task);
+            else
+                continue;
+        };
+
+    $ret = array(
+        'construkted_api_state' => $all_tasks != null ? 'Live' : 'Not Live',
+        'count_of_tasks_being_processed' => count($tasks_being_processed),
+        'count_of_tasks_in_queue' => count($tasks_in_queue),
+        'count_of_tasks_failed' => count($tasks_failed),
+        'html_for_tasks_being_processed' => get_html_for_tasks($tasks_being_processed),
+        'html_for_tasks_in_queue' =>  get_html_for_tasks($tasks_in_queue),
+        'html_for_tasks_failed' => get_html_for_tasks($tasks_failed)
+    );
+
+    echo json_encode($ret);
+
+    wp_die();
+}
+
 add_action( 'wp_ajax_gw3_processing_displayItems', 'gw3_processing_displayItems');
