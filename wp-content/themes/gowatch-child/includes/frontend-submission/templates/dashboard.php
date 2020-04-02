@@ -186,7 +186,7 @@ $frontend_dashboard->profile_tabs = array_insert_after($frontend_dashboard->prof
                                                     <?php endif; ?>
                                                 <?php endforeach; ?>
                                                 <?php do_action( 'wcs_subscription_details_table_after_dates', $subscription ); ?>
-                                                <?php if ( WCS_My_Account_Auto_Renew_Toggle::can_user_toggle_auto_renewal( $subscription ) ) : ?>
+                                                <?php if ( WCS_My_Account_Auto_Renew_Toggle::can_subscription_auto_renewal_be_changed( $subscription ) ) : ?>
                                                     <tr>
                                                         <td><?php esc_html_e( 'Auto renew', 'woocommerce-subscriptions' ); ?></td>
                                                         <td>
@@ -281,7 +281,7 @@ $frontend_dashboard->profile_tabs = array_insert_after($frontend_dashboard->prof
                                         <?php do_action( 'woocommerce_subscription_totals', $subscription, $include_item_removal_links, $totals, $include_switch_links ); ?>
                                     <?php else: ?>
                                         <h4><?php esc_html_e( 'No subscription found.', 'gowatch-child' ); ?></h4>
-                                        <p><?php esc_html_e( 'We could not find any active subscriptions. If you want to activate a subscription please click the button below.', 'gowatch-child' ); ?></p>
+                                        <p><?php esc_html_e( 'We could not find any active subscriptions. If you want to activate a subscription please click the button <below class=""></below>', 'gowatch-child' ); ?></p>
                                         <a class="button" href="<?php echo get_the_permalink( construkted_subscription_product() ); ?>"><?php esc_html_e( 'Upgrade now!', 'gowatch-child' ); ?></a>
                                     <?php endif; ?>
                                     </div>
