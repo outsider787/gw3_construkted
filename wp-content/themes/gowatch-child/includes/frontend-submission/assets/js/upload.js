@@ -112,28 +112,11 @@
         },
 
         added: function (up, files) {
-            var ajaxurl = tszf_frontend_upload.plupload.construkted_ec2_api_task_all_url;
-
-            var self = this;
-
-            $.ajax({
-                url: ajaxurl,
-                type: 'GET',
-                dataType: 'json',
-                data: {}
-            }).done( function( data ) {
-                self.startUploading(up, files);
-            }).fail( function() {
-                alert( 'Something wrong. Please contact support@construkted.com' );
-
-                self.count = 0;
-                self.showHide();
-                self.uploader.refresh();
-            });
-
             plupload.each(files, function(file){
                 Total_file_size_to_upload +=file.size;
             });
+
+            this.startUploading(up, files);
         },
 
         upload: function (uploader) {
