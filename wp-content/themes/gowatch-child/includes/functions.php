@@ -904,7 +904,7 @@ add_action( 'woocommerce_thankyou', 'construkted_redirectcustom');
 function construkted_redirectcustom( $order_id ){
     $order = wc_get_order( $order_id );
     $dashboard_url = get_frontend_dashboard_url();
-    $url = add_query_arg( 'active_tab', 'billing', $dashboard_url );
+    $url = add_query_arg( 'active_tab', 'subscription', $dashboard_url );
     if ( ! $order->has_status( 'failed' ) ) {
         wp_safe_redirect( $url );
         exit;

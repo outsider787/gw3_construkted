@@ -211,8 +211,10 @@ input[type="range"]::-moz-range-thumb {
     flex: 0 0 220px;
 }
 .ts-single-video .post-footer {
-    flex-basis: 100%;
-    max-height: 100%;
+    max-width: 100%;
+    display: block;
+    min-width: 0;
+    min-height: 0;
 }
 
 @media screen and (max-width: 768px) {
@@ -1251,6 +1253,23 @@ table.variations,
 .checkout .form-row-first {
     clear: left;
 }
+
+
+.woocommerce-checkout #content {
+    width: 900px;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.woocommerce-checkout #content .post-title {
+    text-align: center;
+}
+
+.woocommerce-checkout #content .post-meta {
+    display: none;
+}
+
 
 @media only screen and (max-width: 768px) {
     .single-video .post-header .entry-meta-views {
