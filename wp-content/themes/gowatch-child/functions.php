@@ -266,7 +266,6 @@ function override_upload_script() {
                 'filters'          => array(array('title' => __( 'Allowed Files', 'gowatch' ), 'extensions' => '*')),
                 'multipart'        => true,
                 'urlstream_upload' => true,
-                'construkted_ec2_api_task_all_url' => CONSTRUKTED_EC2_API_TASK_ALL
             )
         ));
 
