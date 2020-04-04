@@ -60,7 +60,7 @@ if ( isset( $airkit_breadcrumbs['breadcrumbs'] ) && $airkit_breadcrumbs['breadcr
 		?>
 
 
-		<?php if( $user_total_storage >= $user_used_storage ): ?>
+		<?php if( $user_total_storage <= $user_used_storage ): ?>
 			<div class="upload-notification">
 				<i class="icon-attention"></i>
 				<?php esc_html_e('You exceeded the disk quote available for your subscription. Please upgrade to a package with more disk space.', 'gowatch-child'); ?> <button class="button" onClick="window.location.href = '<?php echo get_the_permalink(construkted_subscription_product()); ?>';"><?php esc_html_e( 'Upgrade now', 'gowatch-child' ); ?></button>
