@@ -26,20 +26,28 @@ var theApp = (function () {
         if(CONSTRUKTED_AJAX.asset_geo_location) {
             var assetGeoLocationData = CONSTRUKTED_AJAX.asset_geo_location;
 
-            var carto = new Cesium.Cartographic(
-                Cesium.Math.toRadians(assetGeoLocationData.longitude),
-                Cesium.Math.toRadians(assetGeoLocationData.latitude),
-                assetGeoLocationData.height);
+            if(!assetGeoLocationData.longitude ||
+               !assetGeoLocationData.latitude ||
+               !assetGeoLocationData.height ) {
+                console.warn('invalid asset geo location!');
+                console.warn(CONSTRUKTED_AJAX.asset_geo_location);
+            }
+            else {
+                var carto = new Cesium.Cartographic(
+                    Cesium.Math.toRadians(assetGeoLocationData.longitude),
+                    Cesium.Math.toRadians(assetGeoLocationData.latitude),
+                    assetGeoLocationData.height);
 
-            tileset_model_matrix = {
-                position:  viewer.scene.globe.ellipsoid.cartographicToCartesian(carto),
-                headingPitchRoll: {
-                    heading: Cesium.Math.toRadians(assetGeoLocationData.heading),
-                    pitch: Cesium.Math.toRadians(assetGeoLocationData.pitch),
-                    roll: Cesium.Math.toRadians(assetGeoLocationData.roll)
-                },
-                scale: assetGeoLocationData.scale
-            };
+                tileset_model_matrix = {
+                    position:  viewer.scene.globe.ellipsoid.cartographicToCartesian(carto),
+                    headingPitchRoll: {
+                        heading: Cesium.Math.toRadians(assetGeoLocationData.heading),
+                        pitch: Cesium.Math.toRadians(assetGeoLocationData.pitch),
+                        roll: Cesium.Math.toRadians(assetGeoLocationData.roll)
+                    },
+                    scale: assetGeoLocationData.scale
+                };
+            }
         }
 
         var setHprQuaternion = new Cesium.Quaternion();
