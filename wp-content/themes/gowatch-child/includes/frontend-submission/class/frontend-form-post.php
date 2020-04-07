@@ -921,7 +921,7 @@ class TSZF_Frontend_Form_Post extends TSZF_Render_Form {
     }
 
     static function generate_slug() {
-        $slug_length = 9;
+        $slug_length = 10;
         $characters = '0123456789abcdefghijklmnopqrstuvwxyz';
         $charactersLength = strlen($characters);
         $post_slug = 'a';
