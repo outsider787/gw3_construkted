@@ -606,6 +606,11 @@ var theApp = (function () {
     function _create3DMap() {
         Cesium.Ion.defaultAccessToken = CONSTRUKTED_AJAX.cesium_access_token;
 
+        if(!Cesium.Ion.defaultAccessToken)
+        {
+            console.warn('default access token is null!');
+        }
+
         viewer = new Cesium.Viewer('cesiumContainer', {
             terrainProvider: Cesium.createWorldTerrain(),
             animation: false,

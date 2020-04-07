@@ -28,7 +28,7 @@ function enqueue_construkted_scripts(){
 
     // pass parameter to starting script: construkted-scrip.js
 
-    error_log('saved tileset_model_matrix_json :' . $tileset_model_matrix_json);
+    error_log('saved asset_geo_location :' . $asset_geo_location_json);
 
     // Get Cesium Settings from the admin panel
     $cesium_options = get_option( 'cesium_options' );
