@@ -25,7 +25,7 @@ $home_active_tab      = ( 'home' == $active_tab )      ? 'active' : '';
 $posts_active_tab     = ( 'posts' == $active_tab )     ? 'active' : '';
 $favorites_active_tab = ( 'favorites' == $active_tab ) ? 'active' : '';
 $settings_active_tab  = ( 'settings' == $active_tab )  ? 'active' : '';
-$billing_active_tab   = ( 'billing' == $active_tab )    ? 'active' : '';
+$subscription_active_tab   = ( 'subscription' == $active_tab )    ? 'active' : '';
 
 $edit_profile = new TSZF_Edit_Profile();
 $frontend_dashboard = new TSZF_Frontend_Dashboard();
@@ -46,8 +46,8 @@ $shown_ids = array();
 unset($frontend_dashboard->profile_tabs['favorites']);
 unset($frontend_dashboard->profile_tabs['playlists']);
 
-// Create a new tab for the billing
-$billing = array('billing' => array('title' => 'Billing', 'class' => 'billing ' . $billing_active_tab, 'url' => remove_query_arg( 'sortby', add_query_arg( array('active_tab' => 'billing') ) )));
+// Create a new tab for the subscription
+$subscription = array('subscription' => array('title' => 'Subscription', 'class' => 'subscription ' . $subscription_active_tab, 'url' => remove_query_arg( 'sortby', add_query_arg( array('active_tab' => 'subscription') ) )));
 
 function array_insert_after( array $array, $key, array $new ) {
     $keys = array_keys( $array );
@@ -56,7 +56,7 @@ function array_insert_after( array $array, $key, array $new ) {
 
     return array_merge( array_slice( $array, 0, $pos ), $new, array_slice( $array, $pos ) );
 }
-$frontend_dashboard->profile_tabs = array_insert_after($frontend_dashboard->profile_tabs, 'posts', $billing);
+$frontend_dashboard->profile_tabs = array_insert_after($frontend_dashboard->profile_tabs, 'posts', $subscription);
 
 ?>
 
@@ -146,7 +146,7 @@ $frontend_dashboard->profile_tabs = array_insert_after($frontend_dashboard->prof
                                         </div>
                                     <?php endif; ?>
                                 
-                                <?php elseif ( 'billing' == $key ): ?>
+                                <?php elseif ( 'subscription' == $key ): ?>
                                     <div class="woocommerce">
                                     <?php
                                         $subscription = 0;
@@ -281,7 +281,7 @@ $frontend_dashboard->profile_tabs = array_insert_after($frontend_dashboard->prof
                                         <?php do_action( 'woocommerce_subscription_totals', $subscription, $include_item_removal_links, $totals, $include_switch_links ); ?>
                                     <?php else: ?>
                                         <h4><?php esc_html_e( 'No subscription found.', 'gowatch-child' ); ?></h4>
-                                        <p><?php esc_html_e( 'We could not find any active subscriptions. If you want to activate a subscription please click the button <below class=""></below>', 'gowatch-child' ); ?></p>
+                                        <p><?php esc_html_e( 'We could not find any active subscriptions. If you want to activate a subscription please click the button below.', 'gowatch-child' ); ?></p>
                                         <a class="button" href="<?php echo get_the_permalink( construkted_subscription_product() ); ?>"><?php esc_html_e( 'Upgrade now!', 'gowatch-child' ); ?></a>
                                     <?php endif; ?>
                                     </div>

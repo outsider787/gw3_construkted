@@ -904,9 +904,113 @@ add_action( 'woocommerce_thankyou', 'construkted_redirectcustom');
 function construkted_redirectcustom( $order_id ){
     $order = wc_get_order( $order_id );
     $dashboard_url = get_frontend_dashboard_url();
-    $url = add_query_arg( 'active_tab', 'billing', $dashboard_url );
+    $url = add_query_arg( 'active_tab', 'subscription', $dashboard_url );
     if ( ! $order->has_status( 'failed' ) ) {
         wp_safe_redirect( $url );
         exit;
     }
 }
+
+
+
+// WooCommerce re-arrange checkout fields
+add_filter( 'woocommerce_checkout_fields' , 'custom_rename_wc_checkout_fields' );
+
+// Change classes of the fields for the checkout page to look nice
+function custom_rename_wc_checkout_fields( $fields ) {
+
+  $fields['billing']['billing_company']['class'] = array('form-row-first');
+  $fields['billing']['billing_country']['class'] = array('form-row-last');
+  
+  $fields['billing']['billing_address_1']['class'] = array('form-row-first');
+  $fields['billing']['billing_address_2']['class'] = array('form-row-last');
+  $fields['billing']['billing_address_2']['label'] = esc_attr__( 'Address 2', 'gowatch-child' );
+
+  $fields['billing']['billing_city']['class'] = array('form-row-first');
+  $fields['billing']['billing_state']['class'] = array('form-row-last');
+  
+  $fields['billing']['billing_postcode']['class'] = array('form-row-first');
+  $fields['billing']['billing_phone']['class'] = array('form-row-last');
+
+  return $fields;
+}
+
+function construkted_subscription_layout() {
+
+    ob_start();
+    ob_clean();
+
+    global $product;
+
+    ?>
+    <div class="woocommerce subscription-product">
+        
+        <?php 
+            // Check if we are switching subcription
+            if( isset($_GET['switch-subscription']) ) {
+                $current_package = getDiskQuotaOfCurrentUser(wp_get_current_user()->ID);
+            }
+
+            function construkted_package_label($current_value, $package_value) {
+
+                $upgrade_label   = esc_html__('Upgrade', 'gowatch-child');
+                $downgrade_label = esc_html__('Downgrade', 'gowatch-child');
+                $current_label   = esc_html__('Current', 'gowatch-child');
+
+                if( $current_value < $package_value ) {
+                    $output = $upgrade_label;
+                } elseif( $current_value > $package_value ) {
+                    $output = $downgrade_label;
+                } else {
+                    $output = $current_label;
+
+                }
+                return $output;
+            }
+
+            do_action( 'woocommerce_before_single_product' );
+
+        ?>
+        <h1 class="page-title text-center"><?php the_title(); ?></h1>
+        <div class="flex-row" data-current="<?php echo $current_package; ?>">
+        <?php
+            $available_variations = $product->get_available_variations();
+            foreach ($available_variations as $key => $value) 
+            {
+            ?>
+                <div class="variation-column">
+                    <div class="variation-name"><?php echo $value['sku']; ?></div>
+                    <div class="variation-price"><?php echo $value['price_html']; ?></div>
+                    <div class="variation-specs"><?php echo $value['variation_description']; ?></div>
+                    <div class="variation-action" data-value="<?php echo $value['attributes']['attribute_disk_space'] ?>"><?php echo construkted_package_label($current_package, $value['attributes']['attribute_disk_space']); ?></div>
+                </div>
+            <?php }
+        ?>
+        </div>
+        <?php woocommerce_template_single_add_to_cart(); ?>
+    </div>
+    <?php
+    $output = ob_get_clean();
+
+    return $output;
+}
+
+
+function construkted_product_shortcode() {
+
+    // Get subscruption product id
+    $product_id = construkted_subscription_product();
+
+    global $product, $woocommerce;
+
+    $woocommerce->cart->empty_cart(); 
+    $product = wc_get_product($product_id);
+
+    $output = construkted_subscription_layout();
+
+    return $output;
+
+}
+
+add_shortcode( 'subscription_packages', 'construkted_product_shortcode' );
+

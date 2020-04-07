@@ -50,36 +50,54 @@ if ( isset( $airkit_breadcrumbs['breadcrumbs'] ) && $airkit_breadcrumbs['breadcr
 
 <section id="main" class="ts-single-post add-new-page ts-single-page airkit_frontend-forms">
 	<div class="container">
-		<div class="row">
-			<?php echo airkit_var_sanitize( $airkit_sidebar['left'], 'true' ); ?>
-			<div class="<?php echo esc_attr( $airkit_sidebar['content_class'] ); ?>">
-				<div id="content" role="main">
 
-					<div class="api-verify">
-						<?php echo construkted_preloader(); ?>
-						<?php esc_html_e('Checking API, please wait...'); ?>
-					</div>
+		<?php
+			// Get current user used storage
+			$user_used_storage = getTotalUploadedFileGBSizeOfCurrentUser();
 
-					<div class="add-new-contents hidden">
-						<?php
-							// Render active form.
-							if( 'submit' === $action ) {
+			// Get current user total storage
+			$user_total_storage = getDiskQuotaOfCurrentUser();
+		?>
 
-								echo '<h1 class="page-title text-left">'. esc_html__( 'Add new post', 'gowatch' ) .'</h1>';
-								echo airkit_var_sanitize( $frontend_form->add_post_form_build( array( 'id' => $active_submit_form_id ) ), 'true' );
 
-							} elseif( 'edit' === $action ) {
+		<?php if( $user_total_storage <= $user_used_storage ): ?>
+			<div class="upload-notification">
+				<i class="icon-attention"></i>
+				<?php esc_html_e('You exceeded the disk quote available for your subscription. Please upgrade to a package with more disk space.', 'gowatch-child'); ?> <button class="button" onClick="window.location.href = '<?php echo get_the_permalink(construkted_subscription_product()); ?>';"><?php esc_html_e( 'Upgrade now', 'gowatch-child' ); ?></button>
+			</div>
+		<?php else: ?>
+		
+			<div class="row">
+				<?php echo airkit_var_sanitize( $airkit_sidebar['left'], 'true' ); ?>
+				<div class="<?php echo esc_attr( $airkit_sidebar['content_class'] ); ?>">
+					<div id="content" role="main">
 
-								echo '<h1 class="page-title text-left">'. esc_html__( 'Now editing:', 'gowatch' ) .' <a href="'. get_permalink( $edit_id ) .'" class="now-editing">'. get_the_title( $edit_id ) .'</a></h1>';
-								echo airkit_var_sanitize( $frontend_form->edit_post_form_build( array() ), 'true' );
+						<div class="api-verify">
+							<?php echo construkted_preloader(); ?>
+							<?php esc_html_e('Checking API, please wait...'); ?>
+						</div>
 
-							}
-						?>
+						<div class="add-new-contents hidden">
+							<?php
+								// Render active form.
+								if( 'submit' === $action ) {
+
+									echo '<h1 class="page-title text-left">'. esc_html__( 'Add new post', 'gowatch' ) .'</h1>';
+									echo airkit_var_sanitize( $frontend_form->add_post_form_build( array( 'id' => $active_submit_form_id ) ), 'true' );
+
+								} elseif( 'edit' === $action ) {
+
+									echo '<h1 class="page-title text-left">'. esc_html__( 'Now editing:', 'gowatch' ) .' <a href="'. get_permalink( $edit_id ) .'" class="now-editing">'. get_the_title( $edit_id ) .'</a></h1>';
+									echo airkit_var_sanitize( $frontend_form->edit_post_form_build( array() ), 'true' );
+
+								}
+							?>
+						</div>
 					</div>
 				</div>
+				<?php echo airkit_var_sanitize( $airkit_sidebar['right'], 'true' ); ?>
 			</div>
-			<?php echo airkit_var_sanitize( $airkit_sidebar['right'], 'true' ); ?>
-		</div>
+		<?php endif; ?>
 	</div>
 </section>
 

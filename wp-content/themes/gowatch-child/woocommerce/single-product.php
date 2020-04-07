@@ -48,52 +48,7 @@ get_header();
 				?>
 			</div>
 		<?php else: ?>
-			<div class="woocommerce">
-				
-				<?php 
-					// Check if we are switching subcription
-					if( isset($_GET['switch-subscription']) ) {
-						$current_package = getDiskQuotaOfCurrentUser(wp_get_current_user()->ID);
-					}
-
-					function construkted_package_label($current_value, $package_value) {
-
-						$upgrade_label   = esc_html__('Upgrade', 'gowatch-child');
-						$downgrade_label = esc_html__('Downgrade', 'gowatch-child');
-						$current_label   = esc_html__('Current', 'gowatch-child');
-
-						if( $current_value < $package_value ) {
-							$output = $upgrade_label;
-						} elseif( $current_value > $package_value ) {
-							$output = $downgrade_label;
-						} else {
-							$output = $current_label;
-
-						}
-						return $output;
-					}
-
-					do_action( 'woocommerce_before_single_product' );
-
-				?>
-				<h1 class="page-title text-center"><?php the_title(); ?></h1>
-				<div class="flex-row" data-current="<?php echo $current_package; ?>">
-				<?php
-					$available_variations = $product->get_available_variations();
-				    foreach ($available_variations as $key => $value) 
-				    {
-				    ?>
-				        <div class="variation-column">
-				        	<div class="variation-name"><?php echo $value['sku']; ?></div>
-				        	<div class="variation-price"><?php echo $value['price_html']; ?></div>
-				        	<div class="variation-specs"><?php echo $value['variation_description']; ?></div>
-				        	<div class="variation-action" data-value="<?php echo $value['attributes']['attribute_disk_space'] ?>"><?php echo construkted_package_label($current_package, $value['attributes']['attribute_disk_space']); ?></div>
-				        </div>
-				    <?php }
-				?>
-				</div>
-				<?php woocommerce_template_single_add_to_cart(); ?>
-			</div>
+			<?php echo construkted_subscription_layout(); ?>
 		<?php endif; ?>
 	</div>
 <?php
