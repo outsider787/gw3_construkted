@@ -1270,6 +1270,10 @@ table.variations,
     display: none;
 }
 
+.widget article .widget-meta ul.list-inline {
+    display: flex;
+}
+
 
 @media only screen and (max-width: 768px) {
     .single-video .post-header .entry-meta-views {
