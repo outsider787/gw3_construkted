@@ -397,40 +397,17 @@ EDD_CJS.CameraController = (function () {
         scene.screenSpaceCameraController.enableLook = false;
     };
 
-    CameraController.prototype.getViewData = function () {
-        var camera = this._cesiumViewer.camera;
-
-        var cartographic = this._cesiumViewer.scene.globe.ellipsoid.cartesianToCartographic(camera.position);
-
-        var viewData = {};
-
-        viewData.longitude = cartographic.longitude;
-        viewData.latitude = cartographic.latitude;
-        viewData.height = cartographic.height;
-
-        viewData.heading = camera.heading;
-        viewData.pitch = camera.pitch;
-        viewData.roll = camera.roll;
-
-        return JSON.stringify(viewData);
-    };
-
     CameraController.prototype.setDefaultView = function() {
         var defaultCameraPositionDirection = CONSTRUKTED_AJAX.default_camera_position_direction;
 
         if(defaultCameraPositionDirection !== undefined && defaultCameraPositionDirection !== "") {
             defaultCameraPositionDirection = JSON.parse(defaultCameraPositionDirection);
 
-            var cartographic = new Cesium.Cartographic(defaultCameraPositionDirection.longitude, defaultCameraPositionDirection.latitude, defaultCameraPositionDirection.height);
+            var offset = new Cesium.HeadingPitchRange(Cesium.Math.toRadians(defaultCameraPositionDirection.heading),
+                                                      Cesium.Math.toRadians(defaultCameraPositionDirection.pitch),
+                                                      defaultCameraPositionDirection.range);
 
-            this._cesiumViewer.camera.flyTo({
-                destination : this._cesiumViewer.scene.globe.ellipsoid.cartographicToCartesian(cartographic),
-                orientation : {
-                    heading : defaultCameraPositionDirection.heading ,
-                    pitch :  defaultCameraPositionDirection.pitch,
-                    roll : defaultCameraPositionDirection.roll
-                }
-            });
+            this._camera.flyToBoundingSphere(this._main3dTileset.boundingSphere, {offset : offset});
         }
         else {
             this._camera.flyToBoundingSphere(this._main3dTileset.boundingSphere);

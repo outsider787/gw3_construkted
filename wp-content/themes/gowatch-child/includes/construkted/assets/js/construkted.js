@@ -15,6 +15,10 @@ var theApp = (function () {
     var jqTilesetEstimateAltitude = jQuery('#tileset_estimate_altitude');
     var jqSaveTilesetModelMatrixButton = jQuery('#save_tileset_model_matrix_button');
 
+    var jqCaptureThumbnailButton = jQuery('#capture_thumbnail');
+    var jqSaveCurrentViewButton = jQuery('#save_current_view');
+    var jqResetCameraViewButton = jQuery('#reset_camera_view');
+
     function start() {
         _create3DMap();
         _initGeoLocationPopup();
@@ -33,6 +37,13 @@ var theApp = (function () {
                 console.warn(CONSTRUKTED_AJAX.asset_geo_location);
             }
             else {
+                assetGeoLocationData.longitude = parseFloat(assetGeoLocationData.longitude);
+                assetGeoLocationData.latitude = parseFloat(assetGeoLocationData.latitude);
+                assetGeoLocationData.height = parseFloat(assetGeoLocationData.height);
+                assetGeoLocationData.heading = parseFloat(assetGeoLocationData.heading);
+                assetGeoLocationData.pitch = parseFloat(assetGeoLocationData.pitch);
+                assetGeoLocationData.roll = parseFloat(assetGeoLocationData.roll);
+
                 var carto = new Cesium.Cartographic(
                     Cesium.Math.toRadians(assetGeoLocationData.longitude),
                     Cesium.Math.toRadians(assetGeoLocationData.latitude),
@@ -103,7 +114,7 @@ var theApp = (function () {
                 transformEditor.viewModel.activate();
         });
 
-        jQuery('#save_tileset_model_matrix_button').click(function () {
+        jqSaveTilesetModelMatrixButton.click(function () {
             _saveTilesetModelMatrix();
         });
 
@@ -499,15 +510,15 @@ var theApp = (function () {
     }
 
     function _initSettingsPopup() {
-        jQuery('#capture_thumbnail').click(function () {
+        jqCaptureThumbnailButton.click(function () {
             _captureThumbnail();
         });
 
-        jQuery('#save_current_view').click(function () {
+        jqSaveCurrentViewButton.click(function () {
             _saveCurrentView();
         });
 
-        jQuery('#reset_camera_view').click(function () {
+        jqResetCameraViewButton.click(function () {
             _resetCameraView();
         });
 
@@ -587,6 +598,8 @@ var theApp = (function () {
     }
 
     function _doDoSaveTilesetModelMatrix(data) {
+        jqSaveTilesetModelMatrixButton.prop('disabled', true);
+
         jQuery.ajax({
             url : CONSTRUKTED_AJAX.ajaxurl,
             type : 'post',
@@ -596,6 +609,8 @@ var theApp = (function () {
                 asset_geo_location_json: JSON.stringify(data)
             },
             success : function( response ) {
+                jqSaveTilesetModelMatrixButton.prop('disabled', false);
+
                 var data = JSON.parse(response);
 
                 if(data.ret === false) {
@@ -606,6 +621,8 @@ var theApp = (function () {
                 alert('Successfully updated!');
             },
             error: function(xhr, status, error) {
+                jqSaveTilesetModelMatrixButton.prop('disabled', false);
+
                 alert('error');
             }
         });
@@ -787,7 +804,7 @@ var theApp = (function () {
                 }
             }
 
-            cameraController.setDefaultView();
+            cameraController.setDefaultView() ;
         }).otherwise(function(error){
             window.alert(error);
         });
@@ -817,6 +834,8 @@ var theApp = (function () {
 
         var mediumQuality  = viewer.canvas.toDataURL('image/jpeg', 0.5);
 
+        jqCaptureThumbnailButton.prop('disabled', true);
+
         jQuery.ajax({
             url : CONSTRUKTED_AJAX.ajaxurl,
             type : 'post',
@@ -826,33 +845,41 @@ var theApp = (function () {
                 capturedJpegImage: mediumQuality
             },
             success : function( response ) {
+                jqCaptureThumbnailButton.prop('disabled', false);
                 alert(response);
             },
             error: function() {
+                jqCaptureThumbnailButton.prop('disabled', false);
                 alert('error');
             }
         });
     }
 
     function _saveCurrentView() {
+        jqSaveCurrentViewButton.prop('disabled', true);
+
         jQuery.ajax({
             url : CONSTRUKTED_AJAX.ajaxurl,
             type : 'post',
             data : {
                 action : 'post_set_current_view',
                 post_id : CONSTRUKTED_AJAX.post_id,
-                view_data: cameraController.getViewData()
+                view_data: _getCurrentCameraOrientationJsonString()
             },
             success : function( response ) {
+                jqSaveCurrentViewButton.prop('disabled', false);
                 alert(response);
             },
             error: function(xhr, status, error) {
+                jqSaveCurrentViewButton.prop('disabled', false);
                 alert('error');
             }
         });
     }
 
     function _resetCameraView() {
+        jqResetCameraViewButton.prop('disabled', true);
+
         jQuery.ajax({
             url : CONSTRUKTED_AJAX.ajaxurl,
             type : 'post',
@@ -861,9 +888,11 @@ var theApp = (function () {
                 post_id : CONSTRUKTED_AJAX.post_id
             },
             success : function( response ) {
+                jqResetCameraViewButton.prop('disabled', false);
                 alert(response);
             },
             error: function(xhr, status, error) {
+                jqResetCameraViewButton.prop('disabled', false);
                 alert('error');
             }
         });
@@ -874,6 +903,20 @@ var theApp = (function () {
             return;
 
         transformEditor.viewModel.deactivate();
+    }
+
+    // https://github.com/outsider787/gw3_construkted/wiki/Construkted-Meta-Data-Definition
+
+    function _getCurrentCameraOrientationJsonString() {
+        var camera = viewer.camera;
+
+        var cameraOrientationData = {};
+
+        cameraOrientationData.heading = Cesium.Math.toDegrees(camera.heading);
+        cameraOrientationData.pitch = Cesium.Math.toDegrees(camera.pitch);
+        cameraOrientationData.range = Cesium.Cartesian3.distance(camera.position, tilesets.boundingSphere.center);
+
+        return JSON.stringify(cameraOrientationData);
     }
 
     return {
