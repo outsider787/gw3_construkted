@@ -1295,6 +1295,10 @@ table.variations,
     border-top: 1px solid rgba(235,239,245,0.3);
 }
 
+.thumbnail-view article.airkit_view-article.over-image .entry-content-footer::before {
+    display: none;
+}
+
 .thumbnail-view article.over-image:hover .image-holder a.post-format-link {
     color: #FFFFFF;
     background-color: var(--blue);
