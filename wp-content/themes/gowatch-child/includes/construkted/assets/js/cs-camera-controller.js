@@ -397,17 +397,45 @@ EDD_CJS.CameraController = (function () {
         scene.screenSpaceCameraController.enableLook = false;
     };
 
+    // https://github.com/outsider787/gw3_construkted/wiki/Construkted-Meta-Data-Definition
+
     CameraController.prototype.setDefaultView = function() {
         var defaultCameraPositionDirection = CONSTRUKTED_AJAX.default_camera_position_direction;
 
         if(defaultCameraPositionDirection !== undefined && defaultCameraPositionDirection !== "") {
-            defaultCameraPositionDirection = JSON.parse(defaultCameraPositionDirection);
+            try {
+                defaultCameraPositionDirection = JSON.parse(defaultCameraPositionDirection);
+            }
+            catch (e){
+                this._camera.flyToBoundingSphere(this._main3dTileset.boundingSphere);
+                return;
+            }
 
-            var offset = new Cesium.HeadingPitchRange(Cesium.Math.toRadians(defaultCameraPositionDirection.heading),
-                                                      Cesium.Math.toRadians(defaultCameraPositionDirection.pitch),
-                                                      defaultCameraPositionDirection.range);
+            if(!defaultCameraPositionDirection.offsetX ||
+                !defaultCameraPositionDirection.offsetY ||
+                !defaultCameraPositionDirection.offsetZ ||
+                !defaultCameraPositionDirection.heading ||
+                !defaultCameraPositionDirection.pitch ||
+                !defaultCameraPositionDirection.roll) {
+                console.warn('invalid default_camera_position_direction');
+                console.warn(CONSTRUKTED_AJAX.default_camera_position_direction);
 
-            this._camera.flyToBoundingSphere(this._main3dTileset.boundingSphere, {offset : offset});
+                this._camera.flyToBoundingSphere(this._main3dTileset.boundingSphere);
+                return;
+            }
+
+            var offset = new Cesium.Cartesian3(defaultCameraPositionDirection.offsetX, defaultCameraPositionDirection.offsetY, defaultCameraPositionDirection.offsetZ);
+
+            var destination = Cesium.Cartesian3.add(this._main3dTileset.boundingSphere.center, offset, new Cesium.Cartesian3());
+
+            this._cesiumViewer.camera.flyTo({
+                destination : destination,
+                orientation : {
+                    heading : Cesium.Math.toRadians(defaultCameraPositionDirection.heading),
+                    pitch :  Cesium.Math.toRadians(defaultCameraPositionDirection.pitch),
+                    roll : Cesium.Math.toRadians(defaultCameraPositionDirection.roll)
+                }
+            });
         }
         else {
             this._camera.flyToBoundingSphere(this._main3dTileset.boundingSphere);

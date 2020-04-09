@@ -864,7 +864,7 @@ var theApp = (function () {
             data : {
                 action : 'post_set_current_view',
                 post_id : CONSTRUKTED_AJAX.post_id,
-                view_data: _getCurrentCameraOrientationJsonString()
+                view_data: _getRelativeCurrentCameraPositionOrientationJsonString()
             },
             success : function( response ) {
                 jqSaveCurrentViewButton.prop('disabled', false);
@@ -907,16 +907,20 @@ var theApp = (function () {
 
     // https://github.com/outsider787/gw3_construkted/wiki/Construkted-Meta-Data-Definition
 
-    function _getCurrentCameraOrientationJsonString() {
+    function _getRelativeCurrentCameraPositionOrientationJsonString() {
         var camera = viewer.camera;
 
-        var cameraOrientationData = {};
+        var data = {};
 
-        cameraOrientationData.heading = Cesium.Math.toDegrees(camera.heading);
-        cameraOrientationData.pitch = Cesium.Math.toDegrees(camera.pitch);
-        cameraOrientationData.range = Cesium.Cartesian3.distance(camera.position, tilesets.boundingSphere.center);
+        data.offsetX = camera.position.x - tilesets.boundingSphere.center.x;
+        data.offsetY = camera.position.y - tilesets.boundingSphere.center.y;
+        data.offsetZ = camera.position.z - tilesets.boundingSphere.center.z;
 
-        return JSON.stringify(cameraOrientationData);
+        data.heading = Cesium.Math.toDegrees(camera.heading);
+        data.pitch = Cesium.Math.toDegrees(camera.pitch);
+        data.roll = Cesium.Math.toDegrees(camera.roll);
+
+        return JSON.stringify(data);
     }
 
     return {
