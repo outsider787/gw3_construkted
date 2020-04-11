@@ -24,7 +24,7 @@
                 <p class="desc">Set default camera position displayed on ititial asset loading.</p>
                 <button type="button" id="save_current_view" class="btn btn-light">Set default view</button>
 
-                <p class="desc">Use if display is not showing in the asset.</p>
+                <p class="desc">Use if display is not showing the asset.</p>
                 <button type="button" id="reset_camera_view" class="btn btn-light">Camera view reset</button>
             <?php } ?>
 
