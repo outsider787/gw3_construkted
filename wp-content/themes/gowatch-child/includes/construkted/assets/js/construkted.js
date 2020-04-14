@@ -677,7 +677,7 @@ var theApp = (function () {
             modifier : Cesium.KeyboardEventModifier.CTRL
         }];
 
-        var tilesetURL = CONSTRUKTED_AJAX.tile_server_url +  CONSTRUKTED_AJAX.post_slug + '/tileset.json';
+        var tilesetURL = 'https://s3.us-east-2.wasabisys.com/construkted-assets/' + CONSTRUKTED_AJAX.post_slug + '/tileset.json';
 
         tilesets = viewer.scene.primitives.add(
             new Cesium.Cesium3DTileset({
