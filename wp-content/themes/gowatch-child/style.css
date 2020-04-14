@@ -1304,6 +1304,9 @@ table.variations,
     background-color: var(--blue);
     box-shadow: 0px 3px 12px rgba(8, 75, 115, 0.9);
 }
+.thumbnail-view article.over-image.airkit_view-article .entry-content-footer::after {
+    display: none;
+}
 
 @media only screen and (max-width: 768px) {
     .single-video .post-header .entry-meta-views {
