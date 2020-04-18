@@ -1,6 +1,7 @@
 <div class="bst4-wrapper">
     <div class="container-fluid">
         <nav id="navbar-right" class="navbar-right bg-light p-3">
+            <span><?php esc_html_e('Tools', 'gowatch-child'); ?></span>
             <ul class="nav flex-column">
                 <li class="nav-item" id="nav-layers">
                     <span class="btn btn-light gwicon-layers" id="construkted-popup-layers-btn" title="Layers of hover tips">

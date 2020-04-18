@@ -94,7 +94,7 @@ $article_atts['class'] = get_post_class( $article_classes );
 
 <div <?php airkit_element_attributes( array(), array('element' => 'post-row'), $post->ID ); ?>>
 
-	<div class="container">
+	<div class="container single-container">
 		<?php
 			if ( 'y' == airkit_single_option( 'breadcrumbs' ) ) {
 
@@ -118,73 +118,93 @@ $article_atts['class'] = get_post_class( $article_classes );
 		<?php airkit_progress_scroll(); ?>
 
 		<article <?php airkit_element_attributes( $article_atts, array('element' => 'article', 'is-single' => true), $post->ID ) ?>>
-			<div class="asset-main-info">
-				<header class="post-header">
-					<?php
-						echo airkit_PostMeta::categories( $post->ID, array( 'wrap-class' => 'post-categories entry-categories' ) );
-						echo airkit_PostMeta::title( $post->ID, array( 'wrap' => 'h2', 'class' => 'post-title single-video-title', 'url' => 'n', 'single' => 'y' ) );
-					?>
+			
+			<header class="post-header">
+				<?php
+					echo airkit_PostMeta::categories( $post->ID, array( 'wrap-class' => 'post-categories entry-categories' ) );
+					echo airkit_PostMeta::title( $post->ID, array( 'wrap' => 'h2', 'class' => 'post-title single-video-title', 'url' => 'n', 'single' => 'y' ) );
+				?>
+			</header>
+
+			<div class="construkted-meta">
+				<ul>
 					<?php if ( 'y' == airkit_option_value('single', 'video_meta') && 'n' != airkit_single_option('views') ) : ?>
-						<div class="entry-meta entry-meta-views">
-							<span><?php esc_html_e('Views', 'gowatch') ?></span>
+						<li class="entry-meta entry-meta-views">
 							<strong><?php airkit_get_views($post->ID) ?></strong>
-						</div>
+							<span><?php esc_html_e('views', 'gowatch') ?></span>
+						</li>
 					<?php endif; ?>
-				</header>
-
-				<aside class="post-meta">
-					<div class="post-meta-author">
-						<?php
-							if ( 'y' == airkit_option_value('single', 'video_meta') ) {
-								echo construkted_PostMeta::author( $post->ID, array('wrap' => 'div', 'avatar' => true, 'date' => true) );
-							}
-						?>
-					</div>
-					<div class="post-meta-actions">
-						<?php
-							// echo airkit_PostMeta::add_to_favorite( $post->ID, array( 'label' => true, 'single' => 'y' ) );
-							//echo airkit_PostMeta::add_to_playlist( $post->ID, array( 'label' => false, 'single' => 'y' ) );
-							construkted_single_sharing( array('label' => 'y', 'tooltip-popover' => 'y') );
-							if ( 'y' == airkit_option_value('single', 'video_meta') ) {
-								echo airkit_PostMeta::rating( $post->ID, array( 'type' => 'form', 'wrap' => 'div' ) );
-							}
-						?>
-					</div>
-				</aside>
-
-				<aside class="post-container">
-
-					<div class="post-content <?php echo $content_size_class; ?>">
-						<?php
-
-							echo airkit_PostMeta::subtitle( $post->ID, array( 'single' => 'y' ) );
-
-							do_action( 'airkit_above_single_content' );
-
-							$content = apply_filters( 'the_content', get_the_content() );
-							airkit_check_subscribers_only($content);
-
-						?>
-					</div>
-					
-					<?php if ( $content_size_class == 'less-content' ): ?>
-						<div class="content-toggler"><span><em><?php echo esc_html__('Show more', 'gowatch') ?></em> <i class="icon-down"></i></span></div>
-					<?php endif ?>
-					<div class="asset-action-buttons">
-						<?php
-	                        echo html_for_asset_download_button( $post->ID, array( 'single' => 'y' ) );
-	                    ?>
-	                     <a href="#" class="gw3-button embed-code-link outline" data-action="show-embed-code-link"><i class="icon-website-code"></i> <?php esc_html_e('Embed', 'gowatch'); ?></a>
-						<div class="embed-content show-embed-code-link">
-							<h4><?php esc_html_e( 'Embed Asset', $domain = 'default' ) ?></h4>
-							<textarea id="video-embed-code"><?php echo construkted_PostMeta::video_embed_code( $post_ID ); ?></textarea>
-						</div>
-					</div>
-					<?php do_action( 'airkit_below_single_content' ); ?>
-					<?php airkit_post_user_actions(); ?>
-				</aside>
+					<?php echo construkted_PostMeta::date( $post->ID ); ?>
+					<li class="entry-meta-embed">
+						 <a href="#" class="embed-code-link" data-action="show-embed-code-link"><i class="icon-website-code"></i> <?php esc_html_e('Embed', 'gowatch'); ?></a>
+					</li>
+					<?php if( !empty(html_for_asset_download_button( $post->ID, array( 'single' => 'y' ) )) ): ?>
+						<li class="entry-meta-download">
+							<?php echo html_for_asset_download_button( $post->ID, array( 'single' => 'y' ) ); ?>
+						</li>
+					<?php endif; ?>
+					<li class="entry-meta-share">
+						<?php construkted_single_sharing( array('label' => 'y', 'tooltip-popover' => 'y') ); ?>
+					</li>
+					<li class="entry-meta-post-actions">
+						<?php airkit_post_user_actions(); ?>
+					</li>
+				</ul>
 			</div>
-			<?php echo construkted_asset_info(); ?>
+			<div class="main-asset-content">
+				<div class="asset-main-info">
+
+					<aside class="post-meta">
+						<div class="post-meta-author">
+							<?php
+								if ( 'y' == airkit_option_value('single', 'video_meta') ) {
+									echo construkted_PostMeta::author( $post->ID, array('wrap' => 'div', 'avatar' => true, 'subscribers' => true) );
+								}
+							?>
+						</div>
+						<div class="post-meta-actions">
+							<?php
+								// echo airkit_PostMeta::add_to_favorite( $post->ID, array( 'label' => true, 'single' => 'y' ) );
+								//echo airkit_PostMeta::add_to_playlist( $post->ID, array( 'label' => false, 'single' => 'y' ) );
+								if ( 'y' == airkit_option_value('single', 'video_meta') ) {
+									echo airkit_PostMeta::rating( $post->ID, array( 'type' => 'form', 'wrap' => 'div' ) );
+								}
+							?>
+							<div class="subscribe-btn">
+								<a href="#" class="wpsta-button wpsta-subscribe-btn" data-authorid="1" data-userid="0">Subscribe</a>
+							</div>
+						</div>
+					</aside>
+
+					<aside class="post-container">
+
+						<div class="post-content <?php echo $content_size_class; ?>">
+							<?php
+
+								echo airkit_PostMeta::subtitle( $post->ID, array( 'single' => 'y' ) );
+
+								do_action( 'airkit_above_single_content' );
+
+								$content = apply_filters( 'the_content', get_the_content() );
+								airkit_check_subscribers_only($content);
+
+							?>
+						</div>
+						
+						<?php if ( $content_size_class == 'less-content' ): ?>
+							<div class="content-toggler"><span><em><?php echo esc_html__('Show more', 'gowatch') ?></em> <i class="icon-down"></i></span></div>
+						<?php endif ?>
+						<div class="asset-action-buttons">
+							<div class="embed-content show-embed-code-link">
+								<h4><?php esc_html_e( 'Embed Asset', $domain = 'default' ) ?></h4>
+								<textarea id="video-embed-code"><?php echo construkted_PostMeta::video_embed_code( $post_ID ); ?></textarea>
+							</div>
+						</div>
+						<?php do_action( 'airkit_below_single_content' ); ?>
+					</aside>
+				</div>
+				<?php echo construkted_asset_info(); ?>
+			</div>
 			<div class="post-footer">
 			<?php 
 				echo airkit_PostMeta::rating_single( $post->ID );

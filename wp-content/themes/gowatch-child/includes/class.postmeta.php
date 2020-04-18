@@ -361,7 +361,7 @@ if ( !class_exists('construkted_PostMeta') ) {
             $meta = (!empty($options['avatar']) ? '<span class="post-author-avatar">' . airkit_get_avatar( get_the_author_meta('ID'), 50 ) . '</span>' : '') . '
 						<span class="vcard author author_name">
                             <a href="' .  get_author_posts_url( $author ) . '" rel="author">
-                            <span class="fn">' . get_the_author_meta( 'display_name', $author ) . '</span></a>' . esc_html__(' on ', 'gowatch-child') . (!empty($options['date']) ? self::date($post_ID, array('wrap' => 'span')) : '') . '
+                            <span class="fn">' . get_the_author_meta( 'display_name', $author ) . '</span></a>' . (!empty($options['date']) ? self::date($post_ID, array('wrap' => 'span')) : '') .  (!empty($options['subscribers']) ? '<span class="author-subscribers">12 subscribers</span>' : '') .'
                         </span>
 					';
 
@@ -617,6 +617,7 @@ if ( !class_exists('construkted_PostMeta') ) {
 							<a class="btn-share" href="#" title="'. esc_html__( 'Share', 'gowatch' ) .'" data-toggle="popover" data-placement="bottom">
 								<span class="btn-icon-wrap">
 									<i class="toggle-sharing icon-share"></i>
+                                    ' . esc_html__('Share', 'gowatch-child') . '
 									<i class="share-count">'. $total .'</i>
 								</span>
 								'. ( $options['label'] === true ? '<span class="entry-meta-description">'. esc_html__( 'Share', 'gowatch' ) .'</span>' : '' ) .'

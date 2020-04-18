@@ -2254,7 +2254,7 @@ public static function user_element( $options = array( ))
 						</ul>
 					</div>';
 
-		$links 	= '<a href="'. esc_url( get_frontend_submit_url() ) .'" class="user-upload"><i class="icon-small-upload-button-with-an-arrow"></i></a><div class="user-image">'. $image_with_link .'<i class="icon-down"></i></div>';
+		$links 	= '<a href="'. esc_url( get_frontend_submit_url() ) .'" class="user-upload"><i class="icon-small-upload-button-with-an-arrow"></i> ' . esc_html__('Upload asset', 'gowatch-child') . '</a><div class="user-image">'. $image_with_link .'<i class="icon-down"></i></div>';
 
 	} else {
 

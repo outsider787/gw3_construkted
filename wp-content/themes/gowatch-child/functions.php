@@ -53,7 +53,7 @@ add_action('wp_enqueue_scripts', 'gowatch_child_enqueue_styles');
 
 function gowatch_child_enqueue_styles()
 {
-    wp_enqueue_style('gowatch-child-style', get_stylesheet_directory_uri() . '/style.css', array('gowatch-style', 'gowatch-bootstrap'));
+    wp_enqueue_style('gowatch-child-style', get_stylesheet_directory_uri() . '/style.css', array('gowatch-style', 'gowatch-bootstrap', 'gowatch-widgets'));
 
     wp_enqueue_script('side-bar-script',  get_stylesheet_directory_uri() . '/includes/construkted/assets/js/side-bar.js', array('jquery'), CS_LIB_VER, true);
 
@@ -97,7 +97,7 @@ function html_for_asset_download_button($post_ID, $options = array())
 
     $href = $s3_server_url . '/' . $author_display_name . '/' . $post_slug . '-' . $original_3d_file_base_name;
 
-    return '<a class="btn-download gw3-button ' . implode(' ', $btn_classes) . '" href="' . esc_url($href) . '" title="' . $label_text . '">
+    return '<a class="btn-download ' . implode(' ', $btn_classes) . '" href="' . esc_url($href) . '" title="' . $label_text . '">
         <i class="icon-download-full"></i> 
                         ' . $download_label . '
             </a>';
