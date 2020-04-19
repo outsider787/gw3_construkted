@@ -256,7 +256,7 @@ function gw3_processing_displayItems() {
         };
 
     $ret = array(
-        'construkted_api_state' => $all_tasks != null ? 'Live' : 'Not Live',
+        'construkted_api_state' => isset($all_tasks) ? 'Live' : 'Not Live',
         'count_of_tasks_being_processed' => count($tasks_being_processed),
         'count_of_tasks_in_queue' => count($tasks_in_queue),
         'count_of_tasks_failed' => count($tasks_failed),
