@@ -794,7 +794,7 @@ function construkted_change_users_subscription() {
         $subscription = wcs_get_subscription( esc_attr($_GET['subscription_id']) );
         $new_status   = esc_attr($_GET['cancel_subscription']);
         $dashboard_url = get_frontend_dashboard_url();
-        $billing_url = add_query_arg( 'active_tab', 'billing', $dashboard_url );
+        $billing_url = add_query_arg( 'active_tab', 'subscription', $dashboard_url );
 
         if ( WCS_User_Change_Status_Handler::validate_request( $user_id, $subscription, $new_status, $_GET['_wpnonce'] ) ) {
             WCS_User_Change_Status_Handler::change_users_subscription( $subscription, $new_status );
@@ -809,7 +809,7 @@ function construkted_change_users_subscription() {
         $subscription = wcs_get_subscription( esc_attr($_GET['subscription_id']) );
         $new_status   = esc_attr($_GET['reactivate_subscription']);
         $dashboard_url = get_frontend_dashboard_url();
-        $billing_url = add_query_arg( 'active_tab', 'billing', $dashboard_url );
+        $billing_url = add_query_arg( 'active_tab', 'subscription', $dashboard_url );
 
         if ( WCS_User_Change_Status_Handler::validate_request( $user_id, $subscription, $new_status, $_GET['_wpnonce'] ) ) {
             WCS_User_Change_Status_Handler::change_users_subscription( $subscription, $new_status );
