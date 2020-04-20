@@ -79,7 +79,9 @@ body {
     --ultraLightGrey: #F9FAFE;
 }
 
-
+.tszf-login-form .sgr-recaptcha {
+    padding: 0 20px;
+}
 .airkit_header-style5 {
     background: var(--blue);
     color: #FFF;
@@ -849,7 +851,7 @@ popups
     height: 48px;
     line-height: 48px;
     padding: 0 32px;
-    border-radius: 35px;
+    border-radius: 5px;
     font-size: 18px;
     color: #FFF;
     background-color: rgba(9,49,84,1);
@@ -1350,7 +1352,56 @@ article .entry-meta-date a::after {
     margin-top: 0;
     font-size: 16px;
 }
-
+.ts-callaction a.continue {
+    border-radius: 5px;
+}
+#mc4wp_email, .mc4wp-form input[type="email"],
+.mc4wp-form input[type="text"] {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+.mc4wp-form input[type="submit"] {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+#footer {
+    font-size: 14px;
+}
+#footer .widget-title::after {
+    display: none;
+}
+#footer .widget-title {
+    margin-bottom: 10px;
+}
+#footer .text-widget em {
+    font-style: 14px;
+    opacity: 0.7;
+}
+#footer .widget {
+    margin-bottom: 20px;
+}
+#footer .site-section > .row {
+    display: flex;
+    flex-direction: row;
+}
+#footer .site-section > .row > div > div {
+    height: 100%;
+}
+.footer-contact {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    flex-direction: column;
+}
+.footer-contact li i {
+    color: var(--violet);
+}
+.limited-subscription-notice {
+    text-align: center;
+    font-size: 0.8em;
+    margin-top: 10px;
+}
 .flex-row {
     display: flex;
     flex-direction: row;
@@ -1360,7 +1411,8 @@ article .entry-meta-date a::after {
     margin: 0 -15px;
 }
 .variation-column {
-    border: 1px solid #f1f1f1;
+    border: 1px solid var(--ultraLightGrey);
+    background: #FFF;
     padding: 20px 28px;
     flex: 1 1 auto;
     margin: 0 15px;
@@ -1377,6 +1429,13 @@ article .entry-meta-date a::after {
 .variation-column:hover {
     box-shadow: 0 2px 20px 5px rgba(30,30,30,0.08);
 }
+.variation-column .variation-name {
+    color: var(--violet);
+}
+
+.variation-column .variation-specs {
+    color: var(--darkBlue);
+}
 .variation-column .variation-price {
     color: var(--blue);
     font-size: 1.1em;
@@ -1385,10 +1444,11 @@ article .entry-meta-date a::after {
     border: 1px solid var(--blue);
     color: var(--blue);
     padding: 9px 13px;
-    border-radius: 35px;
+    border-radius: 5px;
     font-weight: 600;
     text-transform: uppercase;
     font-size: 12px;
+    margin-top: 14px;
     cursor: pointer;
     transition: .2s box-shadow ease, .2s background ease, .2s color ease;
 }
