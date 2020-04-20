@@ -167,38 +167,52 @@ function try_render_embed_cesium_viewer() {
 
     $server_url = get_stylesheet_directory_uri();
 
+    $cesium_options = get_option( 'cesium_options' );
+
+    $cesium_access_token = $cesium_options['construkted-cesium-access-token'];
+
     echo '
         <style>
             html, body, #cesiumContainer {
                 width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
             }
+            .cesium-viewer-measureContainer {
+                display: none !important;
+            }
         </style>
         ';
 
-    echo '<link rel="stylesheet" href="https://cesiumjs.org/releases/' . CESIUMJS_VER . '/Build/Cesium/Widgets/widgets.css" type="text/css">';
-    echo '<link rel="stylesheet" href="' . $server_url. '/css/construkted.css" type="text/css">';
-    echo '<script type="text/javascript" src="' . $server_url . '/wp-includes/js/jquery/jquery.js"></script>';
-    echo '<script type="text/javascript" src="https://cesiumjs.org/releases/' . CESIUMJS_VER . '/Build/Cesium/Cesium.js"></script>';
-    echo '<script type="text/javascript" src="' . $server_url . '/js/cesium-ion-sdk-plugin.js"></script>';
-    echo '<script type="text/javascript" src="' . $server_url . '/js/cs-camera-controller.js"></script>';
+
+    echo '<link rel="stylesheet" href="https://cesiumjs.org/releases/' . CESIUMJS_VER . '/Build/Cesium/Widgets/widgets.css" type="text/css">' . PHP_EOL;
+    echo '<link rel="stylesheet" href="' . $server_url. '/includes/construkted/assets/css/construkted.css" type="text/css">' . PHP_EOL;
+    echo '<script type="text/javascript" src="' . get_site_url() . '/wp-includes/js/jquery/jquery.js"></script>' . PHP_EOL;
+    echo '<script type="text/javascript" src="https://cesiumjs.org/releases/' . CESIUMJS_VER . '/Build/Cesium/Cesium.js"></script>' . PHP_EOL;
+    echo '<script type="text/javascript" src="' . $server_url . '/includes/construkted/assets/js/cesium-ion-sdk-plugin.js"></script>' . PHP_EOL;
+    echo '<script type="text/javascript" src="' . $server_url . '/includes/construkted/assets/js/cs-camera-controller.js"></script>' . PHP_EOL;
 
     // prepare javascript parameters
-    echo '<script>';
-    echo 'var CONSTRUKTED_AJAX = {};';
-    echo 'CONSTRUKTED_AJAX.tile_server_url ="' . CONSTRUKTED_3D_TILE_SERVER_URL . '";';
-    echo 'CONSTRUKTED_AJAX.post_slug ="' . $post_slug . '";';
+    echo '<script>'  . PHP_EOL;
+    echo 'var CONSTRUKTED_AJAX = {};' . PHP_EOL;
+    echo 'CONSTRUKTED_AJAX.cesium_access_token = "' . $cesium_access_token . '";' . PHP_EOL;
+    echo 'CONSTRUKTED_AJAX.tile_server_url ="' . CONSTRUKTED_3D_TILE_SERVER_URL . '";'  . PHP_EOL;
+    echo 'CONSTRUKTED_AJAX.post_slug ="' . $post_slug . '";'  . PHP_EOL;
 
     $default_camera_position_direction = get_post_meta( $post->ID, 'default_camera_position_direction', true);
 
     if($default_camera_position_direction != '')
-        echo "CONSTRUKTED_AJAX.default_camera_position_direction = '" . $default_camera_position_direction . "';";
+        echo "CONSTRUKTED_AJAX.default_camera_position_direction = '" . $default_camera_position_direction . "';"  . PHP_EOL;
 
-    echo '</script>';
+    $asset_geo_location = get_post_meta( $post->ID, 'asset_geo-location', true);
 
-    echo '<script type="text/javascript" src="' . $server_url . '/js/construkted.js"></script>';
+    if($asset_geo_location != '')
+        echo "CONSTRUKTED_AJAX.asset_geo_location = '" . $asset_geo_location . "';"  . PHP_EOL;
 
-    echo '<div id="cesiumContainer"></div>';
-    echo '<div id="toolbar"><button id="exitFPVModeButton" style="display: none" class="cesium-button">EXIT FPV MODE</button></div>';
+    echo '</script>' . PHP_EOL;
+
+    echo '<script type="text/javascript" src="' . $server_url . '/includes/construkted/assets/js/construkted.js"></script>'  . PHP_EOL;
+
+    echo '<div id="cesiumContainer"></div>'  . PHP_EOL;
+    echo '<div id="toolbar"><button id="exitFPVModeButton" style="display: none" class="cesium-button">EXIT FPV MODE</button></div>'  . PHP_EOL;
 
     exit;
 }
