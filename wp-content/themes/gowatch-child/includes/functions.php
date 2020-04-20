@@ -176,6 +176,9 @@ function try_render_embed_cesium_viewer() {
             html, body, #cesiumContainer {
                 width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
             }
+            .cesium-viewer-measureContainer {
+                display: none !important;
+            }
         </style>
         ';
 
