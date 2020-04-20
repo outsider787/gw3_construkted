@@ -355,13 +355,18 @@ if ( !class_exists('construkted_PostMeta') ) {
             $options['key'] = 'author';
             $is_single = isset($options['is-single']) ? $options['is-single'] : false;
 
+            if( class_exists('WPSTA_Model') ) {
+                $wpstamodel =new WPSTA_Model();
+                $nr_subscribers = $wpstamodel->get_num_subscribers(get_the_author_meta('ID'));
+            }
+
 
             $options['prefix'] = (isset($options['prefix']) && !empty($options['prefix'])) ? $options['prefix'] : '';
 
             $meta = (!empty($options['avatar']) ? '<span class="post-author-avatar">' . airkit_get_avatar( get_the_author_meta('ID'), 50 ) . '</span>' : '') . '
 						<span class="vcard author author_name">
                             <a href="' .  get_author_posts_url( $author ) . '" rel="author">
-                            <span class="fn">' . get_the_author_meta( 'display_name', $author ) . '</span></a>' . (!empty($options['date']) ? self::date($post_ID, array('wrap' => 'span')) : '') .  (!empty($options['subscribers']) ? '<span class="author-subscribers">12 subscribers</span>' : '') .'
+                            <span class="fn">' . get_the_author_meta( 'display_name', $author ) . '</span></a>' . (!empty($options['date']) ? self::date($post_ID, array('wrap' => 'span')) : '') .  (!empty($options['subscribers']) ? '<span class="author-subscribers">' . $nr_subscribers . ' ' . esc_html__('subscribers', 'gowatch-child') . '</span>' : '') .'
                         </span>
 					';
 

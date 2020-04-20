@@ -129,7 +129,7 @@ $article_atts['class'] = get_post_class( $article_classes );
 			<div class="construkted-meta">
 				<ul>
 					<?php if ( 'y' == airkit_option_value('single', 'video_meta') && 'n' != airkit_single_option('views') ) : ?>
-						<li class="entry-meta entry-meta-views">
+						<li class="entry-meta-views">
 							<strong><?php airkit_get_views($post->ID) ?></strong>
 							<span><?php esc_html_e('views', 'gowatch') ?></span>
 						</li>
@@ -137,6 +137,10 @@ $article_atts['class'] = get_post_class( $article_classes );
 					<?php echo construkted_PostMeta::date( $post->ID ); ?>
 					<li class="entry-meta-embed">
 						 <a href="#" class="embed-code-link" data-action="show-embed-code-link"><i class="icon-website-code"></i> <?php esc_html_e('Embed', 'gowatch'); ?></a>
+						 <div class="embed-content show-embed-code-link">
+						 	<h4><?php esc_html_e( 'Embed Asset', $domain = 'default' ) ?></h4>
+						 	<textarea id="video-embed-code"><?php echo construkted_PostMeta::video_embed_code( $post_ID ); ?></textarea>
+						 </div>
 					</li>
 					<?php if( !empty(html_for_asset_download_button( $post->ID, array( 'single' => 'y' ) )) ): ?>
 						<li class="entry-meta-download">
@@ -171,7 +175,9 @@ $article_atts['class'] = get_post_class( $article_classes );
 								}
 							?>
 							<div class="subscribe-btn">
-								<a href="#" class="wpsta-button wpsta-subscribe-btn" data-authorid="1" data-userid="0">Subscribe</a>
+								<?php if( class_exists('WPSTA_Model') ): ?>
+									<?php echo do_shortcode('[subscribe-author-button heading="false"]'); ?>
+								<?php endif; ?>
 							</div>
 						</div>
 					</aside>
@@ -194,12 +200,6 @@ $article_atts['class'] = get_post_class( $article_classes );
 						<?php if ( $content_size_class == 'less-content' ): ?>
 							<div class="content-toggler"><span><em><?php echo esc_html__('Show more', 'gowatch') ?></em> <i class="icon-down"></i></span></div>
 						<?php endif ?>
-						<div class="asset-action-buttons">
-							<div class="embed-content show-embed-code-link">
-								<h4><?php esc_html_e( 'Embed Asset', $domain = 'default' ) ?></h4>
-								<textarea id="video-embed-code"><?php echo construkted_PostMeta::video_embed_code( $post_ID ); ?></textarea>
-							</div>
-						</div>
 						<?php do_action( 'airkit_below_single_content' ); ?>
 					</aside>
 				</div>

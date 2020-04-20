@@ -43,9 +43,17 @@ jQuery('#scroll-down-btn').on('click', function(){
     $("html, body").animate({ scrollTop: toScroll }, 600);
 });
 
+jQuery(window).on('scroll', function(){
+    if( jQuery(window).scrollTop() > 200 ) {
+        jQuery('#scroll-down-btn').fadeOut(300);
+    } else {
+        jQuery('#scroll-down-btn').fadeIn(300);
+    }
+});
+
 
 jQuery('.embed-code-link').on('click', function(){
-    jQuery('.embed-content').slideToggle();
+    jQuery('.embed-content').toggleClass('in');
 
     return false;
 });
