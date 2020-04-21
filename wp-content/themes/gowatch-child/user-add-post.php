@@ -82,12 +82,12 @@ if ( isset( $airkit_breadcrumbs['breadcrumbs'] ) && $airkit_breadcrumbs['breadcr
 								// Render active form.
 								if( 'submit' === $action ) {
 
-									echo '<h1 class="page-title text-left">'. esc_html__( 'Add new post', 'gowatch' ) .'</h1>';
+									echo '<h1 class="page-title text-left">'. esc_html__( 'Add new asset', 'gowatch-child' ) .'</h1>';
 									echo airkit_var_sanitize( $frontend_form->add_post_form_build( array( 'id' => $active_submit_form_id ) ), 'true' );
 
 								} elseif( 'edit' === $action ) {
 
-									echo '<h1 class="page-title text-left">'. esc_html__( 'Now editing:', 'gowatch' ) .' <a href="'. get_permalink( $edit_id ) .'" class="now-editing">'. get_the_title( $edit_id ) .'</a></h1>';
+									echo '<h1 class="page-title text-left">'. esc_html__( 'Now editing:', 'gowatch-child' ) .' <a href="'. get_permalink( $edit_id ) .'" class="now-editing">'. get_the_title( $edit_id ) .'</a></h1>';
 									echo airkit_var_sanitize( $frontend_form->edit_post_form_build( array() ), 'true' );
 
 								}

@@ -2254,7 +2254,7 @@ public static function user_element( $options = array( ))
 						</ul>
 					</div>';
 
-		$links 	= '<a href="'. esc_url( get_frontend_submit_url() ) .'" class="user-upload"><i class="icon-small-upload-button-with-an-arrow"></i> ' . esc_html__('Upload asset', 'gowatch-child') . '</a><div class="user-image">'. $image_with_link .'<i class="icon-down"></i></div>';
+		$links 	= '<a href="'. esc_url( get_frontend_submit_url() ) .'" class="user-upload"><i class="icon-small-upload-button-with-an-arrow"></i> <span>' . esc_html__('Upload asset', 'gowatch-child') . '</span></a><div class="user-image">'. $image_with_link .'<i class="icon-down"></i></div>';
 
 	} else {
 
@@ -2268,10 +2268,10 @@ public static function user_element( $options = array( ))
 		}
 
 		// Generate output for not logged in users.
-		$links 			 = '<a href="'. esc_url( get_frontend_submit_url() ) .'" class="user-upload"><i class="icon-small-upload-button-with-an-arrow"></i></a>';
-		$links 			.= '<a class="btn small btn-primary" href="'. esc_url( $login_url ) .'?action=login">'. esc_html__( 'Sign in', 'gowatch' ) .'</a>';
-		$links 			.= '<a class="btn small" href="'. esc_url( $register_url ) .'?action=signup">'. esc_html__( 'Sign up', 'gowatch' ) .'</a>';
-		$links 			.= '<a class="mini-user-login" href="'. esc_url( $login_url ) .'?action=login"><i class="icon-user-full"></i></a>';
+		$links 			 = '<a href="'. esc_url( get_frontend_submit_url() ) .'" class="user-upload"><i class="icon-small-upload-button-with-an-arrow"></i> <span>' . esc_html__('Upload asset', 'gowatch-child') . '</span></a>';
+		$links 			.= '<a class="btn small btn-primary" href="'. esc_url( $login_url ) .'?action=login"><i class="icon-user-full"></i><span>'. esc_html__( 'Sign in', 'gowatch' ) .'</span></a>';
+		//$links 			.= '<a class="btn small" href="'. esc_url( $register_url ) .'?action=signup">'. esc_html__( 'Sign up', 'gowatch' ) .'</a>';
+		//$links 			.= '<a class="mini-user-login" href="'. esc_url( $login_url ) .'?action=login"><i class="icon-user-full"></i></a>';
 
 	}
 

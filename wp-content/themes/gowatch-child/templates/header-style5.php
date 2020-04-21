@@ -52,7 +52,7 @@ echo '<h1 class="hidden">'. get_bloginfo('name') .'</h1>';
 				<?php
 					echo airkit_Compilator::menu_element( $menu_options );
 					echo airkit_Compilator::logo_element( array('align' => 'text-left', 'columns' => 'cell-item') );
-					echo airkit_Compilator::searchbox_element( array('style' => 'input', 'live_results' => 'y', 'align' => 'center', 'columns' => 'col-md-4 col-sm-4 cell-item') );
+					echo airkit_Compilator::searchbox_element( array('style' => 'input', 'live_results' => 'y', 'align' => 'center', 'columns' => 'col-md-4 col-sm-4 cell-item search-cols') );
 					echo construkted_Compilator::user_element( array('align' => 'right', 'columns' => 'col-md-4 col-sm-4 cell-item') );
 				?>
 			</div>

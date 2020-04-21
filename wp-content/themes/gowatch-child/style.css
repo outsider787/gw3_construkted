@@ -107,7 +107,7 @@ body {
     max-width: 210px;
 }
 .airkit_header-style5 .airkit_table-content>.cell-item:first-child {
-    width: auto;
+    width: 60px;
     padding-right: 0;
 }
 .user-element > .btn,
@@ -133,6 +133,22 @@ body {
     font-weight: 400;
     font-size: 14px;
     letter-spacing: -0.01em;
+    text-transform: none;
+}
+.user-element > .btn {
+    background: var(--violet);
+    font-size: 14px;
+    letter-spacing: -0.02em;
+    height: 40px;
+    border-radius: 5px;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 16px;
+    text-transform: none;
+}
+.user-element > .btn:hover {
+    background: #FFF;
+    color: var(--blue);
 }
 .widget-title,
 article .entry-categories {
@@ -214,7 +230,11 @@ article .image-holder .post-link {
 .airkit_frontend-forms textarea {
     padding-top: 10px;
 }
-.thumbnail-view article.over-image .image-holder {
+.thumbnail-view article.over-image .image-holder,
+.thumbnail-view article.below-image .image-holder {
+    overflow: hidden;
+}
+.thumbnail-view article.over-image {
     overflow: hidden;
 }
 .thumbnail-view article.over-image header::before {
@@ -270,8 +290,8 @@ article .read-more {
 
 .has-geolocation {
     position: absolute;
-    top: -4px;
-    right: -4px;
+    top: 0;
+    right: 0;
     width: 60px;
     height: 60px;
     color: #FFF;
@@ -903,6 +923,19 @@ popups
     float: none;
     margin-left: auto;
 }
+.gowatch .wpsta-footer a.wpsta-button {
+    background: var(--violet) !important;
+}
+.gowatch .wpsta-footer a.wpsta-button:hover {
+    background: var(--blue) !important;
+}
+.gowatch .wpsta-author-info img {
+    border-radius: 5px;
+    margin: 0 0 10px 0;
+}
+.gowatch .wpsta-author-info .wpsta-footer {
+    margin-top: 10px;
+}
 .single-video .post-meta .post-meta-actions .subscribe-btn .wpsta-footer a.wpsta-button {
     height: 38px !important;
     display: inline-flex !important;
@@ -1277,7 +1310,7 @@ article .entry-meta-date a::after {
 .user-element .user-dropdown {
     color: #000;
     border-radius: 5px;
-    top: 51px;
+    top: calc(100% + 5px);
 }
 .user-element .user-dropdown::before {
     content: '';
@@ -1287,7 +1320,7 @@ article .entry-meta-date a::after {
     border-left: 8px solid transparent;
     border-right: 8px solid transparent;
     top: -8px;
-    right: 25px;
+    right: 29px;
 }
 .user-element .user-image img {
     border-radius: 5px;
@@ -1340,6 +1373,7 @@ article .entry-meta-date a::after {
     left: 100%;
     width: 1px;
     background: var(--lightGrey);
+    z-index: 5;
 }
 .single-post-navigation .navigation > li .page-next {
     border-top-right-radius: 5px;
@@ -1363,6 +1397,7 @@ article .entry-meta-date a::after {
 .mc4wp-form input[type="submit"] {
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
+    font-weight: 400;
 }
 #footer {
     font-size: 14px;
@@ -1775,12 +1810,13 @@ table.variations,
         flex: 1;
     }
     .single.single-video .post-meta > div.post-meta-actions {
-        flex: 0 1 135px;
-        width: 135px;
+        flex: 0 1 180px;
+        width: 180px;
         margin-left: auto;
         justify-content: flex-end;
         text-align: right;
     }
+
     .single .post-meta .post-meta-actions > div.single-sharing {
         float: none;
     }
@@ -1795,5 +1831,63 @@ table.variations,
     .subscription-product .variation-column {
         flex-direction: column;
         margin-bottom: 20px;
+    }
+    .search-cols {
+        padding: 0;
+    }
+    .airkit-single-likes a {
+        padding: 0 8px;
+    }
+    .airkit_header-style5 .airkit_table-content > .cell-item:nth-child(4) {
+        width: 120px;
+    }
+    .user-element .user-upload i {
+        margin-right: 0;
+    }
+    .user-element .user-upload {
+        margin-right: 5px;
+    }
+    .user-element .user-upload span,
+    .user-element > .btn span {
+        display: none;
+    }
+    .user-element .user-upload,
+    .user-element > .btn {
+        padding: 0 10px;
+    }
+    .user-element {
+        display: flex;
+        justify-content: flex-end;
+    }
+    .construkted-meta ul {
+        flex-wrap: wrap;
+    }
+    .entry-meta-download,
+    .entry-meta-embed,
+    .entry-meta-post-actions {
+        display: none;
+    }
+    .construkted-meta ul li.entry-meta-share {
+        margin-left: auto;
+        margin-right: 0 !important;
+    }
+    .tooltip-sharing .airkit_sharing .popover.bottom.in {
+        right: 0;
+        left: auto;
+    }
+    #commentform .form-submit {
+        text-align: left;
+    }
+    .single.single-video .post-meta .author_name,
+    .single-video .post-meta .post-meta-actions .subscribe-btn .wpsta-footer a.wpsta-button,
+    .airkit-single-likes a {
+        font-size: 12px !important;
+    }
+    .single .post-meta .post-meta-actions > * {
+        margin-right: 0;
+    } 
+    .single .post-meta .post-meta-author,
+    .single .post-meta .post-meta-actions {
+        margin-top: 0;
     }
 }
