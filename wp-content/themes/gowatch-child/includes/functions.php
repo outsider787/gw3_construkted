@@ -985,7 +985,6 @@ function construkted_subscription_layout() {
             do_action( 'woocommerce_before_single_product' );
 
         ?>
-        <h1 class="page-title text-center"><?php the_title(); ?></h1>
         <div class="flex-row" data-current="<?php echo $current_package; ?>">
         <?php
             $available_variations = $product->get_available_variations();

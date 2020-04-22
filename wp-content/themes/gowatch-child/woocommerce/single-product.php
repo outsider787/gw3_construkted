@@ -48,6 +48,7 @@ get_header();
 				?>
 			</div>
 		<?php else: ?>
+			<h1 class="page-title text-center"><?php the_title(); ?></h1>
 			<?php echo construkted_subscription_layout(); ?>
 		<?php endif; ?>
 	</div>
