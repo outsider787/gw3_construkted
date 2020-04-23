@@ -301,6 +301,46 @@ article .read-more {
     right: 0;
     bottom: -30px;
 }
+a[data-fancybox].about-page-play {
+    font-size: 30px;
+    line-height: 30px;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    border: 4px solid #FFF;
+    color: #FFF;
+    border-radius: 50%;
+    position: absolute !important;
+    left: 50%;
+    transform: translateX(-50%);
+    top: -190px;
+}
+a[data-fancybox].about-page-play:hover {
+    background: rgba(255,255,255,0.2);
+}
+a[data-fancybox].about-page-play::before {
+    border-radius: 50%;
+    opacity: 0;
+}
+.airkit_listed-features .icon-box-card {
+    padding: 0;
+    margin-bottom: 14px;
+}
+.airkit_listed-features .icon-box-card .title {
+    margin: 0 0 5px;
+    font-size: 16px;
+}
+.airkit_listed-features .icon-box-card.text-left .icon-box-cont {
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    font-size: 28px;
+}
+.airkit_listed-features .icon-box-card p {
+    color: var(--grey);
+}
 .airkit_icon-box figure {
     padding: 0 30px;
 }
@@ -2049,4 +2089,56 @@ table.variations,
     .home-top-banner h3 {
         font-size: 22px !important;
     }
+    #footer .site-section > .row {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    #footer .site-section > .row > div > div {
+        padding-left: 20px !important;
+        padding-right: 20px !important;
+    }
+    #footer .site-section > .row > div:nth-child(1) {
+        order: 4;
+        flex-basis: 100%;
+    }
+    #footer .site-section > .row > div:nth-child(4) {
+        flex-basis: 100%;
+    }
+    #footer .site-section > .row > div:nth-child(2),
+    #footer .site-section > .row > div:nth-child(3) {
+        flex-basis: 50%;
+        padding-bottom: 10px;
+    }
+    #footer .site-section > .row > div:nth-child(2) > div {
+        padding-left: 20px !important;
+        padding-right: 5px !important;
+        padding-bottom: 0 !important;
+    }
+    #footer .site-section > .row > div:nth-child(3) > div {
+        padding-right: 20px !important;
+        padding-left: 5px !important;
+        padding-bottom: 0 !important;
+    }
+    #footer .site-section > .row > div:nth-child(4) > div {
+        padding-top: 10px !important;
+    }
+    #footer .widget {
+        margin-bottom: 10px;
+    }
+    a[data-fancybox].about-page-play {
+        margin-top: -140px;
+    }
+    .about-page-banner h2::before {
+        margin-left: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        margin-top: -60px;
+    }
+    .about-page-banner h2::after {
+        margin-left: 0;
+        right: 50%;
+        transform: translateX(50%);
+        bottom: -50px;
+    }
+
 }
