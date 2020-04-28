@@ -1960,6 +1960,7 @@ table.variations,
 }
 .thumbnail-view article.over-image .post-link {
     opacity: 0;
+    z-index: 10;
 }
 .thumbnail-view article.over-image header .entry-title a::after {
     content: '';
