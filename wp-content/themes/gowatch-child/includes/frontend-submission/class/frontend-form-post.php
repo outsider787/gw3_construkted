@@ -971,7 +971,8 @@ class TSZF_Frontend_Form_Post extends TSZF_Render_Form {
         $command = $command . '"' . $s3_secret_key . '" ';
         $command = $command . '"' . $s3_bucket . '" ';
         $command = $command . '"' . $schema . '" ';
-        $command = $command . '"' . $attachment_id . '"';
+        $command = $command . '"' . $attachment_id . '" ';
+        $command = $command . '"' . CONSTRUKTED_TILING_SERVER . '"';
         $command = $command . " > /dev/null 2>/dev/null &";
 
         error_log('tiling request command: ' . $command);

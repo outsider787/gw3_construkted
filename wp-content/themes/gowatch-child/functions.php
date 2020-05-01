@@ -13,8 +13,12 @@ if (!defined('DEFAULT_DISK_QUOTA')) {
     define('DEFAULT_DISK_QUOTA', 2);
 }
 
+$api_options = get_option( 'api_options' );
+
+$construkted_api_url = $api_options['construkted-api-url'];
+
 if (!defined('CONSTRUKTED_TILING_SERVER')) {
-    define('CONSTRUKTED_TILING_SERVER', 'https://tile01.construkted.com');
+    define('CONSTRUKTED_TILING_SERVER', $construkted_api_url);
 }
 
 if (!defined('CONSTRUKTED_ASSET_SERVER')) {

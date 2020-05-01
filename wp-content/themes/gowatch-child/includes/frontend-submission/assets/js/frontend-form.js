@@ -804,7 +804,7 @@
     });
     $(window).on('load', function(){
         if ( jQuery('.add-new-page').length > 0 ) {
-            var url = "https://tile01.construkted.com:5000/task/all";
+            var url = tszf_frontend.construkted_api_url + ":5000/task/all";
 
             $.ajax({
                 url : url,

@@ -19,6 +19,7 @@ class CONSTRUKTED_Admin {
     public function construkted_admin_init() {
         register_setting( 'construkted_amazon_s3_options', 'amazon_s3_options', array($this, '') );
         register_setting( 'construkted_cesium_options', 'cesium_options', array($this, '') );
+        register_setting( 'construkted_api_options', 'api_options', array($this, '') );
     }
 
     /**
@@ -75,6 +76,11 @@ class CONSTRUKTED_Admin {
             <?php _e( 'Cesium Settings', 'construkted' ); ?>
         </a>
 
+        <a class="nav-tab <?php echo $constructed_active_tab == 'api-url-settings' ? 'nav-tab-active' : ''; ?>"
+           href="<?php echo admin_url( 'options-general.php?page=construkted_page&tab=api-url-settings' ); ?>">
+            <?php _e( 'API URL Settings', 'construkted' ); ?>
+        </a>
+
         <?php
     }
 
@@ -84,12 +90,15 @@ class CONSTRUKTED_Admin {
     public function construkted_settings_content() {
         global $constructed_active_tab;
 
+
         if ( $constructed_active_tab == 'amazon-s3-settings' )
             require_once( CONSTRUKTED_PATH . '/includes/admin/forms/construkted-amazon-s3-settings.php' );
+        elseif ( $constructed_active_tab == 'processing-state' )
+            require_once( CONSTRUKTED_PATH . '/includes/admin/forms/tiling-state.php' );
         elseif ( $constructed_active_tab == 'cesium-settings' )
             require_once( CONSTRUKTED_PATH . '/includes/admin/forms/cesium-settings.php' );
-        else
-            require_once( CONSTRUKTED_PATH . '/includes/admin/forms/tiling-state.php' );
+        elseif ( $constructed_active_tab == 'api-url-settings' )
+            require_once( CONSTRUKTED_PATH . '/includes/admin/forms/api-url-settings.php' );
     }
 
     /**

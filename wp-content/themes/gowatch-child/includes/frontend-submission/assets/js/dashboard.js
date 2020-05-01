@@ -21,7 +21,7 @@ var runningStatusCodes = {
 };
 
 function updateState() {
-    var url = "https://tile01.construkted.com:5000/task/all";
+    var url = dashboard_ajax.construkted_api_url + ":5000/task/all";
 
     $.ajax({
         url : url,

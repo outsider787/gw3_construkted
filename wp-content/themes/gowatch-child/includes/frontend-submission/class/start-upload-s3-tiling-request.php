@@ -1,6 +1,6 @@
 <?php
 
-if ($argc != 12)
+if ($argc != 13)
 {
     echo 'invalid argument count : ' . $argc . "\n";
     exit();
@@ -17,6 +17,7 @@ $s3_secret_key = $argv[8];
 $s3_bucket = $argv[9];
 $schema = $argv[10];
 $attachment_id = $argv[11];
+$construkted_api_url = $argv[12];
 
 echo 'post_id : ' . $post_id . "\n";
 echo 'post_slug : ' . $post_slug . "\n";
@@ -29,6 +30,7 @@ echo 's3_secret_key : ' . $s3_secret_key . "\n";
 echo 's3_bucket : ' . $s3_bucket . "\n";
 echo 'schema : ' . $schema . "\n";
 echo 'attachment_id : ' . $attachment_id . "\n";
+echo 'construkted_api_url : ' . $construkted_api_url . "\n";
 
 function my_untrailingslashit( $string ) {
     return rtrim( $string, '/\\' );
@@ -68,9 +70,9 @@ try {
     exit;
 }
 
-$construked_tiling_server_url = 'https://tile01.construkted.com:5000/request_tiling';
+$construkted_tiling_server_url =  $construkted_api_url . ':5000/request_tiling';
 
-$url = $construked_tiling_server_url . '/?' .
+$url = $construkted_tiling_server_url . '/?' .
        'postId=' . $post_id .
        '&slug=' . $post_slug .
        '&userName=' . $user_nice_name .

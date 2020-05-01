@@ -1702,7 +1702,8 @@ class TSZF_Render_Form {
         wp_localize_script( 'tszf-form-custom', 'tszf_frontend', array(
             'ajaxurl'       => admin_url( 'admin-ajax.php' ),
             'error_message' => __( 'Please fix the errors to proceed', 'gowatch' ),
-            'nonce'         => wp_create_nonce( 'tszf_nonce' )
+            'nonce'         => wp_create_nonce( 'tszf_nonce' ),
+            'construkted_api_url' => CONSTRUKTED_TILING_SERVER
             )
         );
     }
