@@ -597,7 +597,18 @@ class TSZF_Frontend_Form_Post extends TSZF_Render_Form {
                     $asset_type = $_POST['asset_type'];
 
                 $asset_type = self::convert_asset_type_from_gowatch_to_edd6($asset_type);
-                $attachment_id = $_POST['tszf_files']['upload_asset'][0];
+                #$attachment_id = $_POST['tszf_files']['upload_asset'][0];
+                
+                if (!empty($_POST['tszf_files']['photogrammetry_upload_asset'][0])) 
+                {
+                    $attachment_id = $_POST['tszf_files']['photogrammetry_upload_asset'][0];
+                }
+                
+                if (!empty($_POST['tszf_files']['pc_upload_asset'][0])) 
+                {
+                    $attachment_id = $_POST['tszf_files']['pc_upload_asset'][0];
+                }
+
 
                 self::set_default_thumbnail_of_being_processed_asset($post_id, $postarr['post_name']);
                 self::start_upload_to_s3_and_tiling($post_id, $attachment_id, $postarr['post_name'], $upload_data_type, $asset_type);
