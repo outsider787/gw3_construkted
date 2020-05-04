@@ -597,18 +597,23 @@ class TSZF_Frontend_Form_Post extends TSZF_Render_Form {
                     $asset_type = $_POST['asset_type'];
 
                 $asset_type = self::convert_asset_type_from_gowatch_to_edd6($asset_type);
-                #$attachment_id = $_POST['tszf_files']['upload_asset'][0];
-                
+
                 if (!empty($_POST['tszf_files']['photogrammetry_upload_asset'][0])) 
                 {
                     $attachment_id = $_POST['tszf_files']['photogrammetry_upload_asset'][0];
                 }
-                
-                if (!empty($_POST['tszf_files']['pc_upload_asset'][0])) 
+                else if (!empty($_POST['tszf_files']['pc_upload_asset'][0]))
                 {
                     $attachment_id = $_POST['tszf_files']['pc_upload_asset'][0];
                 }
+                else{
+                    wp_die('$attachment_id is undefined!');
+                }
 
+                $attached_file = get_attached_file($attachment_id, false);
+
+                // we save original file name for making download link
+                add_post_meta($post_id, 'original_3d_file_base_name', basename($attached_file));
 
                 self::set_default_thumbnail_of_being_processed_asset($post_id, $postarr['post_name']);
                 self::start_upload_to_s3_and_tiling($post_id, $attachment_id, $postarr['post_name'], $upload_data_type, $asset_type);

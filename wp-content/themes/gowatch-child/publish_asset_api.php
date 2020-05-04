@@ -17,25 +17,11 @@ require_once ABSPATH . '/wp-admin/includes/image.php';
 
 if(isset($_REQUEST['post_id'])) {
     $post_id = $_REQUEST['post_id'];
-    $attachment_id = $_REQUEST['orig_asset_attachment_id'];
-
-    if($attachment_id == null) {
-        echo json_encode(array('errCode' => 1, 'errMsg' => 'orig_asset_attachment_id!'));
-        exit;
-    }
 
     if ( !get_post ( $post_id ) ) {
         echo json_encode(array('errCode' => 1, 'errMsg' => 'specified post ' . $post_id . ' does not exist!'));
         exit;
     }
-
-    $attached_file = get_attached_file($attachment_id, false);
-
-    wp_delete_attachment( $attachment_id, true );
-
-    // we save original file name for making download link
-
-    add_post_meta($post_id, 'original_3d_file_base_name', basename($attached_file));
 
     wp_publish_post($post_id);
 
