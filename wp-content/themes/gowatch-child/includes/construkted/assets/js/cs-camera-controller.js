@@ -200,10 +200,9 @@ EDD_CJS.CameraController = (function () {
         if (Cesium.Math.equalsEpsilon(cartographic.height, terrainHeight, Cesium.Math.EPSILON4, Cesium.Math.EPSILON1))
             return;
 
-        // I am not sure why negative
+        // Cesium createWorldTerrain provide gives negative height value on some places
         if (cartographic.height < 0) {
             console.warn("height is negative");
-            return;
         }
 
         cartographic.height = cartographic.height + HUMAN_EYE_HEIGHT;
@@ -335,13 +334,13 @@ EDD_CJS.CameraController = (function () {
         console.log('current camera  height: ' + currentCameraCartographic.height);
 
         if(sampledHeight === undefined) {
-            console.log('sampled height is undefined');
+            console.warn('sampled height is undefined');
             return;
         }
 
+        // Cesium createWorldTerrain provide gives negative height value on some places
         if(sampledHeight < 0) {
-            console.log('sampled height is negative');
-            return;
+            console.warn('sampled height is negative');
         }
 
         if( sampledHeight > currentCameraCartographic.height)
