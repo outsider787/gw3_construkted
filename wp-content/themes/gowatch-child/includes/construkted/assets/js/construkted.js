@@ -18,6 +18,7 @@ var theApp = (function () {
     var jqCaptureThumbnailButton = jQuery('#capture_thumbnail');
     var jqSaveCurrentViewButton = jQuery('#save_current_view');
     var jqResetCameraViewButton = jQuery('#reset_camera_view');
+    var jqShowHideWireframeCheckbox = jQuery('#show-hide-wireframe-checkbox');
 
     function start() {
         _create3DMap();
@@ -523,14 +524,17 @@ var theApp = (function () {
         });
 
         jQuery('#maximum-screen-space-error-slider').change(function () {
-            var value = this.value;
-
-            var maximumScreenSpaceError = 32 - value;
-
             if(!tilesets)
                 return;
 
-            tilesets.maximumScreenSpaceError = maximumScreenSpaceError;
+            tilesets.maximumScreenSpaceError = 32 - this.value;
+        });
+
+        jqShowHideWireframeCheckbox.change(function () {
+            if(!tilesets)
+                return;
+
+            tilesets.debugWireframe = this.checked;
         });
     }
 

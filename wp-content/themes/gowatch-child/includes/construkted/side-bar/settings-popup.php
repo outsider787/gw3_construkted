@@ -13,8 +13,8 @@
                 </div>
             </div>
             <div class="form-check">
-                <input class="form-check-input" id="show-hide-all-measurement-checkbox" type="checkbox">
-                <label class="form-check-label" for="show-hide-all-measurement-checkbox">
+                <input class="form-check-input" id="show-hide-wireframe-checkbox" type="checkbox">
+                <label class="form-check-label" for="show-hide-wireframe-checkbox">
                     Show Wireframe
                 </label>
             </div>
@@ -30,7 +30,7 @@
                 <p class="desc">Create/update thumbnail from current asset view.</p>
                 <button type="button" id="capture_thumbnail" class="btn btn-light">Update asset thumbnail</button>
 
-                <p class="desc">Set default camera position displayed on ititial asset loading.</p>
+                <p class="desc">Set default camera position displayed on initial asset loading.</p>
                 <button type="button" id="save_current_view" class="btn btn-light">Set default view</button>
 
                 <p class="desc">Use if display is not showing the asset.</p>
