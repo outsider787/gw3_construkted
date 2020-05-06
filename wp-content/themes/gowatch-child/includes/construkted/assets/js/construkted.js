@@ -686,7 +686,7 @@ var theApp = (function () {
         tilesets = viewer.scene.primitives.add(
             new Cesium.Cesium3DTileset({
                 url: tilesetURL,
-                immediatelyLoadDesiredLevelOfDetail : true,
+                immediatelyLoadDesiredLevelOfDetail : false,
                 skipLevelOfDetail : true,
                 loadSiblings : true
             })
