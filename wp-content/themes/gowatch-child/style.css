@@ -94,19 +94,44 @@ body {
 }
 .autopost-checkbox label {
     display: block;
-    background: var(--ultraLightGrey);
-    color: var(--darkBlue);
+    /*background: var(--ultraLightGrey);
+    color: var(--darkBlue);*/
     border-radius: 5px;
-    margin: 14px 0;
+    /*margin: 14px 0;*/
     padding: 14px;
     font-weight: 400;
     cursor: pointer;
 }
 .autopost-checkbox label:hover {
-    box-shadow: 0 0 0 2px #eff4f7;
+    /*box-shadow: 0 0 0 2px #eff4f7;*/
+    color: var(--violet);
 }
 .autopost-checkbox label input {
     margin-right: 6px;
+}
+.tszf-submit .tszf-label {
+    display: none;
+}
+.tszf-submit {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.tszf-errors {
+    flex: 0 0 100%;
+    margin-top: 20px;
+    border: 2px solid #ff7575;
+    border-radius: 5px;
+    padding: 14px;
+    background: #ffebeb;
+    color: #ff3f3f;
+}
+.airkit_frontend-forms .tszf-submit input[type="submit"][disabled],
+.airkit_frontend-forms .tszf-submit input[type="submit"][disabled]:hover {
+    border-color: var(--lightGrey);
+    background: var(--lightGrey);
+    color: #FFF;
+    cursor: not-allowed;
 }
 .airkit_header-style5 .searchbox.style-input .hidden-form-search .searchbutton {
     color: var(--blue);

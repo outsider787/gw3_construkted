@@ -719,7 +719,7 @@ class TSZF_Render_Form {
                 <input type="hidden" name="post_author" value="<?php echo esc_attr( $cur_post->post_author ); ?>">
                 <input type="submit" name="submit" value="<?php echo esc_html__( 'Update', 'gowatch' ) ?>" />
             <?php } else { ?>
-                <input type="submit" name="submit" value="<?php echo esc_html__( 'Submit', 'gowatch' ) ?>" />
+                <input type="submit" name="submit" disabled="disabled" value="<?php echo esc_html__( 'Submit', 'gowatch' ) ?>" />
                 <input type="hidden" name="tszf_form_status" value="new">
             <?php } ?>
 
@@ -1701,7 +1701,7 @@ class TSZF_Render_Form {
 
         wp_localize_script( 'tszf-form-custom', 'tszf_frontend', array(
             'ajaxurl'       => admin_url( 'admin-ajax.php' ),
-            'error_message' => __( 'Please fix the errors to proceed', 'gowatch' ),
+            'error_message' => __( 'There were validation errors. Please fix the errors to proceed.', 'gowatch' ),
             'nonce'         => wp_create_nonce( 'tszf_nonce' ),
             'construkted_api_url' => CONSTRUKTED_TILING_SERVER
             )

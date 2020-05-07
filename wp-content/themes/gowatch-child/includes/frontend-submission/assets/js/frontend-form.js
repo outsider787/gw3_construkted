@@ -11,6 +11,12 @@
         });
     };
 
+    jQuery(document).on('click', '.autopost-checkbox input[type="checkbox"]', function(){
+        if( jQuery(this).is(':checked') ){
+            TSZF_User_Frontend.validateForm(jQuery('.tszf-form-add'));
+        }
+    });
+
     var TSZF_User_Frontend = {
 
         pass_val : '',
@@ -540,7 +546,7 @@
 
                     case 'file':
                         var length = $(item).find('ul').children().length;
-
+                        if( $(item).hasClass('is-uploading') ) break;
                         if ( !length ) {
                             error = true;
                             error_type = 'required';
@@ -591,6 +597,7 @@
             // if already some error found, bail out
             if (error) {
                 // add error notice
+                jQuery('.autopost-checkbox input[type="checkbox"]').prop('checked', false);
                 TSZF_User_Frontend.addErrorNotice(self,'end');
 
                 return false;

@@ -96,9 +96,11 @@
         startUploading: function(up, files) {
             var $container = $('#' + this.container).find('.tszf-attachment-upload-filelist');
             $container.append(
-                    '<div class="upload-timing"></div><div class="upload-speed"></div><div class="autopost-checkbox"><label for="enable_autopost"><input type="checkbox" name="enable_autopost" id="enable_autopost" />Automatically submit asset when upload is complete?</label></div>');
+                    '<div class="upload-timing"></div><div class="upload-speed"></div>');
 
             this.showHide();
+
+            jQuery('.tszf-submit input[type="submit"]').after('<div class="autopost-checkbox"><label for="enable_autopost"><input type="checkbox" name="enable_autopost" id="enable_autopost" />Automatically submit asset when upload is complete?</label></div>');
 
             $.each(files, function(i, file) {
                 $container.append(
@@ -106,6 +108,8 @@
                     file.name + ' (' + plupload.formatSize(file.size) + ') <b></b>' +
                     '</div></div>');
             });
+
+            $container.addClass('is-uploading');
 
             up.refresh(); // Reposition Flash/Silverlight
             up.start();
@@ -182,6 +186,8 @@
             jQuery('.upload-speed').remove();
             jQuery('.autopost-checkbox').remove();
 
+            $('#' + this.container).find('.is-uploading').removeClass('is-uploading');
+
             Total_file_size_to_upload = 0;
             keepTrack = 1;
             ETA = 0;
@@ -216,6 +222,7 @@
             $('#' + file.id).remove();
             jQuery('.upload-timing').remove();
             jQuery('.upload-speed').remove();
+            $('#' + this.container).removeClass('is-uploading');
 
             var realResponseString = response.response;
 
@@ -249,9 +256,9 @@
                     this.perFileCount--;
                 }
                 this.showHide();
-                
-                if(jQuery('.autopost-checkbox input:checked').length > 0) {
-                    jQuery('.tszf-submit input[type="submit"]').trigger('click');    
+                console.log(jQuery('.autopost-checkbox input').is(':checked'));
+                if(jQuery('.autopost-checkbox input').is(':checked')) {
+                    jQuery('.tszf-submit input[type="submit"]').removeAttr('disabled').trigger('click');    
                 }
 
                 jQuery('.autopost-checkbox').remove();
