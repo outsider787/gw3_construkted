@@ -256,9 +256,9 @@
                     this.perFileCount--;
                 }
                 this.showHide();
-                console.log(jQuery('.autopost-checkbox input').is(':checked'));
+                jQuery('.tszf-submit input[type="submit"]').removeAttr('disabled');
                 if(jQuery('.autopost-checkbox input').is(':checked')) {
-                    jQuery('.tszf-submit input[type="submit"]').removeAttr('disabled').trigger('click');    
+                    jQuery('.tszf-submit input[type="submit"]').trigger('click');    
                 }
 
                 jQuery('.autopost-checkbox').remove();
