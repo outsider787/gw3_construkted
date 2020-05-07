@@ -48,7 +48,7 @@ if ( isset( $airkit_breadcrumbs['breadcrumbs'] ) && $airkit_breadcrumbs['breadcr
 	</div>
 <?php endif; ?>
 
-<section id="main" class="ts-single-post add-new-page ts-single-page airkit_frontend-forms">
+<section id="main" class="ts-single-post add-new-page <?php echo ($action == 'edit') ? 'editing' : '' ?> ts-single-page airkit_frontend-forms">
 	<div class="container">
 
 		<?php
@@ -71,13 +71,14 @@ if ( isset( $airkit_breadcrumbs['breadcrumbs'] ) && $airkit_breadcrumbs['breadcr
 				<?php echo airkit_var_sanitize( $airkit_sidebar['left'], 'true' ); ?>
 				<div class="<?php echo esc_attr( $airkit_sidebar['content_class'] ); ?>">
 					<div id="content" role="main">
-
-						<div class="api-verify">
-							<?php echo construkted_preloader(); ?>
-							<?php esc_html_e('Checking API, please wait...'); ?>
-						</div>
-
-						<div class="add-new-contents hidden">
+						
+						<?php if( $action != 'edit' ): ?>
+							<div class="api-verify">
+								<?php echo construkted_preloader(); ?>
+								<?php esc_html_e('Checking API, please wait...'); ?>
+							</div>
+						<?php endif; ?>
+						<div class="add-new-contents <?php echo ($action != 'edit') ? 'hidden' : '' ?>">
 							<?php
 								// Render active form.
 								if( 'submit' === $action ) {

@@ -17,6 +17,7 @@ class TSZF_Upload {
 
         add_action( 'wp_ajax_tszf_insert_image', array( $this, 'insert_image' ) );
         add_action( 'wp_ajax_nopriv_tszf_insert_image', array( $this, 'insert_image' ) );
+
     }
 
     /**
@@ -102,6 +103,14 @@ class TSZF_Upload {
         exit;
     }
 
+    function custom_upload_dir( $dir ) {
+        return array(
+            'path'   => $dir['basedir'] . '/assets',
+            'url'    => $dir['baseurl'] . '/assets',
+            'subdir' => '/assets',
+        ) + $dir;
+    }
+
     /**
      * Generic function to upload a file
      *
@@ -116,7 +125,11 @@ class TSZF_Upload {
             return array('success' => false, 'error' => 'only one zip or laz file is allowed!');
         }
 
+        add_filter( 'upload_dir', array($this, 'custom_upload_dir') );
+
         $uploaded_file = wp_handle_upload( $upload_data, array('test_form' => false) );
+
+        remove_filter( 'upload_dir', array($this, 'custom_upload_dir') );
 
         // If the wp_handle_upload call returned a local path for the image
         if ( isset( $uploaded_file['file'] ) ) {

@@ -96,7 +96,7 @@
         startUploading: function(up, files) {
             var $container = $('#' + this.container).find('.tszf-attachment-upload-filelist');
             $container.append(
-                    '<div class="upload-timing"></div><div class="upload-speed"></div>');
+                    '<div class="upload-timing"></div><div class="upload-speed"></div><div class="autopost-checkbox"><label for="enable_autopost"><input type="checkbox" name="enable_autopost" id="enable_autopost" />Automatically submit asset when upload is complete?</label></div>');
 
             this.showHide();
 
@@ -180,6 +180,7 @@
             $('#' + this.container).find('#' + error.file.id).remove();
             jQuery('.upload-timing').remove();
             jQuery('.upload-speed').remove();
+            jQuery('.autopost-checkbox').remove();
 
             Total_file_size_to_upload = 0;
             keepTrack = 1;
@@ -240,6 +241,7 @@
                 keepTrack = 1;
                 ETA = 0;
 
+
                 if ( this.perFileCount > this.max ) {
                     var attach_id = $('.tszf-image-wrap:last a.attachment-delete',$container).data('attach_id');
                     self.removeExtraAttachment(attach_id);
@@ -247,9 +249,17 @@
                     this.perFileCount--;
                 }
                 this.showHide();
+                
+                if(jQuery('.autopost-checkbox input:checked').length > 0) {
+                    jQuery('.tszf-submit input[type="submit"]').trigger('click');    
+                }
+
+                jQuery('.autopost-checkbox').remove();
+
 
             } else {
                 alert(realResponse.error);
+                jQuery('.autopost-checkbox').remove();
 
                 this.count -= 1;
                 this.showHide();
@@ -276,6 +286,7 @@
                     self.count -= 1;
                     self.showHide();
                     self.uploader.refresh();
+                    jQuery('.autopost-checkbox').remove();  
                 });
             }
         },
