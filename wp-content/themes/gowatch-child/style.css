@@ -939,7 +939,7 @@ popups
     overflow-y: auto;
     text-align: left;
     width: 300px;
-    height: 100%;
+    height: calc(100% - 60px);
 }
 
 .popup-content {
