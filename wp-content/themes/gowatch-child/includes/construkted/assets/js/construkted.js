@@ -664,20 +664,20 @@ var theApp = (function () {
         });
 
         /* Switch mouse buttons in Cesium viewer:
-            - Left button to rotate
-            - Right button to pan
+            - Left button to pan
+            - Right button to rotate
             - Wheel to zoom
             - Middle button to zoom
         */
 
-        viewer.scene.screenSpaceCameraController.rotateEventTypes = Cesium.CameraEventType.RIGHT_DRAG;
+        viewer.scene.screenSpaceCameraController.rotateEventTypes = Cesium.CameraEventType.LEFT_DRAG;
         viewer.scene.screenSpaceCameraController.zoomEventTypes = [Cesium.CameraEventType.MIDDLE_DRAG, Cesium.CameraEventType.WHEEL, Cesium.CameraEventType.PINCH];
 
-        viewer.scene.screenSpaceCameraController.tiltEventTypes = [Cesium.CameraEventType.LEFT_DRAG, Cesium.CameraEventType.PINCH, {
-            eventType : Cesium.CameraEventType.LEFT_DRAG,
+        viewer.scene.screenSpaceCameraController.tiltEventTypes = [Cesium.CameraEventType.RIGHT_DRAG, Cesium.CameraEventType.PINCH, {
+            eventType : Cesium.CameraEventType.RIGHT_DRAG,
             modifier : Cesium.KeyboardEventModifier.CTRL
         }, {
-            eventType : Cesium.CameraEventType.RIGHT_DRAG,
+            eventType : Cesium.CameraEventType.LEFT_DRAG,
             modifier : Cesium.KeyboardEventModifier.CTRL
         }];
 
