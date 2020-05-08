@@ -200,7 +200,7 @@ EDD_CJS.CameraController = (function () {
         if (Cesium.Math.equalsEpsilon(cartographic.height, terrainHeight, Cesium.Math.EPSILON4, Cesium.Math.EPSILON1))
             return;
 
-        // Cesium createWorldTerrain provide gives negative height value on some places
+        // Cesium createWorldTerrain provider gives negative height value on some places
         if (cartographic.height < 0) {
             console.warn("height is negative");
         }

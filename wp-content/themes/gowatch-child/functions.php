@@ -21,24 +21,16 @@ if (!defined('CONSTRUKTED_TILING_SERVER')) {
     define('CONSTRUKTED_TILING_SERVER', $construkted_api_url);
 }
 
-if (!defined('CONSTRUKTED_ASSET_SERVER')) {
-    define('CONSTRUKTED_ASSET_SERVER', 'https://assets01.construkted.com');
-}
-
-if (!defined('CONSTRUKTED_3D_TILE_SERVER_URL')) {
-    define('CONSTRUKTED_3D_TILE_SERVER_URL', CONSTRUKTED_ASSET_SERVER . '/index.php/asset/');
-}
-
 if (!defined('CONSTRUKTED_EC2_API_REQUEST_TILING')) {
-    define('CONSTRUKTED_EC2_API_REQUEST_TILING', CONSTRUKTED_TILING_SERVER . ':5000/request_tiling');
+    define('CONSTRUKTED_EC2_API_REQUEST_TILING', CONSTRUKTED_TILING_SERVER . '/request_tiling');
 }
 
 if (!defined('CONSTRUKTED_EC2_API_TASK_ALL')) {
-    define('CONSTRUKTED_EC2_API_TASK_ALL', CONSTRUKTED_TILING_SERVER . ':5000/task/all');
+    define('CONSTRUKTED_EC2_API_TASK_ALL', CONSTRUKTED_TILING_SERVER . '/task/all');
 }
 
 if (!defined('CONSTRUKTED_EC2_API_DELETE_ASSET')) {
-    define('CONSTRUKTED_EC2_API_DELETE_ASSET', CONSTRUKTED_TILING_SERVER . ':5000/delete_asset');
+    define('CONSTRUKTED_EC2_API_DELETE_ASSET', CONSTRUKTED_TILING_SERVER . '/delete_asset');
 }
 
 define('CESIUMJS_VER', '1.66');

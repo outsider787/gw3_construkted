@@ -21,7 +21,7 @@ var runningStatusCodes = {
 };
 
 function updateState() {
-    var url = dashboard_ajax.construkted_api_url + ":5000/task/all";
+    var url = dashboard_ajax.construkted_api_url + "/task/all";
 
     $.ajax({
         url : url,

@@ -70,7 +70,7 @@ try {
     exit;
 }
 
-$construkted_tiling_server_url =  $construkted_api_url . ':5000/request_tiling';
+$construkted_tiling_server_url =  $construkted_api_url . '/request_tiling';
 
 $url = $construkted_tiling_server_url . '/?' .
        'postId=' . $post_id .

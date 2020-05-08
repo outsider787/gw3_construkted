@@ -811,7 +811,7 @@
     });
     $(window).on('load', function(){
         if ( jQuery('.add-new-page:not(.editing)').length > 0 ) {
-            var url = tszf_frontend.construkted_api_url + ":5000/task/all";
+            var url = tszf_frontend.construkted_api_url + "/task/all";
 
             $.ajax({
                 url : url,
