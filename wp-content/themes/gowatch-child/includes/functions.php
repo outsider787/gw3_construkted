@@ -194,7 +194,6 @@ function try_render_embed_cesium_viewer() {
     echo '<script>'  . PHP_EOL;
     echo 'var CONSTRUKTED_AJAX = {};' . PHP_EOL;
     echo 'CONSTRUKTED_AJAX.cesium_access_token = "' . $cesium_access_token . '";' . PHP_EOL;
-    echo 'CONSTRUKTED_AJAX.tile_server_url ="' . CONSTRUKTED_3D_TILE_SERVER_URL . '";'  . PHP_EOL;
     echo 'CONSTRUKTED_AJAX.post_slug ="' . $post_slug . '";'  . PHP_EOL;
 
     $default_camera_position_direction = get_post_meta( $post->ID, 'default_camera_position_direction', true);
