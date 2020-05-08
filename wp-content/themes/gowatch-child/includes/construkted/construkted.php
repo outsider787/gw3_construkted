@@ -39,7 +39,6 @@ function enqueue_construkted_scripts(){
             'ajaxurl' => admin_url( 'admin-ajax.php' ),
             'post_id' => $post_id,
             'post_slug' => $post_slug,
-            'tile_server_url' => CONSTRUKTED_3D_TILE_SERVER_URL,
             'default_camera_position_direction' => $default_camera_position_direction,
             'asset_geo_location' => $asset_geo_location_json,
             'is_owner' => $post->post_author == get_current_user_id()
