@@ -135,22 +135,22 @@ EDD_CJS.CameraController = (function () {
 
         switch (keyCode) {
             case 'W'.charCodeAt(0):
+            case 38: // up arrow
                 this._direction = DIRECTION_FORWARD;
                 return;
             case 'S'.charCodeAt(0):
+            case 40: //down arrow
                 this._direction = DIRECTION_BACKWARD;
                 return;
-            case 'Q'.charCodeAt(0):
-                return 'moveUp';
-            case 'E'.charCodeAt(0):
-                return 'moveDown';
             case 'D'.charCodeAt(0):
+            case 39: // right arrow
                 this._direction = DIRECTION_RIGHT;  // Move camera right with key press "D"
                 return;
             case 'A'.charCodeAt(0):
+            case 37: // left arrow
                 this._direction = DIRECTION_LEFT;  // Move camera left with key press "A"
                 return;
-            case 90: // z
+            case 'Z'.charCodeAt(0):
                 if(this._main3dTileset)
                     this._main3dTileset.show = !this._main3dTileset.show;
                 return;
