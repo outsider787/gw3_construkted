@@ -180,6 +180,9 @@ const CesiumFVPCameraController = (function () {
     };
 
     CesiumFVPCameraController.prototype._onMouseLButtonClicked = function (movement) {
+        if(this._isMobile)
+            this._lastTapedPosition = movement.position;
+
         if(this._startFPVPositionMobile == null) {
             if(this._allowStartPositionTap)
                 this._startFPVPositionMobile = movement.position.clone();
@@ -190,7 +193,11 @@ const CesiumFVPCameraController = (function () {
     };
 
     CesiumFVPCameraController.prototype._startFPV = function(screenPosition) {
+        if(this._isMobile)
+            screenPosition = this._lastTapedPosition;
+
         const scene = this._cesiumViewer.scene;
+
         let globe = scene.globe;
 
         globe.depthTestAgainstTerrain = true;
@@ -289,8 +296,19 @@ const CesiumFVPCameraController = (function () {
         return Cesium.Cartesian3.multiplyByScalar(currentCameraPosition, scalar, new Cesium.Cartesian3());
     };
 
+    CesiumFVPCameraController.prototype._getRayPosition = function () {
+        var currentCameraPosition = this._camera.position;
+
+        var magnitude = Cesium.Cartesian3.magnitude(currentCameraPosition);
+        var scalar = (magnitude - HUMAN_EYE_HEIGHT + COLLISION_RAY_HEIGHT )  /magnitude;
+
+        var ret = new Cesium.Cartesian3();
+
+        return Cesium.Cartesian3.multiplyByScalar(currentCameraPosition, scalar, ret);
+    };
+
     CesiumFVPCameraController.prototype._changeCameraPosition = function (dt) {
-        let direction = new Cesium.Cartesian3();
+        var direction = new Cesium.Cartesian3();
 
         if(this._direction === DIRECTION_FORWARD)
             Cesium.Cartesian3.multiplyByScalar(this._camera.direction, 1, direction);
@@ -301,23 +319,67 @@ const CesiumFVPCameraController = (function () {
         else if(this._direction === DIRECTION_RIGHT)
             Cesium.Cartesian3.multiplyByScalar(this._camera.right, 1, direction);
 
-        const stepDistance = this._walkingSpeed() * dt;
+        var stepDistance = this._walkingSpeed() * dt;
 
-        const deltaPosition = Cesium.Cartesian3.multiplyByScalar(direction, stepDistance, new Cesium.Cartesian3());
+        var deltaPosition = Cesium.Cartesian3.multiplyByScalar(direction, stepDistance, new Cesium.Cartesian3());
 
-        const startPosition = this._getCurrentCameraPositionAtCollisionHeight();
+        var rayPosition = this._getRayPosition();
 
-        const endPosition = Cesium.Cartesian3.add(startPosition, deltaPosition, new Cesium.Cartesian3());
+        var endPosition = Cesium.Cartesian3.add(rayPosition, deltaPosition, new Cesium.Cartesian3());
 
-        if(!this._canMove(startPosition, endPosition, stepDistance)) {
-            console.warn('collision detected. can not move!');
+        var rayDirection = Cesium.Cartesian3.normalize(Cesium.Cartesian3.subtract(endPosition, rayPosition, new Cesium.Cartesian3()), new Cesium.Cartesian3());
+
+        var ray = new Cesium.Ray(rayPosition, rayDirection);
+
+        var result = this._cesiumViewer.scene.pickFromRay(ray);
+
+        if(Cesium.defined(result)) {
+            var distanceToIntersection = Cesium.Cartesian3.distanceSquared(rayPosition, result.position);
+
+            if(distanceToIntersection > stepDistance) {
+                this._setCameraPosition(endPosition);
+                return;
+            }
+
             return;
         }
 
-        const cameraPosition = this._getRevisedCameraPosition(endPosition);
+        this._setCameraPosition(endPosition);
+    };
+
+    CesiumFVPCameraController.prototype._setCameraPosition = function (position) {
+        var globe = this._cesiumViewer.scene.globe;
+        var ellipsoid = globe.ellipsoid;
+
+        var cartographic = ellipsoid.cartesianToCartographic(position);
+
+        cartographic.height = 0;
+
+        var sampledHeight = this._cesiumViewer.scene.sampleHeight(cartographic);
+
+        var currentCameraCartographic = ellipsoid.cartesianToCartographic(this._camera.position);
+
+        console.log('sample height: ' + sampledHeight);
+        console.log('current camera  height: ' + currentCameraCartographic.height);
+
+        if(sampledHeight === undefined) {
+            console.warn('sampled height is undefined');
+            return;
+        }
+
+        // Cesium createWorldTerrain provider gives negative height value on some places
+        if(sampledHeight < 0) {
+            console.warn('sampled height is negative');
+        }
+
+        if( sampledHeight > currentCameraCartographic.height)
+            cartographic.height = currentCameraCartographic.height;
+        else {
+            cartographic.height = sampledHeight + HUMAN_EYE_HEIGHT;
+        }
 
         this._camera.setView({
-            destination: cameraPosition,
+            destination: ellipsoid.cartographicToCartesian(cartographic),
             orientation: new Cesium.HeadingPitchRoll(this._camera.heading, this._camera.pitch, this._camera.roll),
             endTransform : Cesium.Matrix4.IDENTITY
         });
@@ -430,9 +492,6 @@ const CesiumFVPCameraController = (function () {
     };
 
     CesiumFVPCameraController.prototype._onClockTick = function (clock) {
-        if(this._isMobile)
-            return;
-
         const dt = clock._clockStep;
 
         if(this._isMouseLeftButtonPressed)
@@ -491,12 +550,13 @@ const CesiumFVPCameraController = (function () {
 
     CesiumFVPCameraController.prototype.setDefaultView = function() {
         if(this._defaultCameraPositionOrientationJson !== undefined && this._defaultCameraPositionOrientationJson !== "") {
-            let defaultCameraPositionDirection = JSON.parse(this._defaultCameraPositionOrientationJson);
+            let defaultCameraPositionDirection;
 
             try {
-                defaultCameraPositionDirection = JSON.parse(defaultCameraPositionDirection);
+                defaultCameraPositionDirection = JSON.parse(this._defaultCameraPositionOrientationJson);
             }
             catch (e){
+                console.error(e.message);
                 this._camera.flyToBoundingSphere(this._main3dTileset.boundingSphere);
                 return;
             }
