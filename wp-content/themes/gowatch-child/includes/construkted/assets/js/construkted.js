@@ -1,12 +1,13 @@
 var viewer = null;
-var cameraController = null;
+var cesiumFPVCameraController = null;
 var tileset_model_matrix = null;
 var originalBoundingSphereCenterHeight = 0;
 
 var theApp = (function () {
-    var tilesets = null;
+    var tileset = null;
     var transformEditor = null;
 
+    var jqExitFPVModeButton = jQuery('#exitFPVModeButton');
     var jqTilesetLatitude = jQuery('#tileset_latitude');
     var jqTilesetLongitude = jQuery('#tileset_longitude');
     var jqTilesetAltitude = jQuery('#tileset_altitude');
@@ -90,7 +91,7 @@ var theApp = (function () {
         }
 
         function changeTilesetModelMatrix(newPosition, headingPitchRoll) {
-            var origModelMatrix = tilesets.modelMatrix;
+            var origModelMatrix = tileset.modelMatrix;
 
             origModelMatrix = Cesium.Matrix4.setTranslation(origModelMatrix, newPosition, origModelMatrix);
 
@@ -130,7 +131,7 @@ var theApp = (function () {
                 return;
             }
 
-            var origModelMatrix = tilesets.modelMatrix;
+            var origModelMatrix = tileset.modelMatrix;
 
             var origPosition = Cesium.Matrix4.getTranslation(origModelMatrix, new Cesium.Cartesian3());
 
@@ -146,7 +147,7 @@ var theApp = (function () {
 
             changeTilesetModelMatrix(newPosition, headingPitchRoll);
 
-            viewer.zoomTo(tilesets);
+            viewer.zoomTo(tileset);
         });
 
         jQuery('#tileset_latitude').change(function () {
@@ -159,7 +160,7 @@ var theApp = (function () {
                 return;
             }
 
-            var origModelMatrix = tilesets.modelMatrix;
+            var origModelMatrix = tileset.modelMatrix;
 
             var origPosition = Cesium.Matrix4.getTranslation(origModelMatrix, new Cesium.Cartesian3());
 
@@ -175,11 +176,11 @@ var theApp = (function () {
 
             changeTilesetModelMatrix(newPosition, headingPitchRoll);
 
-            viewer.zoomTo(tilesets);
+            viewer.zoomTo(tileset);
         });
 
         function changeTilesetHeight(height) {
-            if(tilesets.asset.extras && tilesets.asset.extras.ion.georeferenced) {
+            if(tileset.asset.extras && tileset.asset.extras.ion.georeferenced) {
                 doChangeTilesetHeightForGeoReferencedTileset(height);
             }
             else {
@@ -190,11 +191,11 @@ var theApp = (function () {
         function doChangeTilesetHeightForGeoReferencedTileset(height) {
             var heightDifference = originalBoundingSphereCenterHeight - height;
 
-            tilesets.modelMatrix = Cesium.Matrix4.fromTranslation(new Cesium.Cartesian3(0, 0, heightDifference));
+            tileset.modelMatrix = Cesium.Matrix4.fromTranslation(new Cesium.Cartesian3(0, 0, heightDifference));
         }
 
         function doChangeTilesetHeightForNonGeoReferencedTileset(height) {
-            var origModelMatrix = tilesets.modelMatrix;
+            var origModelMatrix = tileset.modelMatrix;
 
             var origPosition = Cesium.Matrix4.getTranslation(origModelMatrix, new Cesium.Cartesian3());
 
@@ -223,7 +224,7 @@ var theApp = (function () {
 
             changeTilesetHeight(altitude);
 
-            viewer.zoomTo(tilesets);
+            viewer.zoomTo(tileset);
         });
 
         jQuery('#tileset_heading').change(function () {
@@ -236,7 +237,7 @@ var theApp = (function () {
                 return;
             }
 
-            var origModelMatrix = tilesets.modelMatrix;
+            var origModelMatrix = tileset.modelMatrix;
 
             var origPosition = Cesium.Matrix4.getTranslation(origModelMatrix, new Cesium.Cartesian3());
 
@@ -248,13 +249,13 @@ var theApp = (function () {
 
             changeTilesetModelMatrix(origPosition, headingPitchRoll);
 
-            viewer.zoomTo(tilesets);
+            viewer.zoomTo(tileset);
         });
 
         jQuery('#tileset-transparency-slider').change(function () {
             var value = this.value;
 
-            tilesets.style = new Cesium.Cesium3DTileStyle({
+            tileset.style = new Cesium.Cesium3DTileStyle({
                 color: 'rgba(255, 255, 255,' + value + ')'
             });
 
@@ -285,7 +286,7 @@ var theApp = (function () {
 
             jqTilesetAltitude.val(terrainHeight.toFixed(3));
             changeTilesetHeight(terrainHeight);
-            viewer.zoomTo(tilesets);
+            viewer.zoomTo(tileset);
         });
     }
 
@@ -524,17 +525,17 @@ var theApp = (function () {
         });
 
         jQuery('#maximum-screen-space-error-slider').change(function () {
-            if(!tilesets)
+            if(!tileset)
                 return;
 
-            tilesets.maximumScreenSpaceError = 32 - this.value;
+            tileset.maximumScreenSpaceError = 32 - this.value;
         });
 
         jqShowHideWireframeCheckbox.change(function () {
-            if(!tilesets)
+            if(!tileset)
                 return;
 
-            tilesets.debugWireframe = this.checked;
+            tileset.debugWireframe = this.checked;
         });
     }
 
@@ -560,7 +561,7 @@ var theApp = (function () {
 
             _doSaveTilesetModelMatrix(position, headingPitchRoll, scale);
         } else {
-            var currentModelMatrix = tilesets.modelMatrix;
+            var currentModelMatrix = tileset.modelMatrix;
 
             var position = Cesium.Matrix4.getTranslation(currentModelMatrix, new Cesium.Cartesian3());
 
@@ -575,7 +576,7 @@ var theApp = (function () {
     }
 
     function _saveTilesetModelMatrix() {
-        if(tilesets.asset.extras && tilesets.asset.extras.ion.georeferenced) {
+        if(tileset.asset.extras && tileset.asset.extras.ion.georeferenced) {
             _saveTilesetModelMatrixForGeoReferencedTileset();
         }
         else {
@@ -683,7 +684,7 @@ var theApp = (function () {
 
         var tilesetURL = 'https://s3.us-east-2.wasabisys.com/construkted-assets/' + CONSTRUKTED_AJAX.post_slug + '/tileset.json';
 
-        tilesets = viewer.scene.primitives.add(
+        tileset = viewer.scene.primitives.add(
             new Cesium.Cesium3DTileset({
                 url: tilesetURL,
                 immediatelyLoadDesiredLevelOfDetail : false,
@@ -692,58 +693,67 @@ var theApp = (function () {
             })
         );
 
-        if(tilesets == null)
+        if(tileset == null)
             return;
 
         // Model level of detail
-        tilesets.maximumScreenSpaceError = 8.0; // Default is 16
-        tilesets.maximumMemoryUsage = 512; // Default is 512
+        tileset.maximumScreenSpaceError = 8.0; // Default is 16
+        tileset.maximumMemoryUsage = 512; // Default is 512
 
         // Point cloud point size
-        //tilesets.pointCloudShading.attenuation = true;
-        //tilesets.pointCloudShading.maximumAttenuation = 5;
+        //tileset.pointCloudShading.attenuation = true;
+        //tileset.pointCloudShading.maximumAttenuation = 5;
 
-        tilesets.pointCloudShading.maximumAttenuation = 1.2; // Don't allow points larger than 4 pixels.
-        tilesets.pointCloudShading.baseResolution = 0.44; // Assume an original capture resolution of 5 centimeters between neighboring points.
-        tilesets.pointCloudShading.geometricErrorScale = 0.3; // Applies to both geometric error and the base resolution.
-        tilesets.pointCloudShading.attenuation = true;
-        tilesets.pointCloudShading.eyeDomeLighting = true;
-        tilesets.pointCloudShading.eyeDomeLightingStrength = 0.5;
-        tilesets.pointCloudShading.eyeDomeLightingRadius = 0.5;
+        tileset.pointCloudShading.maximumAttenuation = 1.2; // Don't allow points larger than 4 pixels.
+        tileset.pointCloudShading.baseResolution = 0.44; // Assume an original capture resolution of 5 centimeters between neighboring points.
+        tileset.pointCloudShading.geometricErrorScale = 0.3; // Applies to both geometric error and the base resolution.
+        tileset.pointCloudShading.attenuation = true;
+        tileset.pointCloudShading.eyeDomeLighting = true;
+        tileset.pointCloudShading.eyeDomeLightingStrength = 0.5;
+        tileset.pointCloudShading.eyeDomeLightingRadius = 0.5;
 
-        tilesets.readyPromise.then(function(){
+        tileset.readyPromise.then(function(){
             var options = {
-                exitFPVModeButtonId: 'exitFPVModeButton',
                 cesiumViewer: viewer,
-                objectsToExcludeForCameraControl: [],
-                showCameraBreakPoint: true,
-                showCameraPath: false
+                main3dTileset: tileset,
+                defaultCameraPositionOrientationJson : CONSTRUKTED_AJAX.default_camera_position_direction,
+                isMobile: false,
+                ignoreCollisionDetection: true
             };
 
-            options.objectsToExcludeForCameraControl.push(tilesets);
-            options.main3dTileset = tilesets;
+            cesiumFPVCameraController = new CesiumFVPCameraController(options);
 
-            cameraController = new EDD_CJS.CameraController(options);
+            cesiumFPVCameraController.FPVStarted().addEventListener(function() {
+                jqExitFPVModeButton.show();
+            });
+
+            cesiumFPVCameraController.FPVFinished().addEventListener(function() {
+                jqExitFPVModeButton.hide();
+            });
+
+            jqExitFPVModeButton.click(function () {
+                cesiumFPVCameraController.exitFPV();
+            });
 
             //required since the models may not be geographically referenced.
 
-            if(tilesets.asset.extras !== null) {
-                if (tilesets.asset.extras.ion.georeferenced !== true) {
+            if(tileset.asset.extras !== null) {
+                if (tileset.asset.extras.ion.georeferenced !== true) {
                     if (tileset_model_matrix) {
-                        _setTilesetModelMatrix(tilesets, tileset_model_matrix);
+                        _setTilesetModelMatrix(tileset, tileset_model_matrix);
 
                         if(CONSTRUKTED_AJAX.is_owner) {
                             transformEditor = new Cesium.TransformEditor({
                                 container: viewer.container,
                                 scene: viewer.scene,
-                                transform: tilesets.modelMatrix,
-                                boundingSphere: tilesets.boundingSphere
+                                transform: tileset.modelMatrix,
+                                boundingSphere: tileset.boundingSphere
                             });
 
                             transformEditor.viewModel.deactivate();
                         }
                     } else {
-                        tilesets.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(Cesium.Cartesian3.fromDegrees(0, 0));
+                        tileset.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(Cesium.Cartesian3.fromDegrees(0, 0));
 
                         var modelMatrixUpdateTried = false;
 
@@ -754,7 +764,7 @@ var theApp = (function () {
                                 var terrainHeight = viewer.scene.globe.getHeight(cartographic);
 
                                 if(terrainHeight) {
-                                    tilesets.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(Cesium.Cartesian3.fromDegrees(0, 0, terrainHeight));
+                                    tileset.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(Cesium.Cartesian3.fromDegrees(0, 0, terrainHeight));
                                     jqTilesetAltitude.val(terrainHeight);
                                 }
                                 else {
@@ -770,8 +780,8 @@ var theApp = (function () {
                         transformEditor = new Cesium.TransformEditor({
                             container: viewer.container,
                             scene: viewer.scene,
-                            transform: tilesets.modelMatrix,
-                            boundingSphere: tilesets.boundingSphere
+                            transform: tileset.modelMatrix,
+                            boundingSphere: tileset.boundingSphere
                         });
 
                         transformEditor.viewModel.deactivate();
@@ -784,7 +794,7 @@ var theApp = (function () {
                     jqEditAssetGeoLocationButton.prop('disabled', true);
                     jqTilesetEstimateAltitude.prop('disabled', true);
 
-                    var position = tilesets.boundingSphere.center;
+                    var position = tileset.boundingSphere.center;
 
                     var carto = Cesium.Cartographic.fromCartesian(position);
 
@@ -795,7 +805,7 @@ var theApp = (function () {
 
                         var heightDifference = originalBoundingSphereCenterHeight - parseFloat(assetGeoLocationData.height);
 
-                        tilesets.modelMatrix = Cesium.Matrix4.fromTranslation(new Cesium.Cartesian3(0, 0, heightDifference));
+                        tileset.modelMatrix = Cesium.Matrix4.fromTranslation(new Cesium.Cartesian3(0, 0, heightDifference));
 
                         jqTilesetAltitude.val(assetGeoLocationData.height);
                     }
@@ -808,7 +818,7 @@ var theApp = (function () {
                 }
             }
 
-            cameraController.setDefaultView() ;
+            cesiumFPVCameraController.setDefaultView() ;
         }).otherwise(function(error){
             window.alert(error);
         });
@@ -829,7 +839,7 @@ var theApp = (function () {
 
         var modelMatrix = Cesium.Transforms.headingPitchRollToFixedFrame(center, hpr);
 
-        tilesets.modelMatrix = Cesium.Matrix4.setScale(modelMatrix, scaleCartesian3, new Cesium.Matrix4());
+        tileset.modelMatrix = Cesium.Matrix4.setScale(modelMatrix, scaleCartesian3, new Cesium.Matrix4());
     }
 
     function _captureThumbnail() {
@@ -916,9 +926,9 @@ var theApp = (function () {
 
         var data = {};
 
-        data.offsetX = camera.position.x - tilesets.boundingSphere.center.x;
-        data.offsetY = camera.position.y - tilesets.boundingSphere.center.y;
-        data.offsetZ = camera.position.z - tilesets.boundingSphere.center.z;
+        data.offsetX = camera.position.x - tileset.boundingSphere.center.x;
+        data.offsetY = camera.position.y - tileset.boundingSphere.center.y;
+        data.offsetZ = camera.position.z - tileset.boundingSphere.center.z;
 
         data.heading = Cesium.Math.toDegrees(camera.heading);
         data.pitch = Cesium.Math.toDegrees(camera.pitch);
@@ -929,7 +939,7 @@ var theApp = (function () {
 
     return {
         viewer: viewer,
-        cameraController: cameraController,
+        cameraController: cesiumFPVCameraController,
         start: start,
         tryDeactivateTransformEditor: tryDeactivateTransformEditor
     };

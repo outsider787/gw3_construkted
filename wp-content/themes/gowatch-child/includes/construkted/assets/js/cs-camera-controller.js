@@ -1,25 +1,27 @@
-var EDD_CJS = {};
+'use strict';
 
-EDD_CJS.CameraController = (function () {
+const CesiumFVPCameraController = (function () {
     // this mean person is stop
-    var DIRECTION_NONE = -1;
+    const DIRECTION_NONE = -1;
 
-    var DIRECTION_FORWARD = 0;
-    var DIRECTION_BACKWARD = 1;
-    var DIRECTION_LEFT = 2;
-    var DIRECTION_RIGHT = 3;
+    const DIRECTION_FORWARD = 0;
+    const DIRECTION_BACKWARD = 1;
+    const DIRECTION_LEFT = 2;
+    const DIRECTION_RIGHT = 3;
 
-    var DEFAULT_HUMAN_WALKING_SPEED = 0.5;
+    const DEFAULT_HUMAN_WALKING_SPEED = 0.5;
 
-    var MAX_PITCH_IN_DEGREE = 88;
-    var ROTATE_SPEED = -5;
-    var COLLISION_RAY_HEIGHT = 0.5;
-    var HUMAN_EYE_HEIGHT = 1.65;
+    const MAX_PITCH_IN_DEGREE = 88;
+    const ROTATE_SPEED = -5;
+    const COLLISION_RAY_HEIGHT = 0.5;
+    const HUMAN_EYE_HEIGHT = 1.65;
 
     //constructor
-    function CameraController(options) {
+    function CesiumFVPCameraController(options) {
+        this._isMobile = options.isMobile;
         this._enabled = false;
-        this._exitFPVModeButtonId = options.exitFPVModeButtonId;
+        this._FPVStarted = new Cesium.Event();
+        this._FPVFinished = new Cesium.Event();
 
         this._cesiumViewer = options.cesiumViewer;
         this._canvas = this._cesiumViewer.canvas;
@@ -28,6 +30,8 @@ EDD_CJS.CameraController = (function () {
         this._direction = DIRECTION_NONE;
 
         this._main3dTileset = options.main3dTileset;
+        this._defaultCameraPositionOrientationJson = options.defaultCameraPositionOrientationJson;
+        this._ignoreCollisionDetection = Cesium.defined(options.ignoreCollisionDetection) ? options.ignoreCollisionDetection : false;
 
         /**
          * heading: angle with up direction
@@ -38,42 +42,36 @@ EDD_CJS.CameraController = (function () {
         // indicate if heading and pitch is changed
         this._isMouseLeftButtonPressed = false;
 
-        this._frameMonitor = Cesium.FrameRateMonitor.fromScene(this._cesiumViewer.scene);
-
-        this._init();
-
-        // finally we show toolbar
-
-        $('#' + this._exitFPVModeButtonId).hide();
-
-        this._connectEventHandlers();
-    }
-
-    CameraController.prototype._init = function () {
-        var canvas = this._cesiumViewer.canvas;
-
         this._startMousePosition = null;
         this._mousePosition = null;
 
-        this._screenSpaceHandler = new Cesium.ScreenSpaceEventHandler(canvas);
+        this._frameMonitor = Cesium.FrameRateMonitor.fromScene(this._cesiumViewer.scene);
 
-        var self = this;
+        this._screenSpaceEventHandler = new Cesium.ScreenSpaceEventHandler( this._canvas);
+        this._screenSpaceEventHandler.setInputAction(this._onMouseLButtonDoubleClicked.bind(this), Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
+        this._screenSpaceEventHandler.setInputAction(this._onMouseLButtonClicked.bind(this), Cesium.ScreenSpaceEventType.LEFT_DOWN);
+        this._screenSpaceEventHandler.setInputAction(this._onMouseUp.bind(this), Cesium.ScreenSpaceEventType.LEFT_UP);
 
-        this._screenSpaceHandler.setInputAction(function(movement) {
-            self._onMouseLButtonClicked(movement);
-        }, Cesium.ScreenSpaceEventType.LEFT_DOWN);
+        this._startFPVPositionMobile = null;
+        this._lastTranslationX = 0;
+        this._lastTranslationY = 0;
+        this._lastTranslationZ = 0;
 
-        this._screenSpaceHandler.setInputAction(function(movement) {
-            self._onMouseLButtonDoubleClicked(movement);
-        }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
+        this._lastRotationX = 0;
+        this._lastRotationY = 0;
+        this._lastRotaionZ = 0;
 
-        this._screenSpaceHandler.setInputAction(function(movement) {
-            self._onMouseMove(movement);
-        }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+        this._allowStartPositionTap = false;
+    }
 
-        this._screenSpaceHandler.setInputAction(function(movement) {
-            self._onMouseUp(movement);
-        }, Cesium.ScreenSpaceEventType.LEFT_UP);
+    CesiumFVPCameraController.prototype.setAllowStartPositionTap = function(value) {
+        this._allowStartPositionTap = value;
+    };
+
+    CesiumFVPCameraController.prototype._connectEventHandlers = function () {
+        const canvas = this._cesiumViewer.canvas;
+
+        this._screenSpaceEventHandler.setInputAction(this._onMouseMove.bind(this), Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
         // needed to put focus on the canvas
         canvas.setAttribute('tabindex', '0');
@@ -82,55 +80,72 @@ EDD_CJS.CameraController = (function () {
             canvas.focus();
         };
 
-        document.addEventListener('keydown', function(e) {
-            self._onKeyDown(e.keyCode);
-        }, false);
+        const self = this;
 
-        document.addEventListener('keyup', function(e) {
-            self._onKeyUp(e.keyCode);
-        }, false);
+        this._onKeyDownCallback = function(event) {
+            self._onKeyDown(event);
+        };
 
-        this._cesiumViewer.clock.onTick.addEventListener(function(clock) {
-            self._onClockTick(clock);
-        });
+        this._onKeyUpCallback = function(event) {
+            self._onKeyUp(event);
+        };
+
+        document.addEventListener('keydown', this._onKeyDownCallback);
+        document.addEventListener('keyup', this._onKeyUpCallback);
+
+        this._disconectOnClockTick = this._cesiumViewer.clock.onTick.addEventListener(CesiumFVPCameraController.prototype._onClockTick, this);
     };
 
-    CameraController.prototype._enable = function (cartographic) {
-        var globe = this._cesiumViewer.scene.globe;
+    CesiumFVPCameraController.prototype._disconnectEventHandlers = function () {
+        this._screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
-        $('#' + this._exitFPVModeButtonId).show();
+        document.removeEventListener('keydown', this._onKeyDownCallback);
+        document.removeEventListener('keyup', this._onKeyUpCallback);
+        this._disconectOnClockTick();
+    };
 
-        this._enabled = true;
-
-        this._disableDefaultCameraController();
+    CesiumFVPCameraController.prototype._doStartFPV = function (cartographic) {
+        const globe = this._cesiumViewer.scene.globe;
+        const self = this;
 
         this._camera.flyTo({
             destination : globe.ellipsoid.cartographicToCartesian(cartographic),
             orientation : {
-                heading : 0,
-                pitch :  -0.5,
+                heading : this._camera.heading,
+                pitch :  0,
                 roll : 0.0
+            },
+            complete: function () {
+                self._disableDefaultScreenSpaceCameraController();
+                self._connectEventHandlers();
+
+                // please note the clone 's meaning.
+                self._cameraDirectionAtArStartedMoment = self._camera.direction.clone();
+                self._cameraRightAtArStartedMoment = self._camera.right.clone();
+                self._cameraUpAtArStartedMoment = self._camera.up.clone();
+                self._cameraPositionAtArStartedMoment = self._camera.position.clone(new Cesium.Cartesian3());
+                self._cameraHeadingAtArStartedMoment = self._camera.heading;
+                self._cameraPitchAtArStartedMoment = self._camera.pitch;
+
+                self._FPVStarted.raiseEvent();
+                self._enabled = true;
             }
         });
-
-        return true;
     };
 
-    CameraController.prototype._disable = function () {
+    CesiumFVPCameraController.prototype.exitFPV = function () {
+        this._enableDefaultScreenSpaceCameraController();
+        this._disconnectEventHandlers();
+        this.setDefaultView();
+        this._startFPVPositionMobile = null;
+        this._allowStartPositionTap = false;
+        this._FPVFinished.raiseEvent();
         this._enabled = false;
-
-        var scene = this._cesiumViewer.scene;
-
-        // enable the default event handlers
-
-        scene.screenSpaceCameraController.enableRotate = true;
-        scene.screenSpaceCameraController.enableTranslate = true;
-        scene.screenSpaceCameraController.enableZoom = true;
-        scene.screenSpaceCameraController.enableTilt = true;
-        scene.screenSpaceCameraController.enableLook = true;
     };
 
-    CameraController.prototype._onKeyDown = function (keyCode) {
+    CesiumFVPCameraController.prototype._onKeyDown = function (event) {
+        const keyCode = event.keyCode;
+
         this._direction = DIRECTION_NONE;
 
         switch (keyCode) {
@@ -144,119 +159,117 @@ EDD_CJS.CameraController = (function () {
                 return;
             case 'D'.charCodeAt(0):
             case 39: // right arrow
-                this._direction = DIRECTION_RIGHT;  // Move camera right with key press "D"
+                this._direction = DIRECTION_RIGHT;
                 return;
             case 'A'.charCodeAt(0):
             case 37: // left arrow
-                this._direction = DIRECTION_LEFT;  // Move camera left with key press "A"
+                this._direction = DIRECTION_LEFT;
                 return;
-            case 'Z'.charCodeAt(0):
+            case 90: // z
                 if(this._main3dTileset)
                     this._main3dTileset.show = !this._main3dTileset.show;
                 return;
             default:
-                return undefined;
+                return;
         }
     };
 
     //noinspection JSUnusedLocalSymbols
-    CameraController.prototype._onKeyUp = function (keyCode) {
+    CesiumFVPCameraController.prototype._onKeyUp = function () {
         this._direction = DIRECTION_NONE;
     };
 
-    CameraController.prototype._onMouseLButtonClicked = function (movement) {
+    CesiumFVPCameraController.prototype._onMouseLButtonClicked = function (movement) {
+        if(this._startFPVPositionMobile == null) {
+            if(this._allowStartPositionTap)
+                this._startFPVPositionMobile = movement.position.clone();
+        }
+
         this._isMouseLeftButtonPressed = true;
-        this._mousePosition = this._startMousePosition = Cesium.Cartesian3.clone(movement.position);
+        this._mousePosition = this._startMousePosition = movement.position.clone();
     };
 
-    CameraController.prototype._enterFPV = function(movement) {
-        var scene = this._cesiumViewer.scene;
+    CesiumFVPCameraController.prototype._startFPV = function(screenPosition) {
+        const scene = this._cesiumViewer.scene;
+        let globe = scene.globe;
 
-        scene.globe.depthTestAgainstTerrain = true;
+        globe.depthTestAgainstTerrain = true;
 
-        var pickRay = scene.camera.getPickRay(movement.position);
+        const pickRay = scene.camera.getPickRay(screenPosition);
 
-        var result = scene.pickFromRay(pickRay);
+        const result = scene.pickFromRay(pickRay);
 
         if(!result)
         {
             alert("Unfortunately failed to enter FPV!");
+            console.warn('pickFromRay failed!');
             return;
         }
 
-        var globe = this._cesiumViewer.scene.globe;
-        var cartographic = globe.ellipsoid.cartesianToCartographic(result.position);
+        const pickedCartographic = globe.ellipsoid.cartesianToCartographic(result.position);
 
         // consider terrain height
-        var terrainHeight = globe.getHeight(cartographic);
-		
-		if(terrainHeight === undefined)
+        const terrainHeightAtPickedCartographic = globe.getHeight(pickedCartographic);
+
+        if(terrainHeightAtPickedCartographic === undefined)
         {
-            alert("Unfortunately failed to enter FPV! We can not get terrain height on clicked point.");
+            alert("Unfortunately failed to enter FPV!");
+            console.warn('globe.getHeight(cartographic) failed!');
             return;
         }
 
         // determine we clicked out of main 3d tileset
-        if (Cesium.Math.equalsEpsilon(cartographic.height, terrainHeight, Cesium.Math.EPSILON4, Cesium.Math.EPSILON1))
+        if (Cesium.Math.equalsEpsilon(pickedCartographic.height, terrainHeightAtPickedCartographic, Cesium.Math.EPSILON4, Cesium.Math.EPSILON1)) {
+            if(!this._isMobile)
+                alert("Please double click exactly on target 3d tile!");
+            else
+                alert("Please tap exactly on target 3d tile!");
             return;
+        }
 
         // Cesium createWorldTerrain provider gives negative height value on some places
-        if (cartographic.height < 0) {
+        if (pickedCartographic.height < 0) {
             console.warn("height is negative");
         }
 
-        cartographic.height = cartographic.height + HUMAN_EYE_HEIGHT;
+        pickedCartographic.height = pickedCartographic.height + HUMAN_EYE_HEIGHT;
 
-        if(!this._enabled)
-            this._enable(cartographic);
-
-        this._camera.flyTo({
-            destination : globe.ellipsoid.cartographicToCartesian(cartographic),
-            orientation : {
-                heading : this._camera.heading,
-                pitch :  0,
-                roll : 0.0
-            }
-        });
+        this._doStartFPV(pickedCartographic);
     };
 
-    CameraController.prototype._onMouseLButtonDoubleClicked = function (movement) {
-        this._enterFPV(movement);
+    CesiumFVPCameraController.prototype._onMouseLButtonDoubleClicked = function (movement) {
+        if(this._enabled)
+            return;
+
+        this._startFPV(movement.position);
     };
 
-    CameraController.prototype._onMouseMove = function (movement) {
+    CesiumFVPCameraController.prototype._onMouseMove = function (movement) {
         this._mousePosition = movement.endPosition;
     };
 
     //noinspection JSUnusedLocalSymbols
-    CameraController.prototype._onMouseUp = function (position) {
+    CesiumFVPCameraController.prototype._onMouseUp = function (position) {
         this._isMouseLeftButtonPressed = false;
     };
 
-    CameraController.prototype._changeCameraHeadingPitchByMouse = function (dt) {
-        var width = this._canvas.clientWidth;
-        var height = this._canvas.clientHeight;
+    CesiumFVPCameraController.prototype._changeCameraHeadingPitchByMouse = function (dt) {
+        const width = this._canvas.clientWidth;
+        const height = this._canvas.clientHeight;
 
         // Coordinate (0.0, 0.0) will be where the mouse was clicked.
-        var deltaX = (this._mousePosition.x - this._startMousePosition.x) / width;
-        var deltaY = -(this._mousePosition.y - this._startMousePosition.y) / height;
+        const deltaX = (this._mousePosition.x - this._startMousePosition.x) / width;
+        const deltaY = -(this._mousePosition.y - this._startMousePosition.y) / height;
 
-        var currentHeadingInDegree = Cesium.Math.toDegrees(this._camera.heading);
-        var deltaHeadingInDegree = (deltaX * ROTATE_SPEED);
-        var newHeadingInDegree = currentHeadingInDegree + deltaHeadingInDegree;
+        const currentHeadingInDegree = Cesium.Math.toDegrees(this._camera.heading);
+        const deltaHeadingInDegree = (deltaX * ROTATE_SPEED);
+        const newHeadingInDegree = currentHeadingInDegree + deltaHeadingInDegree;
 
-        var currentPitchInDegree = Cesium.Math.toDegrees(this._camera.pitch);
-        var deltaPitchInDegree = (deltaY * ROTATE_SPEED);
-        var newPitchInDegree = currentPitchInDegree + deltaPitchInDegree;
+        const currentPitchInDegree = Cesium.Math.toDegrees(this._camera.pitch);
+        const deltaPitchInDegree = (deltaY * ROTATE_SPEED);
+        let newPitchInDegree = currentPitchInDegree + deltaPitchInDegree;
 
-        if( newPitchInDegree > MAX_PITCH_IN_DEGREE * 2 && newPitchInDegree < 360 - MAX_PITCH_IN_DEGREE) {
-            newPitchInDegree = 360 - MAX_PITCH_IN_DEGREE;
-        }
-        else {
-            if (newPitchInDegree > MAX_PITCH_IN_DEGREE && newPitchInDegree < 360 - MAX_PITCH_IN_DEGREE) {
-                newPitchInDegree = MAX_PITCH_IN_DEGREE;
-            }
-        }
+        newPitchInDegree = this._validPitch(newPitchInDegree);
 
         this._camera.setView({
             orientation: {
@@ -267,19 +280,17 @@ EDD_CJS.CameraController = (function () {
         });
     };
 
-    CameraController.prototype._getRayPosition = function () {
-        var currentCameraPosition = this._camera.position;
+    CesiumFVPCameraController.prototype._getCurrentCameraPositionAtCollisionHeight = function () {
+        const currentCameraPosition = this._camera.position;
 
-        var magnitude = Cesium.Cartesian3.magnitude(currentCameraPosition);
-        var scalar = (magnitude - HUMAN_EYE_HEIGHT + COLLISION_RAY_HEIGHT )  /magnitude;
+        const magnitude = Cesium.Cartesian3.magnitude(currentCameraPosition);
+        const scalar = (magnitude - HUMAN_EYE_HEIGHT + COLLISION_RAY_HEIGHT ) / magnitude;
 
-        var ret = new Cesium.Cartesian3();
-
-        return Cesium.Cartesian3.multiplyByScalar(currentCameraPosition, scalar, ret);
+        return Cesium.Cartesian3.multiplyByScalar(currentCameraPosition, scalar, new Cesium.Cartesian3());
     };
 
-    CameraController.prototype._changeCameraPosition = function (dt) {
-        var direction = new Cesium.Cartesian3();
+    CesiumFVPCameraController.prototype._changeCameraPosition = function (dt) {
+        let direction = new Cesium.Cartesian3();
 
         if(this._direction === DIRECTION_FORWARD)
             Cesium.Cartesian3.multiplyByScalar(this._camera.direction, 1, direction);
@@ -290,77 +301,139 @@ EDD_CJS.CameraController = (function () {
         else if(this._direction === DIRECTION_RIGHT)
             Cesium.Cartesian3.multiplyByScalar(this._camera.right, 1, direction);
 
-        var stepDistance = this._walkingSpeed() * dt;
+        const stepDistance = this._walkingSpeed() * dt;
 
-        var deltaPosition = Cesium.Cartesian3.multiplyByScalar(direction, stepDistance, new Cesium.Cartesian3());
+        const deltaPosition = Cesium.Cartesian3.multiplyByScalar(direction, stepDistance, new Cesium.Cartesian3());
 
-        var rayPosition = this._getRayPosition();
+        const startPosition = this._getCurrentCameraPositionAtCollisionHeight();
 
-        var endPosition = Cesium.Cartesian3.add(rayPosition, deltaPosition, new Cesium.Cartesian3());
+        const endPosition = Cesium.Cartesian3.add(startPosition, deltaPosition, new Cesium.Cartesian3());
 
-        var rayDirection = Cesium.Cartesian3.normalize(Cesium.Cartesian3.subtract(endPosition, rayPosition, new Cesium.Cartesian3()), new Cesium.Cartesian3());
-
-        var ray = new Cesium.Ray(rayPosition, rayDirection);
-
-        var result = this._cesiumViewer.scene.pickFromRay(ray);
-
-        if(Cesium.defined(result)) {
-            var distanceToIntersection = Cesium.Cartesian3.distanceSquared(rayPosition, result.position);
-
-            if(distanceToIntersection > stepDistance) {
-                this._setCameraPosition(endPosition);
-                return;
-            }
-
+        if(!this._canMove(startPosition, endPosition, stepDistance)) {
+            console.warn('collision detected. can not move!');
             return;
         }
 
-        this._setCameraPosition(endPosition);
-    };
-
-    CameraController.prototype._setCameraPosition = function (position) {
-        var globe = this._cesiumViewer.scene.globe;
-        var ellipsoid = globe.ellipsoid;
-
-        var cartographic = ellipsoid.cartesianToCartographic(position);
-
-        cartographic.height = 0;
-
-        var sampledHeight = this._cesiumViewer.scene.sampleHeight(cartographic);
-
-        var currentCameraCartographic = ellipsoid.cartesianToCartographic(this._camera.position);
-
-        console.log('sample height: ' + sampledHeight);
-        console.log('current camera  height: ' + currentCameraCartographic.height);
-
-        if(sampledHeight === undefined) {
-            console.warn('sampled height is undefined');
-            return;
-        }
-
-        // Cesium createWorldTerrain provide gives negative height value on some places
-        if(sampledHeight < 0) {
-            console.warn('sampled height is negative');
-        }
-
-        if( sampledHeight > currentCameraCartographic.height)
-            cartographic.height = currentCameraCartographic.height;
-        else {
-            cartographic.height = sampledHeight + HUMAN_EYE_HEIGHT;
-        }
+        const cameraPosition = this._getRevisedCameraPosition(endPosition);
 
         this._camera.setView({
-            destination: ellipsoid.cartographicToCartesian(cartographic),
+            destination: cameraPosition,
             orientation: new Cesium.HeadingPitchRoll(this._camera.heading, this._camera.pitch, this._camera.roll),
             endTransform : Cesium.Matrix4.IDENTITY
         });
     };
 
-    CameraController.prototype._onClockTick = function (clock) {
-        if(!this._enabled)
+    // check collision
+
+    CesiumFVPCameraController.prototype._canMove = function(startPosition, endPosition, stepDistance) {
+        /**
+         * code snippet to reconsider
+         */
+
+        /*
+         const scene = this._cesiumViewer.scene;
+         const globe = scene.globe;
+         const ellipsoid = globe.ellipsoid;
+
+         const startCartographic = ellipsoid.cartesianToCartographic(startPosition);
+         const endCartographic = ellipsoid.cartesianToCartographic(endPosition);
+
+         const startHeight =  scene.sampleHeight(startCartographic);
+         const endHeight =  scene.sampleHeight(endCartographic);
+
+         const deltaHeight = endHeight - startHeight;
+
+         if(deltaHeight > 0.5)
+         {
+         console.warn('can not move 0.5 m higher position!');
+         return false;
+         }
+
+         */
+
+        if(this._ignoreCollisionDetection)
+            return true;
+
+        const rayDirection = Cesium.Cartesian3.subtract(endPosition, startPosition, new Cesium.Cartesian3());
+
+        let ray = new Cesium.Ray(startPosition, rayDirection);
+
+        // horizontal pick
+        const result = this._cesiumViewer.scene.pickFromRay(ray);
+
+        if(Cesium.defined(result)) {
+            // check collision
+            const distanceToIntersection = Cesium.Cartesian3.distanceSquared(startPosition, result.position);
+
+            if(distanceToIntersection >= stepDistance) {
+                // we can safely move to endPosition
+                return true;
+            }
+            else {
+                // in future please consider vertical height difference
+                return false;
+            }
+        }
+        else
+            return true;
+    };
+
+    CesiumFVPCameraController.prototype._getRevisedCameraPosition = function (targetPosition) {
+        const scene = this._cesiumViewer.scene;
+        const globe = scene.globe;
+        const ellipsoid = globe.ellipsoid;
+
+        const targetCartographic = ellipsoid.cartesianToCartographic(targetPosition);
+
+        const heightAtTargetPosition = scene.sampleHeight(targetCartographic);
+
+        const currentCameraCartographic = ellipsoid.cartesianToCartographic(this._camera.position);
+
+        // console.log('heightAtTargetPosition: ' + heightAtTargetPosition);
+        // console.log('current camera height: ' + currentCameraCartographic.height);
+
+        if(heightAtTargetPosition === undefined) {
+            console.warn('heightAtTargetPosition is undefined');
+            /**
+             *  in future we need to think why heightAtTargetPosition is undefined
+             */
+
+            //return null;
+
+            targetCartographic.height = currentCameraCartographic.height;
+            return ellipsoid.cartographicToCartesian(targetCartographic);
+        }
+
+        if(heightAtTargetPosition < 0) {
+            /**
+             *  in future we need to think why heightAtTargetPosition is negative
+             */
+
+            console.warn('heightAtTargetPosition is negative');
+            //return null;
+
+            targetCartographic.height = currentCameraCartographic.height;
+            return ellipsoid.cartographicToCartesian(targetCartographic);
+        }
+
+        if( heightAtTargetPosition > currentCameraCartographic.height) {
+            /**
+             * code snippet to reconsider
+             */
+            targetCartographic.height = currentCameraCartographic.height;
+        }
+        else {
+            targetCartographic.height = heightAtTargetPosition + HUMAN_EYE_HEIGHT;
+        }
+
+        return ellipsoid.cartographicToCartesian(targetCartographic);
+    };
+
+    CesiumFVPCameraController.prototype._onClockTick = function (clock) {
+        if(this._isMobile)
             return;
 
-        var dt = clock._clockStep;
+        const dt = clock._clockStep;
 
         if(this._isMouseLeftButtonPressed)
             this._changeCameraHeadingPitchByMouse(dt);
@@ -370,22 +443,12 @@ EDD_CJS.CameraController = (function () {
         }
     };
 
-    CameraController.prototype._connectEventHandlers = function () {
-        var self = this;
-
-        $('#' + this._exitFPVModeButtonId).on('click', function(event){
-            self._disable();
-            self.setDefaultView();
-            $('#' + self._exitFPVModeButtonId).hide();
-        });
-    };
-
-    CameraController.prototype.isEnabled = function () {
+    CesiumFVPCameraController.prototype.isEnabled = function () {
         return this._enabled;
     };
 
-    CameraController.prototype._disableDefaultCameraController = function () {
-        var scene = this._cesiumViewer.scene;
+    CesiumFVPCameraController.prototype._disableDefaultScreenSpaceCameraController = function () {
+        const scene = this._cesiumViewer.scene;
 
         // disable the default event handlers
 
@@ -396,12 +459,40 @@ EDD_CJS.CameraController = (function () {
         scene.screenSpaceCameraController.enableLook = false;
     };
 
-    // https://github.com/outsider787/gw3_construkted/wiki/Construkted-Meta-Data-Definition
+    CesiumFVPCameraController.prototype._enableDefaultScreenSpaceCameraController = function () {
+        const scene = this._cesiumViewer.scene;
 
-    CameraController.prototype.setDefaultView = function() {
-        var defaultCameraPositionDirection = CONSTRUKTED_AJAX.default_camera_position_direction;
+        // disable the default event handlers
 
-        if(defaultCameraPositionDirection !== undefined && defaultCameraPositionDirection !== "") {
+        scene.screenSpaceCameraController.enableRotate = true;
+        scene.screenSpaceCameraController.enableTranslate = true;
+        scene.screenSpaceCameraController.enableZoom = true;
+        scene.screenSpaceCameraController.enableTilt = true;
+        scene.screenSpaceCameraController.enableLook = true;
+    };
+
+    CesiumFVPCameraController.prototype.getViewData = function () {
+        const camera = this._cesiumViewer.camera;
+
+        const cartographic = this._cesiumViewer.scene.globe.ellipsoid.cartesianToCartographic(camera.position);
+
+        const viewData = {};
+
+        viewData.longitude = cartographic.longitude;
+        viewData.latitude = cartographic.latitude;
+        viewData.height = cartographic.height;
+
+        viewData.heading = camera.heading;
+        viewData.pitch = camera.pitch;
+        viewData.roll = camera.roll;
+
+        return JSON.stringify(viewData);
+    };
+
+    CesiumFVPCameraController.prototype.setDefaultView = function() {
+        if(this._defaultCameraPositionOrientationJson !== undefined && this._defaultCameraPositionOrientationJson !== "") {
+            let defaultCameraPositionDirection = JSON.parse(this._defaultCameraPositionOrientationJson);
+
             try {
                 defaultCameraPositionDirection = JSON.parse(defaultCameraPositionDirection);
             }
@@ -441,20 +532,152 @@ EDD_CJS.CameraController = (function () {
         }
     };
 
-    CameraController.prototype._walkingSpeed = function() {
-        var lastFPS = this._frameMonitor.lastFramesPerSecond;
+    CesiumFVPCameraController.prototype._walkingSpeed = function() {
+        const lastFPS = this._frameMonitor.lastFramesPerSecond;
 
-        var defaultWorkingSpeed = DEFAULT_HUMAN_WALKING_SPEED;
+        const defaultWorkingSpeed = DEFAULT_HUMAN_WALKING_SPEED;
 
         if(lastFPS === undefined) {
             return defaultWorkingSpeed;
         }
 
-        var factor = 30;
+        const factor = 30;
 
         return defaultWorkingSpeed * factor / lastFPS;
     };
 
-    return CameraController;
+    CesiumFVPCameraController.prototype.FPVStarted = function () {
+        return this._FPVStarted;
+    };
+
+    CesiumFVPCameraController.prototype.FPVFinished = function () {
+        return this._FPVFinished;
+    };
+
+    CesiumFVPCameraController.prototype.startFPVMobile = function () {
+        /*
+         const width = this._canvas.clientWidth;
+         const height = this._canvas.clientHeight;
+
+         const screenCenterPosition = new Cesium.Cartesian2(width / 2 , height / 2);
+         */
+
+        this._startFPV(this._startFPVPositionMobile);
+    };
+
+    CesiumFVPCameraController.prototype._getModifiedCurrentCameraPositionMobile = function () {
+        const currentCameraPosition = this._cameraPositionAtArStartedMoment;
+
+        const magnitude = Cesium.Cartesian3.magnitude(currentCameraPosition);
+        const scalar = (magnitude - HUMAN_EYE_HEIGHT + COLLISION_RAY_HEIGHT ) / magnitude;
+
+        return Cesium.Cartesian3.multiplyByScalar(currentCameraPosition, scalar, new Cesium.Cartesian3());
+    };
+
+    CesiumFVPCameraController.prototype._validPitch = function(pitch) {
+        if( pitch > MAX_PITCH_IN_DEGREE * 2 && pitch < 360 - MAX_PITCH_IN_DEGREE) {
+            pitch = 360 - MAX_PITCH_IN_DEGREE;
+        }
+        else {
+            if (pitch > MAX_PITCH_IN_DEGREE && pitch < 360 - MAX_PITCH_IN_DEGREE) {
+                pitch = MAX_PITCH_IN_DEGREE;
+            }
+        }
+
+        return pitch;
+    };
+
+    CesiumFVPCameraController.prototype.setView = function (translationX, translationY, translationZ, rotationX, rotationY, rotationZ) {
+        if(translationX == this._lastTranslationX &&
+            translationZ == this._lastTranslationZ &&
+            rotationX == this._lastRotationX &&
+            rotationY == this._lastRotationY
+        )
+            return;
+
+        let cameraPosition;
+
+        const right = Cesium.Cartesian3.multiplyByScalar(this._cameraRightAtArStartedMoment, translationX, new Cesium.Cartesian3());
+        const direction = Cesium.Cartesian3.multiplyByScalar(this._cameraDirectionAtArStartedMoment, -translationZ, new Cesium.Cartesian3());
+        const up = Cesium.Cartesian3.multiplyByScalar(this._cameraUpAtArStartedMoment, translationY, new Cesium.Cartesian3());
+
+        let deltaPosition = Cesium.Cartesian3.add(right, direction, new Cesium.Cartesian3());
+
+        // we ignore up movement
+        //deltaPosition = Cesium.Cartesian3.add(deltaPosition, up, new Cesium.Cartesian3());
+
+        if(deltaPosition.equals(Cesium.Cartesian3.ZERO))
+        {
+            cameraPosition = this._cameraPositionAtArStartedMoment.clone();
+        }else
+        {
+            const startPosition = this._getModifiedCurrentCameraPositionMobile();
+
+            const endPosition = Cesium.Cartesian3.add(startPosition, deltaPosition, new Cesium.Cartesian3());
+
+            if(!this._canMove(startPosition, endPosition, Cesium.Cartesian3.magnitude(deltaPosition))) {
+                console.warn('collision detected. can not move!');
+                cameraPosition = this._cameraPositionAtArStartedMoment.clone();
+            }
+            else {
+                cameraPosition = this._getRevisedCameraPosition(endPosition);
+            }
+        }
+
+        // change orientation
+
+        const originalHeadingInDegree = Cesium.Math.toDegrees(this._cameraHeadingAtArStartedMoment);
+        const newHeadingInDegree = originalHeadingInDegree + rotationX;
+
+        const originalPitchInDegree = Cesium.Math.toDegrees(this._cameraPitchAtArStartedMoment);
+        let newPitchInDegree = originalPitchInDegree + rotationY;
+
+        newPitchInDegree = this._validPitch(newPitchInDegree);
+
+        // we ignore roll
+        this._camera.setView({
+            destination: cameraPosition,
+            orientation: {
+                heading : Cesium.Math.toRadians(newHeadingInDegree),
+                pitch : Cesium.Math.toRadians(newPitchInDegree),
+                roll : this._camera.roll
+            },
+            endTransform : Cesium.Matrix4.IDENTITY
+        });
+
+        this._lastTranslationX = translationX;
+        this._lastTranslationY = translationY;
+        this._lastTranslationZ = translationZ;
+
+        this._lastRotationX = rotationX;
+        this._lastRotationY = rotationY;
+        this._lastRotationZ = rotationZ;
+    };
+
+    CesiumFVPCameraController.prototype.startFPVPositionMobile = function () {
+        return this._startFPVPositionMobile;
+    };
+
+    CesiumFVPCameraController.prototype.setDirectionLeft = function () {
+        this._direction = DIRECTION_LEFT;
+    };
+
+    CesiumFVPCameraController.prototype.setDirectionRight = function () {
+        this._direction = DIRECTION_RIGHT;
+    };
+
+    CesiumFVPCameraController.prototype.setDirectionForward = function () {
+        this._direction = DIRECTION_FORWARD;
+    };
+
+    CesiumFVPCameraController.prototype.setDirectionBackward = function () {
+        this._direction = DIRECTION_BACKWARD;
+    };
+
+    CesiumFVPCameraController.prototype.setDirectionNone = function () {
+        this._direction = DIRECTION_NONE;
+    };
+
+    return CesiumFVPCameraController;
 
 })();
