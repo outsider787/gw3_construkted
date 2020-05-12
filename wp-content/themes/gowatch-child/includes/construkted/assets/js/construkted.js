@@ -657,7 +657,7 @@ var theApp = (function () {
             navigationHelpButton: false
         });
 
-        viewer.resolutionScale = 0.5;
+        viewer.resolutionScale = 1.0;
         viewer.scene.globe.depthTestAgainstTerrain = true;
 
         viewer.extend(Cesium.viewerMeasureMixin, {
