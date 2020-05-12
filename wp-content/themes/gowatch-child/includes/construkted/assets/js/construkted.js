@@ -642,9 +642,7 @@ var theApp = (function () {
         Cesium.Ion.defaultAccessToken = CONSTRUKTED_AJAX.cesium_access_token;
 
         if(!Cesium.Ion.defaultAccessToken)
-        {
             console.warn('default access token is null!');
-        }
 
         viewer = new Cesium.Viewer('cesiumContainer', {
             terrainProvider: Cesium.createWorldTerrain(),
@@ -659,6 +657,7 @@ var theApp = (function () {
             navigationHelpButton: false
         });
 
+        viewer.resolutionScale = 0.5;
         viewer.scene.globe.depthTestAgainstTerrain = true;
 
         viewer.extend(Cesium.viewerMeasureMixin, {
@@ -679,13 +678,17 @@ var theApp = (function () {
         viewer.scene.screenSpaceCameraController.rotateEventTypes = Cesium.CameraEventType.LEFT_DRAG;
         viewer.scene.screenSpaceCameraController.zoomEventTypes = [Cesium.CameraEventType.MIDDLE_DRAG, Cesium.CameraEventType.WHEEL, Cesium.CameraEventType.PINCH];
 
-        viewer.scene.screenSpaceCameraController.tiltEventTypes = [Cesium.CameraEventType.RIGHT_DRAG, Cesium.CameraEventType.PINCH, {
-            eventType : Cesium.CameraEventType.RIGHT_DRAG,
-            modifier : Cesium.KeyboardEventModifier.CTRL
-        }, {
-            eventType : Cesium.CameraEventType.LEFT_DRAG,
-            modifier : Cesium.KeyboardEventModifier.CTRL
-        }];
+        viewer.scene.screenSpaceCameraController.tiltEventTypes = [
+            Cesium.CameraEventType.RIGHT_DRAG, Cesium.CameraEventType.PINCH,
+            {
+                eventType : Cesium.CameraEventType.RIGHT_DRAG,
+                modifier : Cesium.KeyboardEventModifier.CTRL
+            },
+            {
+                eventType : Cesium.CameraEventType.LEFT_DRAG,
+                modifier : Cesium.KeyboardEventModifier.CTRL
+            }
+        ];
 
         var tilesetURL = 'https://s3.us-east-2.wasabisys.com/construkted-assets/' + CONSTRUKTED_AJAX.post_slug + '/tileset.json';
 
@@ -727,24 +730,24 @@ var theApp = (function () {
             };
 
             jQuery.fn.doubletap = jQuery.fn.doubletap || function(handler, delay) {
-                    delay = delay == null ? 300 : delay;
+                delay = delay == null ? 300 : delay;
 
-                    this.bind('touchend', function(event) {
-                        var now = new Date().getTime();
-                        // The first time this will make delta a negative number.
-                        var lastTouch = $(this).data('lastTouch') || now + 1;
-                        var delta = now - lastTouch;
-                        if (delta < delay && 0 < delta) {
-                            // After we detect a doubletap, start over.
-                            $(this).data('lastTouch', null);
-                            if (handler !== null && typeof handler === 'function') {
-                                handler(event);
-                            }
-                        } else {
-                            $(this).data('lastTouch', now);
+                this.bind('touchend', function(event) {
+                    var now = new Date().getTime();
+                    // The first time this will make delta a negative number.
+                    var lastTouch = $(this).data('lastTouch') || now + 1;
+                    var delta = now - lastTouch;
+                    if (delta < delay && 0 < delta) {
+                        // After we detect a doubletap, start over.
+                        $(this).data('lastTouch', null);
+                        if (handler !== null && typeof handler === 'function') {
+                            handler(event);
                         }
-                    });
-                };
+                    } else {
+                        $(this).data('lastTouch', now);
+                    }
+                });
+            };
 
             var jqCesiumCanvas = jQuery('.cesium-widget > canvas');
 
@@ -753,11 +756,16 @@ var theApp = (function () {
                 {
                     const touch = event.originalEvent.changedTouches[0];
 
-                    //jQuery('.airkit_single-post')[0].offsetTop
+                    // touch.clientX, clientY gives wrong values
+                    // so _getPickedCartographic will internally use other values, so called _lastTapedPosition
 
-                    console.log(touch.clientY + ' from double tap');
-
-                    cesiumFPVCameraController._startFPV({x: touch.clientX, y: touch.clientY - 84});
+                    cesiumFPVCameraController.onDoubleTaped(
+                    {
+                        position : {
+                            x: touch.clientX,
+                            y: touch.clientY
+                        }
+                    });
                 }
                 else {
                     console.warn('can not get position');

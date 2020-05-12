@@ -192,7 +192,7 @@ const CesiumFVPCameraController = (function () {
         this._mousePosition = this._startMousePosition = movement.position.clone();
     };
 
-    CesiumFVPCameraController.prototype._startFPV = function(screenPosition) {
+    CesiumFVPCameraController.prototype._getPickedCartographic = function(screenPosition) {
         if(this._isMobile)
             screenPosition = this._lastTapedPosition;
 
@@ -210,7 +210,7 @@ const CesiumFVPCameraController = (function () {
         {
             alert("Unfortunately failed to enter FPV!");
             console.warn('pickFromRay failed!');
-            return;
+            return null;
         }
 
         const pickedCartographic = globe.ellipsoid.cartesianToCartographic(result.position);
@@ -222,16 +222,17 @@ const CesiumFVPCameraController = (function () {
         {
             alert("Unfortunately failed to enter FPV!");
             console.warn('globe.getHeight(cartographic) failed!');
-            return;
+            return null;
         }
 
-        // determine we clicked out of main 3d tileset
+        // determine if we clicked out of main 3d tileset
         if (Cesium.Math.equalsEpsilon(pickedCartographic.height, terrainHeightAtPickedCartographic, Cesium.Math.EPSILON4, Cesium.Math.EPSILON1)) {
             if(!this._isMobile)
                 alert("Please double click exactly on target 3d tile!");
             else
-                alert("Please tap exactly on target 3d tile!");
-            return;
+                alert("Please double tap exactly on target 3d tile!");
+
+            return null;
         }
 
         // Cesium createWorldTerrain provider gives negative height value on some places
@@ -241,14 +242,31 @@ const CesiumFVPCameraController = (function () {
 
         pickedCartographic.height = pickedCartographic.height + HUMAN_EYE_HEIGHT;
 
-        this._doStartFPV(pickedCartographic);
+        return pickedCartographic;
     };
 
     CesiumFVPCameraController.prototype._onMouseLButtonDoubleClicked = function (movement) {
-        if(this._enabled)
+        const pickedCartographic = this._getPickedCartographic(movement.position);
+
+        if(!pickedCartographic)
             return;
 
-        this._startFPV(movement.position);
+        if(this._enabled){
+            const globe = this._cesiumViewer.scene.globe;
+
+            this._camera.flyTo({
+                destination : globe.ellipsoid.cartographicToCartesian(pickedCartographic),
+                orientation : {
+                    heading : this._camera.heading,
+                    pitch :  0,
+                    roll : 0.0
+                }
+            });
+
+            return;
+        }
+
+        this._doStartFPV(pickedCartographic);
     };
 
     CesiumFVPCameraController.prototype._onMouseMove = function (movement) {
@@ -622,7 +640,7 @@ const CesiumFVPCameraController = (function () {
          const screenCenterPosition = new Cesium.Cartesian2(width / 2 , height / 2);
          */
 
-        this._startFPV(this._startFPVPositionMobile);
+        this._getPickedCartographic(this._startFPVPositionMobile);
     };
 
     CesiumFVPCameraController.prototype._getModifiedCurrentCameraPositionMobile = function () {
@@ -736,6 +754,10 @@ const CesiumFVPCameraController = (function () {
 
     CesiumFVPCameraController.prototype.setDirectionNone = function () {
         this._direction = DIRECTION_NONE;
+    };
+
+    CesiumFVPCameraController.prototype.onDoubleTaped = function (movement) {
+        this._onMouseLButtonDoubleClicked(movement);
     };
 
     return CesiumFVPCameraController;
