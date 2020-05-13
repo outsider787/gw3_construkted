@@ -296,7 +296,7 @@ const CesiumFVPCameraController = (function () {
         const deltaY = -(currentMousePosition.y - this._startMousePosition.y) / height;
 
         console.log(`deltaX = ${currentMousePosition.x - this._startMousePosition.x} deltaY = ${currentMousePosition.y - this._startMousePosition.y}`);
--
+
         const deltaHeadingInDegree = (deltaX * CAMERA_ANGLE_CHANGE_SPEED_HEADING);
         const deltaPitchInDegree = (deltaY * CAMERA_ANGLE_CHANGE_SPEED_PITCH);
 
