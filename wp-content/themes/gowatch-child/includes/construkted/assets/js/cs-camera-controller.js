@@ -12,9 +12,11 @@ const CesiumFVPCameraController = (function () {
     const DEFAULT_HUMAN_WALKING_SPEED = 0.5;
 
     const MAX_PITCH_IN_DEGREE = 88;
-    const ROTATE_SPEED = -5;
+    const CAMERA_ANGLE_CHANGE_SPEED = -50;
     const COLLISION_RAY_HEIGHT = 0.5;
     const HUMAN_EYE_HEIGHT = 1.65;
+
+    var scratchDirection = new Cesium.Cartesian3();
 
     //constructor
     function CesiumFVPCameraController(options) {
@@ -40,14 +42,16 @@ const CesiumFVPCameraController = (function () {
          */
 
         // indicate if heading and pitch is changed
-        this._isMouseLeftButtonPressed = false;
+        this._leftButtonPressed = false;
+        this._cameraHeadingWhenLbuttonPressed = this._camera.heading;
+        this._cameraPitchWhenLbuttonPressed = this._camera.pitch;
 
         this._startMousePosition = null;
-        this._mousePosition = null;
 
         this._frameMonitor = Cesium.FrameRateMonitor.fromScene(this._cesiumViewer.scene);
 
         this._screenSpaceEventHandler = new Cesium.ScreenSpaceEventHandler( this._canvas);
+
         this._screenSpaceEventHandler.setInputAction(this._onMouseLButtonDoubleClicked.bind(this), Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
         this._screenSpaceEventHandler.setInputAction(this._onMouseLButtonClicked.bind(this), Cesium.ScreenSpaceEventType.LEFT_DOWN);
         this._screenSpaceEventHandler.setInputAction(this._onMouseUp.bind(this), Cesium.ScreenSpaceEventType.LEFT_UP);
@@ -188,8 +192,10 @@ const CesiumFVPCameraController = (function () {
                 this._startFPVPositionMobile = movement.position.clone();
         }
 
-        this._isMouseLeftButtonPressed = true;
-        this._mousePosition = this._startMousePosition = movement.position.clone();
+        this._leftButtonPressed = true;
+        this._cameraHeadingWhenLbuttonPressed = this._camera.heading;
+        this._cameraPitchWhenLbuttonPressed = this._camera.pitch;
+        this._startMousePosition = movement.position.clone();
     };
 
     CesiumFVPCameraController.prototype._getPickedCartographic = function(screenPosition) {
@@ -270,36 +276,33 @@ const CesiumFVPCameraController = (function () {
     };
 
     CesiumFVPCameraController.prototype._onMouseMove = function (movement) {
-        this._mousePosition = movement.endPosition;
+        if(!this._leftButtonPressed)
+            return;
+
+        this._changeCameraHeadingPitch(movement.endPosition);
     };
 
     //noinspection JSUnusedLocalSymbols
     CesiumFVPCameraController.prototype._onMouseUp = function (position) {
-        this._isMouseLeftButtonPressed = false;
+        this._leftButtonPressed = false;
     };
 
-    CesiumFVPCameraController.prototype._changeCameraHeadingPitchByMouse = function (dt) {
+    CesiumFVPCameraController.prototype._changeCameraHeadingPitch = function (currentMousePosition) {
         const width = this._canvas.clientWidth;
         const height = this._canvas.clientHeight;
 
-        // Coordinate (0.0, 0.0) will be where the mouse was clicked.
-        const deltaX = (this._mousePosition.x - this._startMousePosition.x) / width;
-        const deltaY = -(this._mousePosition.y - this._startMousePosition.y) / height;
+        const deltaX = (currentMousePosition.x - this._startMousePosition.x) / width;
+        const deltaY = -(currentMousePosition.y - this._startMousePosition.y) / height;
 
-        const currentHeadingInDegree = Cesium.Math.toDegrees(this._camera.heading);
-        const deltaHeadingInDegree = (deltaX * ROTATE_SPEED);
-        const newHeadingInDegree = currentHeadingInDegree + deltaHeadingInDegree;
+        console.log(`deltaX = ${currentMousePosition.x - this._startMousePosition.x} deltaY = ${currentMousePosition.y - this._startMousePosition.y}`);
 
-        const currentPitchInDegree = Cesium.Math.toDegrees(this._camera.pitch);
-        const deltaPitchInDegree = (deltaY * ROTATE_SPEED);
-        let newPitchInDegree = currentPitchInDegree + deltaPitchInDegree;
-
-        newPitchInDegree = this._validPitch(newPitchInDegree);
+        const deltaHeadingInDegree = (deltaX * CAMERA_ANGLE_CHANGE_SPEED);
+        const deltaPitchInDegree = (deltaY * CAMERA_ANGLE_CHANGE_SPEED);
 
         this._camera.setView({
             orientation: {
-                heading : Cesium.Math.toRadians(newHeadingInDegree),
-                pitch : Cesium.Math.toRadians(newPitchInDegree),
+                heading : this._cameraHeadingWhenLbuttonPressed + Cesium.Math.toRadians(deltaHeadingInDegree),
+                pitch : this._validPitch(this._cameraPitchWhenLbuttonPressed + Cesium.Math.toRadians(deltaPitchInDegree)),
                 roll : this._camera.roll
             }
         });
@@ -326,20 +329,18 @@ const CesiumFVPCameraController = (function () {
     };
 
     CesiumFVPCameraController.prototype._changeCameraPosition = function (dt) {
-        var direction = new Cesium.Cartesian3();
-
         if(this._direction === DIRECTION_FORWARD)
-            Cesium.Cartesian3.multiplyByScalar(this._camera.direction, 1, direction);
+            Cesium.Cartesian3.multiplyByScalar(this._camera.direction, 1, scratchDirection);
         else if(this._direction === DIRECTION_BACKWARD)
-            Cesium.Cartesian3.multiplyByScalar(this._camera.direction, -1, direction);
+            Cesium.Cartesian3.multiplyByScalar(this._camera.direction, -1, scratchDirection);
         else if(this._direction === DIRECTION_LEFT)
-            Cesium.Cartesian3.multiplyByScalar(this._camera.right, -1, direction);
+            Cesium.Cartesian3.multiplyByScalar(this._camera.right, -1, scratchDirection);
         else if(this._direction === DIRECTION_RIGHT)
-            Cesium.Cartesian3.multiplyByScalar(this._camera.right, 1, direction);
+            Cesium.Cartesian3.multiplyByScalar(this._camera.right, 1, scratchDirection);
 
         var stepDistance = this._walkingSpeed() * dt;
 
-        var deltaPosition = Cesium.Cartesian3.multiplyByScalar(direction, stepDistance, new Cesium.Cartesian3());
+        var deltaPosition = Cesium.Cartesian3.multiplyByScalar(scratchDirection, stepDistance, new Cesium.Cartesian3());
 
         var rayPosition = this._getRayPosition();
 
@@ -511,9 +512,6 @@ const CesiumFVPCameraController = (function () {
 
     CesiumFVPCameraController.prototype._onClockTick = function (clock) {
         const dt = clock._clockStep;
-
-        if(this._isMouseLeftButtonPressed)
-            this._changeCameraHeadingPitchByMouse(dt);
 
         if(this._direction !== DIRECTION_NONE) {
             this._changeCameraPosition(dt);
