@@ -12,7 +12,7 @@ const CesiumFVPCameraController = (function () {
     const DEFAULT_HUMAN_WALKING_SPEED = 0.5;
 
     const MAX_PITCH_IN_DEGREE = 88;
-    const CAMERA_ANGLE_CHANGE_SPEED = -50;
+    const CAMERA_ANGLE_CHANGE_SPEED = -70;
     const COLLISION_RAY_HEIGHT = 0.5;
     const HUMAN_EYE_HEIGHT = 1.65;
 
