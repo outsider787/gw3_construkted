@@ -12,7 +12,8 @@ const CesiumFVPCameraController = (function () {
     const DEFAULT_HUMAN_WALKING_SPEED = 0.5;
 
     const MAX_PITCH_IN_DEGREE = 88;
-    const CAMERA_ANGLE_CHANGE_SPEED = -65;
+    const CAMERA_ANGLE_CHANGE_SPEED_HEADING = -60;
+    const CAMERA_ANGLE_CHANGE_SPEED_PITCH = -60;
     const COLLISION_RAY_HEIGHT = 0.5;
     const HUMAN_EYE_HEIGHT = 1.65;
 
@@ -295,9 +296,9 @@ const CesiumFVPCameraController = (function () {
         const deltaY = -(currentMousePosition.y - this._startMousePosition.y) / height;
 
         console.log(`deltaX = ${currentMousePosition.x - this._startMousePosition.x} deltaY = ${currentMousePosition.y - this._startMousePosition.y}`);
-
-        const deltaHeadingInDegree = (deltaX * CAMERA_ANGLE_CHANGE_SPEED);
-        const deltaPitchInDegree = (deltaY * CAMERA_ANGLE_CHANGE_SPEED);
+-
+        const deltaHeadingInDegree = (deltaX * CAMERA_ANGLE_CHANGE_SPEED_HEADING);
+        const deltaPitchInDegree = (deltaY * CAMERA_ANGLE_CHANGE_SPEED_PITCH);
 
         this._camera.setView({
             orientation: {
