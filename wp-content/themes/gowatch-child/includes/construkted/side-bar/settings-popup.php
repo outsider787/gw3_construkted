@@ -37,7 +37,7 @@
                 <button type="button" id="reset_camera_view" class="btn btn-light">Camera view reset</button>
             <?php } ?>
 
-            <div class="form-group hidden">
+            <div class="form-group">
                 <label for="fpv_speed">FPV movement speed</label>
                 <input type="range" class="form-control-range" name="fpv_speed" id="fpv_speed">
                 <div class="label-min-max">
