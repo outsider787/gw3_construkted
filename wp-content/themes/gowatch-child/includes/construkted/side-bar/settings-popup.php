@@ -18,7 +18,17 @@
                     Show Wireframe
                 </label>
             </div>
-
+            <hr style="width:100%;text-align:left;margin-left:0">
+             <div class="form-group">
+                <label for="fpv_speed"><strong>FPV Movement</strong></label>
+                <br>Movement Speed 
+                <input type="range" id="fpv-movement-speed-slider" class="form-control-range" name="fpv_speed" min="0.1" max="1" value="0.5" step="0.01">
+                <div class="label-min-max">
+                    <span class="lbl-min">Slow</span>
+                    <span class="lbl-max" style="float:right">Fast</span>
+                </div>
+            </div>
+            
             <!-- These buttons should only be visible to the asset owner (logged in) -->
 
             <?php
@@ -36,15 +46,6 @@
                 <p class="desc">Use if display is not showing the asset.</p>
                 <button type="button" id="reset_camera_view" class="btn btn-light">Camera view reset</button>
             <?php } ?>
-
-            <div class="form-group">
-                <label for="fpv_speed">FPV movement speed</label>
-                <input type="range" id="fpv-movement-speed-slider" class="form-control-range" name="fpv_speed" min="0.1" max="1" value="0.5" step="0.01">
-                <div class="label-min-max">
-                    <span class="lbl-min">Slow</span>
-                    <span class="lbl-max" style="float:right">Fast</span>
-                </div>
-            </div>
         </div>
     </div>
 </div>
