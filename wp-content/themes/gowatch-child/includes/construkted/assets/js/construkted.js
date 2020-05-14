@@ -533,7 +533,19 @@ var theApp = (function () {
             if(!tileset)
                 return;
 
+            if(camera)
+
             tileset.maximumScreenSpaceError = 32 - this.value;
+        });
+
+        jQuery('#fpv-movement-speed-slider').change(function () {
+            if(!tileset)
+                return;
+
+            if(!cesiumFPVCameraController)
+                return;
+
+            cesiumFPVCameraController.setWorkingSpeed(parseFloat(this.value));
         });
 
         jqShowHideWireframeCheckbox.change(function () {

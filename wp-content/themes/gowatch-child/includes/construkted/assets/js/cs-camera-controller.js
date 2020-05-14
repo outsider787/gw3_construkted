@@ -9,7 +9,7 @@ const CesiumFVPCameraController = (function () {
     const DIRECTION_LEFT = 2;
     const DIRECTION_RIGHT = 3;
 
-    const DEFAULT_HUMAN_WALKING_SPEED = 0.5;
+    const DEFAULT_WALKING_SPEED = 0.5;
 
     const MAX_PITCH_IN_DEGREE = 88;
     const CAMERA_ANGLE_CHANGE_SPEED_HEADING = -60;
@@ -67,6 +67,7 @@ const CesiumFVPCameraController = (function () {
         this._lastRotaionZ = 0;
 
         this._allowStartPositionTap = false;
+        this._walkingSpeed = DEFAULT_WALKING_SPEED;
     }
 
     CesiumFVPCameraController.prototype.setAllowStartPositionTap = function(value) {
@@ -295,8 +296,6 @@ const CesiumFVPCameraController = (function () {
         const deltaX = (currentMousePosition.x - this._startMousePosition.x) / width;
         const deltaY = -(currentMousePosition.y - this._startMousePosition.y) / height;
 
-        console.log(`deltaX = ${currentMousePosition.x - this._startMousePosition.x} deltaY = ${currentMousePosition.y - this._startMousePosition.y}`);
-
         const deltaHeadingInDegree = (deltaX * CAMERA_ANGLE_CHANGE_SPEED_HEADING);
         const deltaPitchInDegree = (deltaY * CAMERA_ANGLE_CHANGE_SPEED_PITCH);
 
@@ -339,7 +338,7 @@ const CesiumFVPCameraController = (function () {
         else if(this._direction === DIRECTION_RIGHT)
             Cesium.Cartesian3.multiplyByScalar(this._camera.right, 1, scratchDirection);
 
-        var stepDistance = this._walkingSpeed() * dt;
+        var stepDistance = this._fpsConsideredWalkingSpeed() * dt;
 
         var deltaPosition = Cesium.Cartesian3.multiplyByScalar(scratchDirection, stepDistance, new Cesium.Cartesian3());
 
@@ -378,9 +377,6 @@ const CesiumFVPCameraController = (function () {
         var sampledHeight = this._cesiumViewer.scene.sampleHeight(cartographic);
 
         var currentCameraCartographic = ellipsoid.cartesianToCartographic(this._camera.position);
-
-        console.log('sample height: ' + sampledHeight);
-        console.log('current camera  height: ' + currentCameraCartographic.height);
 
         if(sampledHeight === undefined) {
             console.warn('sampled height is undefined');
@@ -609,10 +605,10 @@ const CesiumFVPCameraController = (function () {
         }
     };
 
-    CesiumFVPCameraController.prototype._walkingSpeed = function() {
+    CesiumFVPCameraController.prototype._fpsConsideredWalkingSpeed = function() {
         const lastFPS = this._frameMonitor.lastFramesPerSecond;
 
-        const defaultWorkingSpeed = DEFAULT_HUMAN_WALKING_SPEED;
+        const defaultWorkingSpeed = this._walkingSpeed;
 
         if(lastFPS === undefined) {
             return defaultWorkingSpeed;
@@ -757,6 +753,10 @@ const CesiumFVPCameraController = (function () {
 
     CesiumFVPCameraController.prototype.onDoubleTaped = function (movement) {
         this._onMouseLButtonDoubleClicked(movement);
+    };
+
+    CesiumFVPCameraController.prototype.setWorkingSpeed = function (speed) {
+        this._walkingSpeed = speed;
     };
 
     return CesiumFVPCameraController;
