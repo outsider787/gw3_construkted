@@ -1287,19 +1287,15 @@ article .entry-meta {
     color: var(--grey);
 }
 .gw3-button {
-    height: 40px;
-    line-height: 40px;
     display: inline-flex;
-    padding: 0 18px;
-    border-radius: 25px;
-    background: var(--blue);
+    padding: 12px 16px;
+    border-radius: 5px;
+    background: var(--violet);
     color: #FFF;
-    text-transform: uppercase;
-    font-size: 12px;
-    font-weight: 500;
+    font-size: 14px;
 }
 .gw3-button:hover {
-    background: rgba(9,49,84,1);
+    background: var(--blue);
     color: #FFF;
 }
 .gw3-button.outline {
@@ -2036,7 +2032,158 @@ table.variations,
     display: none;
 }
 
+/* The info modal styles here */
+.ck-asset-modal {
+    position: absolute;
+    width: 800px;
+    max-width: 100%;
+    background: rgba(0,0,0,0.75);
+    padding: 22px 0;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #fff;
+    border-radius: 5px;
+    font-size: 14px;
+}
+.ck-asset-modal > i.icon-close {
+    font-size: 16px;
+    color: #FFF;
+    cursor: pointer;
+    position: absolute;
+    top: 22px;
+    right: 22px;
+    line-height: 1;
+    display: inline-flex;
+}
+.ck-asset-modal > i.icon-close:hover {
+    color: var(--violet);
+}
+.ck-asset-modal a:not([class*="button"]) {
+    color: var(--violet);
+}
+.ck-asset-modal h4 {
+    font-size: 18px;
+    display: block;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    margin: 0 0 28px 0;
+    padding: 0 0 14px 0;
+}
+.ck-asset-modal label {
+    font-weight: 400;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    margin-top: 20px;
+}
+.ck-asset-modal label input {
+    margin-right: 6px;
+}
+.ck-asset-modal-footer {
+    text-align: center;
+    margin-top: 20px;
+}
+.ck-asset-modal .flexer {
+    display: flex;
+    flex-direction: row;
+}
+.ck-asset-modal .flexer .ck-col:first-child::after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255,255,255,0.2);
+    width: 1px;
+}
+.ck-asset-modal .flexer .ck-col {
+    flex: 0 0 50%;
+    padding: 0 20px;
+    position: relative;
+}
+.ck-asset-modal .ck-modal-item {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 20px;
+}
+.ck-asset-modal .ck-modal-item img {
+    width: 64px;
+    min-width: 64px;
+    max-width: 100%;
+    height: auto;
+    margin: 0;
+}
+.ck-asset-modal .ck-modal__item-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    text-align: left;
+    padding-left: 30px;
+}
+.ck-asset-modal .ck-modal-item strong {
+    font-size: 1.05em;
+    color: var(--violet);
+    font-weight: 400;
+}
+.ck-modal-toggler {
+    position: absolute;
+    bottom: 30px;
+    right: 50px;
+    background: var(--violet);
+    color: #FFF;
+    font-size: 18px;
+    display: inline-flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+.ck-modal-toggler:hover {
+    background: var(--blue);
+}
+
 @media only screen and (max-width: 768px) {
+    .ck-asset-modal {
+        top: 20px;
+        left: 20px;
+        transform: none;
+        right: 20px;
+        max-height: calc(100% - 40px);
+        overflow-y: auto;
+        width: auto;
+    }
+    .ck-asset-modal .ck-col:first-of-type {
+        display: none;
+    }
+    .ck-asset-modal .flexer .ck-col {
+        flex: 0 0 100%;
+    }
+    .ck-asset-modal h4 {
+        text-align: left;
+    }
+    .ck-asset-modal > i.icon-close {
+        padding: 6px 10px;
+        right: 0;
+    }
+    .ck-asset-modal .ck-modal-item img {
+        width: 48px;
+        min-width: 48px;
+        max-width: 100%;
+        height: auto;
+        margin: 0;
+    }
+    .ck-asset-modal-footer,
+    .ck-asset-modal label {
+        margin-top: 5px;
+    }
+    .ck-modal-toggler {
+        right: 0;
+    }
     .single-video .post-header .entry-meta-views {
         margin-top: 0;
         bottom: 0;

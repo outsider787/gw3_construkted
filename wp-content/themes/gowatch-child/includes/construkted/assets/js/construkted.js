@@ -1099,3 +1099,38 @@ jQuery(document).ready(function(){
 
     theApp.start();
 });
+
+
+
+// Create the asset modal features
+jQuery(document).ready(function(){
+    // Check if we have a cookie with the modal box closed
+    let ckAssetModal = jQuery.cookie('ck-asset-modal');
+    if( ckAssetModal == 'y' ) {
+        jQuery('.ck-asset-modal').addClass('is-closed hidden');
+    } else {
+        jQuery('.ck-asset-modal').fadeIn(600);
+    }
+
+    jQuery(document).on('click', '.ck-asset-modal .icon-close, .ck-asset-modal-footer .gw3-button', function(){
+        let modal = jQuery(this).parents('.ck-asset-modal');
+        modal.addClass('hidden is-closed');
+
+        // Check if the checkbox is checked to make sure we disable it for 31 days
+        if( jQuery('#ck-asset-modal-close').is(':checked') ) {
+            jQuery.cookie( 'ck-asset-modal', 'y', { expires: 31 } );
+        }
+    });
+
+    jQuery(document).on('click', '.ck-modal-toggler', function(){
+        let modal = jQuery('.ck-asset-modal');
+        modal.removeClass('hidden is-closed');
+        modal.fadeIn(300);
+
+        // // Check if the checkbox is checked to make sure we disable it for 31 days
+        // if( jQuery('#ck-asset-modal-close').is(':checked') ) {
+        //     jQuery.cookie( 'ck-asset-modal', 'y', { expires: 31 } );
+        // }
+    });
+});
+

@@ -80,6 +80,8 @@ $article_atts['class'] = get_post_class( $article_classes );
 				// echo get_the_post_thumbnail( $post->ID, 'gowatch_single');
 				airkit_overlay_effect_type();
 
+				construkted_asset_modal();
+
 
 				// Show the right sidebar part
 				render_construkted_side_bar();
