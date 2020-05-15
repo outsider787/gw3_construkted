@@ -1030,13 +1030,18 @@ add_shortcode( 'subscription_packages', 'construkted_product_shortcode' );
 
 
 function construkted_asset_modal() {
+
+    $svg_arrow_up = '<svg width="65" height="65" viewBox="0 0 65 65" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M2.45117 5.24982L2.45117 59.2498C2.45117 60.9067 3.79432 62.2498 5.45117 62.2498L59.4512 62.2498C61.108 62.2498 62.4512 60.9067 62.4512 59.2498L62.4512 5.24982C62.4512 3.59297 61.108 2.24982 59.4512 2.24982L5.45117 2.24982C3.79432 2.24982 2.45117 3.59297 2.45117 5.24982Z" stroke="white" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M33.5118 16.7185C32.926 16.0937 31.9763 16.0937 31.3905 16.7185L20.8905 27.9185C20.3047 28.5433 20.3047 29.5564 20.8905 30.1812C21.4763 30.8061 22.426 30.8061 23.0118 30.1812L30.9512 21.7126V46.6499C30.9512 47.5335 31.6227 48.2499 32.4512 48.2499C33.2796 48.2499 33.9512 47.5335 33.9512 46.6499V21.7126L41.8905 30.1812C42.4763 30.8061 43.426 30.8061 44.0118 30.1812C44.5976 29.5564 44.5976 28.5433 44.0118 27.9185L33.5118 16.7185Z" fill="white"/>
+</svg>';
     ?>
 
     <div class="fpv-navigation">
-        <div class="fpv-nav-btn fpv-up"><img src="<?php echo get_stylesheet_directory_uri(); ?>/images/arrow-up.svg" alt="" /></div>
-        <div class="fpv-nav-btn fpv-left"><img src="<?php echo get_stylesheet_directory_uri(); ?>/images/arrow-up.svg" alt="" /></div>
-        <div class="fpv-nav-btn fpv-right"><img src="<?php echo get_stylesheet_directory_uri(); ?>/images/arrow-up.svg" alt="" /></div>
-        <div class="fpv-nav-btn fpv-down"><img src="<?php echo get_stylesheet_directory_uri(); ?>/images/arrow-up.svg" alt="" /></div>
+        <div class="fpv-nav-btn fpv-up"><?php echo $svg_arrow_up; ?></div>
+        <div class="fpv-nav-btn fpv-left"><?php echo $svg_arrow_up; ?></div>
+        <div class="fpv-nav-btn fpv-right"><?php echo $svg_arrow_up; ?></div>
+        <div class="fpv-nav-btn fpv-down"><?php echo $svg_arrow_up; ?></div>
     </div>
     <button id="exitFPVModeButton">EXIT FPV MODE</button>
         
