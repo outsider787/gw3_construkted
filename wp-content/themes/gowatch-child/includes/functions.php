@@ -1075,7 +1075,7 @@ function construkted_asset_modal() {
                     <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/key-arrows.svg" alt="" />
                     <div class="ck-modal__item-details">
                         <strong><?php esc_html_e('Movement', 'gowatch-child'); ?></strong>
-                        <span><?php esc_html_e('Use arrows keys to move around', 'gowatch-child'); ?></span>
+                        <span><?php esc_html_e('Use keyboard arrows keys or WASD keys to move around', 'gowatch-child'); ?></span>
                     </div>
                 </div>
             </div>
