@@ -8,10 +8,10 @@ var theApp = (function () {
     var transformEditor = null;
 
     var jqExitFPVModeButton = jQuery('#exitFPVModeButton');
-    var jqMoveLeftButton = jQuery('#moveLeftButton');
-    var jqMoveRightButton = jQuery('#moveRightButton');
-    var jqMoveFrontButton = jQuery('#moveFrontButton');
-    var jqMoveBackButton = jQuery('#moveBackButton');
+    var jqMoveLeftButton = jQuery('.fpv-left');
+    var jqMoveRightButton = jQuery('fpv-right');
+    var jqMoveFrontButton = jQuery('.fpv-up');
+    var jqMoveBackButton = jQuery('.fpv-down');
 
     var jqTilesetLatitude = jQuery('#tileset_latitude');
     var jqTilesetLongitude = jQuery('#tileset_longitude');
@@ -800,6 +800,7 @@ var theApp = (function () {
                 jqMoveRightButton.show();
                 jqMoveFrontButton.show();
                 jqMoveBackButton.show();
+                jQuery('body').addClass('fpv-mode-on');
             });
 
             cesiumFPVCameraController.FPVFinished().addEventListener(function() {
@@ -808,6 +809,7 @@ var theApp = (function () {
                 jqMoveRightButton.hide();
                 jqMoveFrontButton.hide();
                 jqMoveBackButton.hide();
+                jQuery('body').addClass('fpv-mode-on');
             });
 
             jqExitFPVModeButton.click(function () {
@@ -1112,7 +1114,8 @@ jQuery(document).ready(function(){
         jQuery('.ck-asset-modal').fadeIn(600);
     }
 
-    jQuery(document).on('click', '.ck-asset-modal .icon-close, .ck-asset-modal-footer .gw3-button', function(){
+    jQuery(document).on('click', '.ck-asset-modal .icon-close, .ck-asset-modal-footer .gw3-button', function(e){
+        e.preventDefault();
         let modal = jQuery(this).parents('.ck-asset-modal');
         modal.addClass('hidden is-closed');
 
@@ -1122,15 +1125,11 @@ jQuery(document).ready(function(){
         }
     });
 
-    jQuery(document).on('click', '.ck-modal-toggler', function(){
+    jQuery(document).on('click', '.ck-modal-toggler', function(e){
+        e.preventDefault();
         let modal = jQuery('.ck-asset-modal');
         modal.removeClass('hidden is-closed');
         modal.fadeIn(300);
-
-        // // Check if the checkbox is checked to make sure we disable it for 31 days
-        // if( jQuery('#ck-asset-modal-close').is(':checked') ) {
-        //     jQuery.cookie( 'ck-asset-modal', 'y', { expires: 31 } );
-        // }
     });
 });
 

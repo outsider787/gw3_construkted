@@ -1031,6 +1031,14 @@ add_shortcode( 'subscription_packages', 'construkted_product_shortcode' );
 
 function construkted_asset_modal() {
     ?>
+
+    <div class="fpv-navigation">
+        <div class="fpv-up"><img src="<?php echo get_stylesheet_directory_uri(); ?>/images/arrow-up.svg" alt="" /></div>
+        <div class="fpv-left"><img src="<?php echo get_stylesheet_directory_uri(); ?>/images/arrow-up.svg" alt="" /></div>
+        <div class="fpv-right"><img src="<?php echo get_stylesheet_directory_uri(); ?>/images/arrow-up.svg" alt="" /></div>
+        <div class="fpv-down"><img src="<?php echo get_stylesheet_directory_uri(); ?>/images/arrow-up.svg" alt="" /></div>
+    </div>
+    <button id="exitFPVModeButton">EXIT FPV MODE</button>
         
     <div class="ck-asset-modal" style="display: none;">
         <i class="icon-close"></i>

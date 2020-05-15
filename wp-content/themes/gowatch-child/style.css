@@ -2146,6 +2146,74 @@ table.variations,
 .ck-modal-toggler:hover {
     background: var(--blue);
 }
+@media screen and (max-width: 1280px) {
+
+    .fpv-navigation {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 30px;
+        width: 240px;
+        height: 160px;
+        display: none;
+    }
+    .fpv-navigation .fpv-up {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    .fpv-navigation .fpv-left {
+        transform: rotate(-90deg);
+        position: absolute;
+        top: 50%;
+        left: 0;
+    }
+    .fpv-navigation .fpv-right {
+        transform: rotate(90deg);
+        position: absolute;
+        top: 50%;
+        right: 0;
+    }
+    .fpv-navigation .fpv-down {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translateX(-50%) rotate(-180deg);
+    }
+    .fpv-navigation > div {
+        border-radius: 5px;
+    }
+    .fpv-navigation > div:focus,
+    .fpv-navigation > div:active {
+        background: rgba(255,255,255,0.2);
+    }
+    #exitFPVModeButton {
+        display: inline-flex;
+        top: 20px;
+        height: 46px;
+        padding: 16px 24px;
+        width: calc(100% - 40px);
+        left: 20px;
+        right: 20px;
+        background: rgba(230,230,230,0.3);
+        border: 1px solid rgba(230,230,230,0.2);
+        border-radius: 5px;
+        position: absolute;
+        color: #FFF;
+        text-align: center;
+        justify-content: center;
+        line-height: 1;
+        display: none;
+        cursor: pointer;
+    }
+    @media (hover: hover) {
+        #exitFPVModeButton:hover {
+            border-color: rgba(230,230,230,0.5);
+            background-color: rgba(230,230,230,0.35);
+        }
+    }
+}
 
 @media only screen and (max-width: 768px) {
     .ck-asset-modal {
@@ -2164,11 +2232,12 @@ table.variations,
         flex: 0 0 100%;
     }
     .ck-asset-modal h4 {
-        text-align: left;
+        font-size: 15px;
     }
     .ck-asset-modal > i.icon-close {
         padding: 6px 10px;
         right: 0;
+        top: 15px;
     }
     .ck-asset-modal .ck-modal-item img {
         width: 48px;
@@ -2221,6 +2290,9 @@ table.variations,
     }
     .airkit-single-likes a {
         padding: 0 8px;
+    }
+    .airkit_header-style5 {
+        padding: 10px 0;
     }
     .airkit_header-style5 .airkit_table-content > .cell-item:nth-child(4) {
         width: 120px;
