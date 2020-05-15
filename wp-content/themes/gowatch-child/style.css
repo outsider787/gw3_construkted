@@ -2146,7 +2146,7 @@ table.variations,
 .ck-modal-toggler:hover {
     background: var(--blue);
 }
-@media screen and (max-width: 1280px) {
+
 
     .fpv-navigation {
         position: absolute;
@@ -2213,7 +2213,7 @@ table.variations,
             background-color: rgba(230,230,230,0.35);
         }
     }
-}
+
 
 @media only screen and (max-width: 768px) {
     .ck-asset-modal {

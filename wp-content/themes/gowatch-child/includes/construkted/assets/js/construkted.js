@@ -9,7 +9,7 @@ var theApp = (function () {
 
     var jqExitFPVModeButton = jQuery('#exitFPVModeButton');
     var jqMoveLeftButton = jQuery('.fpv-left');
-    var jqMoveRightButton = jQuery('fpv-right');
+    var jqMoveRightButton = jQuery('.fpv-right');
     var jqMoveFrontButton = jQuery('.fpv-up');
     var jqMoveBackButton = jQuery('.fpv-down');
 
@@ -796,20 +796,14 @@ var theApp = (function () {
 
             cesiumFPVCameraController.FPVStarted().addEventListener(function() {
                 jqExitFPVModeButton.show();
-                jqMoveLeftButton.show();
-                jqMoveRightButton.show();
-                jqMoveFrontButton.show();
-                jqMoveBackButton.show();
                 jQuery('body').addClass('fpv-mode-on');
+                jQuery('.fpv-navigation').show();
             });
 
             cesiumFPVCameraController.FPVFinished().addEventListener(function() {
                 jqExitFPVModeButton.hide();
-                jqMoveLeftButton.hide();
-                jqMoveRightButton.hide();
-                jqMoveFrontButton.hide();
-                jqMoveBackButton.hide();
-                jQuery('body').addClass('fpv-mode-on');
+                jQuery('body').removeClass('fpv-mode-on');
+                jQuery('.fpv-navigation').hide();
             });
 
             jqExitFPVModeButton.click(function () {
