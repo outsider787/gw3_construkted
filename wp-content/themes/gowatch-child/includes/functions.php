@@ -1033,10 +1033,10 @@ function construkted_asset_modal() {
     ?>
 
     <div class="fpv-navigation">
-        <div class="fpv-up"><img src="<?php echo get_stylesheet_directory_uri(); ?>/images/arrow-up.svg" alt="" /></div>
-        <div class="fpv-left"><img src="<?php echo get_stylesheet_directory_uri(); ?>/images/arrow-up.svg" alt="" /></div>
-        <div class="fpv-right"><img src="<?php echo get_stylesheet_directory_uri(); ?>/images/arrow-up.svg" alt="" /></div>
-        <div class="fpv-down"><img src="<?php echo get_stylesheet_directory_uri(); ?>/images/arrow-up.svg" alt="" /></div>
+        <div class="fpv-nav-btn fpv-up"><img src="<?php echo get_stylesheet_directory_uri(); ?>/images/arrow-up.svg" alt="" /></div>
+        <div class="fpv-nav-btn fpv-left"><img src="<?php echo get_stylesheet_directory_uri(); ?>/images/arrow-up.svg" alt="" /></div>
+        <div class="fpv-nav-btn fpv-right"><img src="<?php echo get_stylesheet_directory_uri(); ?>/images/arrow-up.svg" alt="" /></div>
+        <div class="fpv-nav-btn fpv-down"><img src="<?php echo get_stylesheet_directory_uri(); ?>/images/arrow-up.svg" alt="" /></div>
     </div>
     <button id="exitFPVModeButton">EXIT FPV MODE</button>
         

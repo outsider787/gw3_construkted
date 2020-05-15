@@ -2207,6 +2207,9 @@ table.variations,
         display: none;
         cursor: pointer;
     }
+    .fpn-nav-btn {
+        -webkit-touch-callout: none;
+    }
     @media (hover: hover) {
         #exitFPVModeButton:hover {
             border-color: rgba(230,230,230,0.5);

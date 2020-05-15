@@ -1125,5 +1125,9 @@ jQuery(document).ready(function(){
         modal.removeClass('hidden is-closed');
         modal.fadeIn(300);
     });
+
+    jQuery('.fpv-nav-btn').on('click', function(e){
+        e.preventDefault();
+    })
 });
 
