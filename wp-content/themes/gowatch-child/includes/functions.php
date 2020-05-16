@@ -1088,13 +1088,6 @@ function construkted_asset_modal() {
                     </div>
                 </div>
                 <div class="ck-modal-item">
-                    <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/double-tap.svg" alt="" />
-                    <div class="ck-modal__item-details">
-                        <strong><?php esc_html_e('Jump to new location', 'gowatch-child'); ?></strong>
-                        <span><?php esc_html_e('Double-tap on the asset to choose start location.', 'gowatch-child'); ?></span>
-                    </div>
-                </div>
-                <div class="ck-modal-item">
                     <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/finger-drag.svg" alt="" />
                     <div class="ck-modal__item-details">
                         <strong><?php esc_html_e('Look around', 'gowatch-child'); ?></strong>
@@ -1106,6 +1099,13 @@ function construkted_asset_modal() {
                     <div class="ck-modal__item-details">
                         <strong><?php esc_html_e('Movement', 'gowatch-child'); ?></strong>
                         <span><?php esc_html_e('Use arrows keys to move around', 'gowatch-child'); ?></span>
+                    </div>
+                </div>
+                <div class="ck-modal-item">
+                    <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/double-tap.svg" alt="" />
+                    <div class="ck-modal__item-details">
+                        <strong><?php esc_html_e('Jump to new location', 'gowatch-child'); ?></strong>
+                        <span><?php esc_html_e('Double-tap on the asset to choose start location.', 'gowatch-child'); ?></span>
                     </div>
                 </div>
             </div>
