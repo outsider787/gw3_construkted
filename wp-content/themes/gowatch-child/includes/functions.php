@@ -1058,13 +1058,6 @@ function construkted_asset_modal() {
                     </div>
                 </div>
                 <div class="ck-modal-item">
-                    <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/double-click.svg" alt="" />
-                    <div class="ck-modal__item-details">
-                        <strong><?php esc_html_e('Jump to new location', 'gowatch-child'); ?></strong>
-                        <span><?php esc_html_e('Double-click on the asset to choose new location.', 'gowatch-child'); ?></span>
-                    </div>
-                </div>
-                <div class="ck-modal-item">
                     <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/mouse-drag.svg" alt="" />
                     <div class="ck-modal__item-details">
                         <strong><?php esc_html_e('Look around', 'gowatch-child'); ?></strong>
@@ -1078,6 +1071,13 @@ function construkted_asset_modal() {
                         <span><?php esc_html_e('Use keyboard arrows keys or WASD keys to move around', 'gowatch-child'); ?></span>
                     </div>
                 </div>
+                <div class="ck-modal-item">
+                    <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/double-click.svg" alt="" />
+                    <div class="ck-modal__item-details">
+                        <strong><?php esc_html_e('Jump to new location', 'gowatch-child'); ?></strong>
+                        <span><?php esc_html_e('Double-click on the asset to choose new location.', 'gowatch-child'); ?></span>
+                    </div>
+                </div> 
             </div>
             <div class="ck-col">
                 <div class="ck-modal-item">
