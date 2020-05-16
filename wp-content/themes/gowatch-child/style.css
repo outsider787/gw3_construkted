@@ -2156,6 +2156,8 @@ table.variations,
         width: 240px;
         height: 160px;
         display: none;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
     }
     .fpv-navigation .fpv-up {
         position: absolute;
@@ -2206,9 +2208,12 @@ table.variations,
         line-height: 1;
         display: none;
         cursor: pointer;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
     }
     .fpn-nav-btn {
         -webkit-touch-callout: none;
+        -webkit-user-select: none;
     }
     @media (hover: hover) {
         #exitFPVModeButton:hover {
