@@ -33,6 +33,13 @@ var theApp = (function () {
         _initSettingsPopup();
     }
 
+    function _block_keys(e) {
+        switch(e.keyCode){
+            case 37: case 39: case 38:  case 40: e.preventDefault(); break; // Space
+            default: break; // do not block other keys
+        }
+    }
+
     function _initGeoLocationPopup() {
         if(CONSTRUKTED_AJAX.asset_geo_location) {
             var assetGeoLocationData = CONSTRUKTED_AJAX.asset_geo_location;
@@ -798,12 +805,16 @@ var theApp = (function () {
                 jqExitFPVModeButton.show();
                 jQuery('body').addClass('fpv-mode-on');
                 jQuery('.fpv-navigation').show();
+
+                window.addEventListener("keydown", _block_keys, false);
             });
 
             cesiumFPVCameraController.FPVFinished().addEventListener(function() {
                 jqExitFPVModeButton.hide();
                 jQuery('body').removeClass('fpv-mode-on');
                 jQuery('.fpv-navigation').hide();
+
+                window.removeEventListener("keydown", _block_keys, false);
             });
 
             jqExitFPVModeButton.click(function () {
