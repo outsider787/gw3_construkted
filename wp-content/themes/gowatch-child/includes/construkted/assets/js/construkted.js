@@ -911,17 +911,27 @@ var theApp = (function () {
                             if(!modelMatrixUpdateTried && viewer.scene.globe.tilesLoaded){
                                 var cartographic = new Cesium.Cartographic(0, 0);
 
+                                var magicTerrainHeight = 17;
                                 var terrainHeight = viewer.scene.globe.getHeight(cartographic);
 
                                 if(terrainHeight) {
-                                    tileset.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(Cesium.Cartesian3.fromDegrees(0, 0, terrainHeight));
-                                    jqTilesetAltitude.val(terrainHeight);
+                                    if(terrainHeight < magicTerrainHeight) {
+                                        console.warn('invalid terrain height 0/0 : ' + terrainHeight);
+                                        terrainHeight = magicTerrainHeight;
+                                    }
                                 }
                                 else {
                                     console.warn('failed to get terrain height 0/0');
+                                    terrainHeight = magicTerrainHeight;
                                 }
 
+                                tileset.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(Cesium.Cartesian3.fromDegrees(0, 0, terrainHeight));
+
+                                jqTilesetAltitude.val(terrainHeight);
+
                                 modelMatrixUpdateTried = true;
+
+                                viewer.camera.flyToBoundingSphere(tileset.boundingSphere);
                             }
                         });
                     }
