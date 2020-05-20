@@ -288,3 +288,26 @@ add_action('upload_mimes', 'construkted_upload_mimes');
 function construkted_preloader(){
     return '<div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>';
 }
+
+/**
+ * Function for excluding the private set posts from the post views
+ */
+function ck_exclude_private_posts($query) {
+    if( $query->query['is_post_view'] == true || $query->query['is_widget_view'] == true ) {
+        // Prepare the meta query to exclude private posts
+        $meta_query = array(
+            array(
+                'key' => 'view_access',
+                'value' => 'private',
+                'compare' => 'NOT LIKE',
+                'type' => 'string'
+            )
+        );
+        // Set the new query settings
+        // $query->set('has_password', false);
+        $query->set('meta_query', $meta_query);
+    }
+    return $query;
+}
+
+add_action('pre_get_posts', 'ck_exclude_private_posts');
