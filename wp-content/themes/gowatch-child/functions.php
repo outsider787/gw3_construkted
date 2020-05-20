@@ -295,7 +295,10 @@ function construkted_preloader(){
 function ck_exclude_private_posts($query) {
     if( $query->query['is_post_view'] == true || $query->query['is_widget_view'] == true ) {
         // Prepare the meta query to exclude private posts
-        $meta_query = array(
+        $meta_query = !empty($query->get('meta_query')) ? $query->get('meta_query') : array();
+
+        //Add our meta query to the original meta queries
+        $meta_query[] = array(
             array(
                 'key' => 'view_access',
                 'value' => 'private',
@@ -304,7 +307,7 @@ function ck_exclude_private_posts($query) {
             )
         );
         // Set the new query settings
-        // $query->set('has_password', false);
+        $query->set('has_password', false);
         $query->set('meta_query', $meta_query);
     }
     return $query;
