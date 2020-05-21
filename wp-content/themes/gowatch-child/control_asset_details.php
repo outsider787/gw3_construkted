@@ -99,11 +99,17 @@ function set_default_thumbnail_of_no_thumbnail($post_id, $slug) {
 }
 
 
-if( in_array('delete_attachment', $_REQUEST['action']) ) {
+if( 'delete_attachment' == $_REQUEST['action'] ) {
 
 
 	// Do whatever necessary for the delete_attachment action
 	if(isset($_REQUEST['post_id']) && !empty($_REQUEST['post_id'])) {
+
+	    // Actually load the WP environment only if all tests are passed and WP is needed
+	    require( '../../../wp-load.php' );
+		require_once ABSPATH . '/wp-admin/includes/image.php';
+
+
 	    $post_id = esc_attr($_REQUEST['post_id']);
 	    $attachment_id = esc_attr($_REQUEST['orig_asset_attachment_id']);
 
@@ -116,10 +122,6 @@ if( in_array('delete_attachment', $_REQUEST['action']) ) {
 	        echo json_encode(array('errCode' => 1, 'errMsg' => 'specified post ' . $post_id . ' does not exist!'));
 	        exit;
 	    }
-
-	    // Actually load the WP environment only if all tests are passed and WP is needed
-	    require( '../../../wp-load.php' );
-		require_once ABSPATH . '/wp-admin/includes/image.php';
 
 	    $attached_file = get_attached_file($attachment_id, false);
 
@@ -140,19 +142,21 @@ if( in_array('delete_attachment', $_REQUEST['action']) ) {
 	    echo json_encode(array('errCode' => 1, 'errMsg' => 'please specify post id!'));
 	    exit;
 	}
-} elseif( in_array('publish_asset', $_REQUEST['action']) ) {
+} elseif( 'publish_asset' == $_REQUEST['action'] ) {
 
 	// Do whatever needs to be done to publish an asset
 	if( isset($_REQUEST['post_id']) && !empty($_REQUEST['post_id']) ) {
+
+
+	    require( '../../../wp-load.php' );
+		require_once ABSPATH . '/wp-admin/includes/image.php';
+		
 	    $post_id = esc_attr($_REQUEST['post_id']);
 
 	    if ( !get_post ( $post_id ) ) {
 	        echo json_encode(array('errCode' => 1, 'errMsg' => 'specified post ' . $post_id . ' does not exist!'));
 	        exit;
 	    }
-
-	    require( '../../../wp-load.php' );
-		require_once ABSPATH . '/wp-admin/includes/image.php';
 
 	    wp_publish_post($post_id);
 
