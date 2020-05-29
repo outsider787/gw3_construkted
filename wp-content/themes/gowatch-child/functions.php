@@ -314,3 +314,39 @@ function ck_exclude_private_posts($query) {
 }
 
 add_action('pre_get_posts', 'ck_exclude_private_posts');
+
+
+/**
+ * Functions for creating a CRON job to remove the items from this server//WP
+ */
+
+function ck_asset_delete_action() {
+
+    $args = array(
+        'post_type' => 'attachment',
+        'numberposts' => -1,
+        'post_status' => null,
+        'post_parent' => null, // any parent
+        'date_query' => array(
+            'before' => date('Y-m-d', strtotime('-2 days')) 
+        )
+        ); 
+    $attachments = get_posts($args);
+    if ($attachments) {
+        foreach ($attachments as $post) {
+            setup_postdata($post);
+            if( !in_array($post->post_mime_type, array('image/jpeg','image/jpg', 'image/png') ) ) {
+                wp_delete_attachment( $post->ID, true );
+            }
+        }
+    }
+
+}
+add_action('ck_asset_delete_action', 'ck_asset_delete_action');
+add_action('init', 'ck_asset_delete_cron');
+
+function ck_asset_delete_cron() {
+    if (!wp_next_scheduled('ck_asset_delete_action')) {
+        wp_schedule_event(time(), 'daily', 'ck_asset_delete_action');
+    }
+}
