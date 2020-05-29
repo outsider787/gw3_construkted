@@ -335,7 +335,7 @@ function ck_asset_delete_action() {
     if ($attachments) {
         foreach ($attachments as $post) {
             setup_postdata($post);
-            if( !in_array($post->post_mime_type, array('image/jpeg','image/jpg', 'image/png') ) ) {
+            if( in_array($post->post_mime_type, array('application/zip', 'application/laz') ) ) {
                 wp_delete_attachment( $post->ID, true );
             }
         }
