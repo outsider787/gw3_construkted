@@ -19,7 +19,7 @@ class CONSTRUKTED_Admin {
     public function construkted_admin_init() {
         register_setting( 'construkted_amazon_s3_options', 'amazon_s3_options', array($this, '') );
         register_setting( 'construkted_cesium_options', 'cesium_options', array($this, '') );
-        register_setting( 'construkted_api_options', 'api_options', array($this, '') );
+        register_setting( 'construkted_api_options', 'api_urls', array($this, '') );
     }
 
     /**
@@ -90,7 +90,6 @@ class CONSTRUKTED_Admin {
     public function construkted_settings_content() {
         global $constructed_active_tab;
 
-
         if ( $constructed_active_tab == 'amazon-s3-settings' )
             require_once( CONSTRUKTED_PATH . '/includes/admin/forms/construkted-amazon-s3-settings.php' );
         elseif ( $constructed_active_tab == 'processing-state' )
@@ -116,7 +115,6 @@ class CONSTRUKTED_Admin {
     }
 
     function enqueue_custom_scripts_styles() {;
-
         wp_enqueue_script( 'construkted-admin-script', get_stylesheet_directory_uri() . '/includes/admin/js/construkted.js', array('jquery'), false, true );
         wp_enqueue_style('construkted-admin-css', get_stylesheet_directory_uri() . '/includes/admin/css/gw3-admin-css.css' );
 

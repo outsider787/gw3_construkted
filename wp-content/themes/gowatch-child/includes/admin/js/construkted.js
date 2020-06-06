@@ -81,7 +81,7 @@
 
         const newRowHtml = '<tr>' +
                                '<td>' +
-                                    ' <input type="text" id = "' + 'construkted-api-url'  + index + '" name="api_options[construkted-api-url' + index  +']" size="63"/> ' +
+                                    ' <input type="text" id = "' + 'construkted-api-url'  + index + '" name="api_urls[construkted-api-url' + index  +']" size="63"/> ' +
                                     '<input type="button" class="button-primary construkted-api-delete-button" value="Delete"/> ' +
                                 '</td>' +
                             '</tr>';
