@@ -65,6 +65,46 @@
         });
     });
 
+    jQuery('#add-new-construkted-url').click(function () {
+        var rowCount = jQuery('#construkted-api-url-settings-table tr').size();
+
+        console.log(rowCount);
+
+        // last row : for "Save Changes" button
+        // just before last row : for "ADD URL" button
+        if(rowCount < 2) {
+            console.error('construkted-api-url-settings-table must have 2 row at least');
+            return;
+        }
+
+        const index = (rowCount - 2);
+
+        const newRowHtml = '<tr>' +
+                               '<td>' +
+                                    ' <input type="text" id = "' + 'construkted-api-url'  + index + '" name="api_options[construkted-api-url' + index  +']" size="63"/> ' +
+                                    '<input type="button" class="button-primary construkted-api-delete-button" value="Delete"/> ' +
+                                '</td>' +
+                            '</tr>';
+
+        if(rowCount == 2) {
+            jQuery('#construkted-api-url-settings-table tr:first').before(newRowHtml);
+        }
+        else
+            jQuery('#construkted-api-url-settings-table > tbody > tr').eq(rowCount - 3).after(newRowHtml);
+
+        jQuery('.construkted-api-delete-button').click(function () {
+            var trParent = $(this).parent().parent();
+
+            trParent.remove();
+        });
+    });
+
+    jQuery('.construkted-api-delete-button').click(function () {
+        var trParent = $(this).parent().parent();
+
+        trParent.remove();
+    });
+
     connectClickDetail();
 
     function connectClickDetail() {
