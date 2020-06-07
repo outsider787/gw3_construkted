@@ -13,6 +13,12 @@ if (!defined('DEFAULT_DISK_QUOTA')) {
     define('DEFAULT_DISK_QUOTA', 2);
 }
 
+$api_urls = get_option( 'api_urls' );
+
+if (!defined('CONSTRUKTED_API_URLS')) {
+    define('CONSTRUKTED_API_URLS', $api_urls);
+}
+
 $api_options = get_option( 'api_options' );
 
 $construkted_api_url = $api_options['construkted-api-url'];

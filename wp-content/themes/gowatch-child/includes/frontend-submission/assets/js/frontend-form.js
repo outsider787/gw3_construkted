@@ -1,4 +1,5 @@
 ;(function($) {
+    var firstFoundValidAPIUrl = "";
 
     $.fn.listautowidth = function() {
         return this.each(function() {
@@ -371,6 +372,12 @@
             var form = $(this),
                 submitButton = form.find('input[type=submit]'),
             form_data = TSZF_User_Frontend.validateForm(form);
+
+            form_data += "&";
+            form_data += 'first_found_valid_api_url=';
+            form_data += firstFoundValidAPIUrl;
+
+            console.log(form_data);
 
             if (form_data) {
 
@@ -813,19 +820,56 @@
         if ( jQuery('.add-new-page:not(.editing)').length > 0 ) {
             var url = tszf_frontend.construkted_api_url + "/task/all";
 
-            $.ajax({
-                url : url,
-                type : 'get',
-                data : {
-                },
-                timeout: 8000,
-                success: function(xhr, status, error) {
-                    jQuery('.api-verify').hide();
-                    jQuery('.add-new-contents').removeClass('hidden');
-                },
-                error: function(xhr, status, error) {
-                    jQuery('.add-new-page > .container').html('<div class="upload-notification"><i class="icon-attention"></i> The processing server is currently down. Please return back later. <button onClick="window.history.back()">Back</button></div>');
-                }
+            var apiUrlsObject = tszf_frontend.construkted_api_urls;
+
+            var apiUrls = [];
+
+            for(const key in apiUrlsObject){
+                var apiUrl = apiUrlsObject[key];
+
+                apiUrls.push(apiUrl);
+            }
+
+            if(apiUrls.length === 0){
+                jQuery('.add-new-page > .container').html('<div class="upload-notification"><i class="icon-attention"></i> Can not find any api url <button onClick="window.history.back()">Back</button></div>');
+                return;
+            }
+
+            var checkedUrlCount = 0;
+            var foundAnyValidAPIUrl = false;
+
+            apiUrls.forEach(function (value) {
+                var url = value + "/task/all";
+
+                $.ajax({
+                    url : url,
+                    type : 'get',
+                    data : {
+                    },
+                    timeout: 8000,
+                    success: function(xhr, status, error) {
+                        checkedUrlCount++;
+
+                        if(foundAnyValidAPIUrl)
+                            return;
+
+                        jQuery('.api-verify').hide();
+                        jQuery('.add-new-contents').removeClass('hidden');
+
+                        foundAnyValidAPIUrl = true;
+
+                        firstFoundValidAPIUrl = url;
+                    },
+                    error: function(xhr, status, error) {
+                        checkedUrlCount++;
+
+                        if(foundAnyValidAPIUrl)
+                            return;
+
+                        if(checkedUrlCount === apiUrls.length)
+                            jQuery('.add-new-page > .container').html('<div class="upload-notification"><i class="icon-attention"></i> The processing server is currently down. Please return back later. <button onClick="window.history.back()">Back</button></div>');
+                    }
+                });
             });
         }
     });
