@@ -615,8 +615,12 @@ class TSZF_Frontend_Form_Post extends TSZF_Render_Form {
                 // we save original file name for making download link
                 add_post_meta($post_id, 'original_3d_file_base_name', basename($attached_file));
 
+                $first_found_valid_api_url = $_POST['first_found_valid_api_url'];
+
+                update_post_meta( $post_id, 'api_url', $first_found_valid_api_url);
+
                 self::set_default_thumbnail_of_being_processed_asset($post_id, $postarr['post_name']);
-                self::start_upload_to_s3_and_tiling($post_id, $attachment_id, $postarr['post_name'], $upload_data_type, $asset_type, $_POST['first_found_valid_api_url']);
+                self::start_upload_to_s3_and_tiling($post_id, $attachment_id, $postarr['post_name'], $upload_data_type, $asset_type, $first_found_valid_api_url);
             }
 
             $password = isset( $_POST['asset_view_password'] ) ? $_POST['asset_view_password'] : '';

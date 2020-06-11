@@ -818,8 +818,6 @@
     });
     $(window).on('load', function(){
         if ( jQuery('.add-new-page:not(.editing)').length > 0 ) {
-            var url = tszf_frontend.construkted_api_url + "/task/all";
-
             var apiUrlsObject = tszf_frontend.construkted_api_urls;
 
             var apiUrls = [];
@@ -838,11 +836,11 @@
             var checkedUrlCount = 0;
             var foundAnyValidAPIUrl = false;
 
-            apiUrls.forEach(function (value) {
-                var url = value + "/task/all";
+            apiUrls.forEach(function (apiUrl) {
+                var taskAllUrl = apiUrl + "/task/all";
 
                 $.ajax({
-                    url : url,
+                    url : taskAllUrl,
                     type : 'get',
                     data : {
                     },
@@ -858,7 +856,7 @@
 
                         foundAnyValidAPIUrl = true;
 
-                        firstFoundValidAPIUrl = url;
+                        firstFoundValidAPIUrl = apiUrl;
                     },
                     error: function(xhr, status, error) {
                         checkedUrlCount++;
