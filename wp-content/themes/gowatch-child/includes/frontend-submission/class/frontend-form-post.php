@@ -620,7 +620,7 @@ class TSZF_Frontend_Form_Post extends TSZF_Render_Form {
                 update_post_meta( $post_id, 'api_url', $first_found_valid_api_url);
 
                 self::set_default_thumbnail_of_being_processed_asset($post_id, $postarr['post_name']);
-                self::start_upload_to_s3_and_tiling($post_id, $attachment_id, $postarr['post_name'], $upload_data_type, $asset_type, $first_found_valid_api_url);
+                self::start_upload_to_s3_and_tiling($post_id, $attachment_id, $postarr['post_name'], $upload_data_type, $asset_type, $first_found_valid_api_url, get_site_url());
             }
 
             $password = isset( $_POST['asset_view_password'] ) ? $_POST['asset_view_password'] : '';
@@ -953,7 +953,7 @@ class TSZF_Frontend_Form_Post extends TSZF_Render_Form {
         return $post_slug;
     }
 
-    static function start_upload_to_s3_and_tiling($post_id, $attachment_id, $post_slug, $upload_data_type, $asset_model_type, $construkted_api_url) {
+    static function start_upload_to_s3_and_tiling($post_id, $attachment_id, $post_slug, $upload_data_type, $asset_model_type, $construkted_api_url, $site_url) {
         $attached_file = get_attached_file($attachment_id, false);
 
         // save uploaded file size
@@ -992,7 +992,8 @@ class TSZF_Frontend_Form_Post extends TSZF_Render_Form {
         $command = $command . '"' . $s3_bucket . '" ';
         $command = $command . '"' . $schema . '" ';
         $command = $command . '"' . $attachment_id . '" ';
-        $command = $command . '"' . $construkted_api_url . '"';
+        $command = $command . '"' . $construkted_api_url . '" ';
+        $command = $command . '"' . $site_url . '"';
         $command = $command . " > /dev/null 2>/dev/null &";
 
         error_log('tiling request command: ' . $command);

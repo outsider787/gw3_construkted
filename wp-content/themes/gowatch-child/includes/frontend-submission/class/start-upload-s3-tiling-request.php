@@ -1,6 +1,6 @@
 <?php
 
-if ($argc != 13)
+if ($argc != 14)
 {
     echo 'invalid argument count : ' . $argc . "\n";
     exit();
@@ -18,6 +18,7 @@ $s3_bucket = $argv[9];
 $schema = $argv[10];
 $attachment_id = $argv[11];
 $construkted_api_url = $argv[12];
+$site_url = $argv[13];
 
 echo 'post_id : ' . $post_id . "\n";
 echo 'post_slug : ' . $post_slug . "\n";
@@ -31,6 +32,7 @@ echo 's3_bucket : ' . $s3_bucket . "\n";
 echo 'schema : ' . $schema . "\n";
 echo 'attachment_id : ' . $attachment_id . "\n";
 echo 'construkted_api_url : ' . $construkted_api_url . "\n";
+echo 'site_url : ' . $site_url . "\n";
 
 function my_untrailingslashit( $string ) {
     return rtrim( $string, '/\\' );
@@ -79,7 +81,8 @@ $url = $construkted_tiling_server_url . '/?' .
        '&fileName=' . $file_name .
        '&uploadDataType=' . $upload_data_type .
        '&assetModelType=' . $asset_model_type .
-       '&attachmentId=' . $attachment_id;
+       '&attachmentId=' . $attachment_id .
+       '&wPServerUrl=' . $site_url;
 
 $url = str_replace(" ", "%20", $url);
 
