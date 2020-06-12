@@ -664,7 +664,6 @@ var theApp = (function () {
             console.warn('default access token is null!');
 
         viewer = new Cesium.Viewer('cesiumContainer', {
-            terrainProvider: Cesium.createWorldTerrain(),
             animation: false,
             homeButton: false, //  the HomeButton widget will not be created.
             baseLayerPicker: false, // If set to false, the BaseLayerPicker widget will not be created.
@@ -948,6 +947,8 @@ var theApp = (function () {
                     }
                 }
                 else {
+                    viewer.terrainProvider = Cesium.createWorldTerrain();
+
                     jqTilesetLatitude.prop('disabled', true);
                     jqTilesetLongitude.prop('disabled', true);
                     jqTilesetHeading.prop('disabled', true);
