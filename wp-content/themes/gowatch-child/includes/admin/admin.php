@@ -119,18 +119,15 @@ class CONSTRUKTED_Admin {
         wp_enqueue_style('construkted-admin-css', get_stylesheet_directory_uri() . '/includes/admin/css/gw3-admin-css.css' );
 
         wp_localize_script( 'construkted-admin-script', 'construktedAdminParam', array(
-                'ajaxUrl' => admin_url("admin-ajax.php")
+                'ajaxUrl' => admin_url("admin-ajax.php"),
+                'apiUrls' => CONSTRUKTED_API_URLS
             )
         );
     }
 }
 
-
-
-// Create the AJAX functions for the processing state
-
-function construkted_get_all_task() {
-    $url = CONSTRUKTED_EC2_API_TASK_ALL;
+function construkted_get_all_task($api_url) {
+    $url = $api_url . "/task/all";
     $ret = wp_remote_get( $url );
 
     $tasks = [];
@@ -189,7 +186,6 @@ function get_html_for_one_task($task) {
     $output = ob_get_clean();
 
     return $output;
-
 }
 
 function gw3_processing_generateItem($item) {
@@ -242,11 +238,14 @@ function get_html_for_tasks($tasks) {
 }
 
 function gw3_processing_displayItems() {
-    $all_tasks = construkted_get_all_task();
+    $api_url = $_POST['apiUrl'];
+
+    $all_tasks = construkted_get_all_task($api_url);
 
     $tasks_being_processed = [];
     $tasks_in_queue = [];
     $tasks_failed = [];
+    $tasks_completed = [];
 
     if($all_tasks != null)
         foreach ($all_tasks as $task) {
@@ -258,6 +257,8 @@ function gw3_processing_displayItems() {
                 array_push($tasks_being_processed, $task);
             else if ($status_code == 40) // failed
                 array_push($tasks_failed, $task);
+            else if ($status_code == 50) // completed
+                array_push($tasks_completed, $task);
             else
                 continue;
         };
@@ -267,9 +268,11 @@ function gw3_processing_displayItems() {
         'count_of_tasks_being_processed' => count($tasks_being_processed),
         'count_of_tasks_in_queue' => count($tasks_in_queue),
         'count_of_tasks_failed' => count($tasks_failed),
+        'count_of_tasks_completed' => count($tasks_completed),
         'html_for_tasks_being_processed' => get_html_for_tasks($tasks_being_processed),
         'html_for_tasks_in_queue' =>  get_html_for_tasks($tasks_in_queue),
-        'html_for_tasks_failed' => get_html_for_tasks($tasks_failed)
+        'html_for_tasks_failed' => get_html_for_tasks($tasks_failed),
+        'html_for_tasks_completed' => get_html_for_tasks($tasks_completed)
     );
 
     echo json_encode($ret);

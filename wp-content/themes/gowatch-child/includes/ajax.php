@@ -139,7 +139,7 @@ function construkted_delete_asset( $post_id ) {
         return array('success' => false, 'error' => 'failed to find original zip file name!');
     }
 
-    $server_url = CONSTRUKTED_EC2_API_DELETE_ASSET;
+    $server_url = get_post_meta($post_id, 'api_url', true) . '/delete_asset';
 
     error_log($server_url);
 
