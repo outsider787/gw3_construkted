@@ -111,14 +111,14 @@ var theApp = (function () {
         }
 
         if(tileset_model_matrix){
-            jQuery('#tileset_latitude').val(assetGeoLocationData.latitude);
-            jQuery('#tileset_longitude').val(assetGeoLocationData.longitude);
+            jqTilesetLatitude.val(assetGeoLocationData.latitude);
+            jqTilesetLongitude.val(assetGeoLocationData.longitude);
             jqTilesetAltitude.val(assetGeoLocationData.height);
             jQuery('#tileset_heading').val(assetGeoLocationData.heading);
         }
         else{
-            jQuery('#tileset_latitude').val(0);
-            jQuery('#tileset_longitude').val(0);
+            jqTilesetLatitude.val(0);
+            jqTilesetLongitude.val(0);
             jqTilesetAltitude.val(0);
             jQuery('#tileset_heading').val(0);
         }
@@ -132,16 +132,18 @@ var theApp = (function () {
             _saveTilesetModelMatrix();
         });
 
-        jQuery('#tileset_longitude').change(function () {
-            var longitude = jQuery('#tileset_longitude').val();
+        jqTilesetLongitude.change(function () {
+            var longitude = jqTilesetLongitude.val();
 
             longitude = parseFloat(longitude);
 
             if(isNaN(longitude) || longitude > 180 || longitude < -180) {
-                jQuery('#tileset_longitude').val('');
+                jqTilesetLongitude.val('');
                 alert('invalid longitude: ' + longitude);
                 return;
             }
+
+            toggleGlobeSkyBoxAtmosphere(true);
 
             var origModelMatrix = tileset.modelMatrix;
 
@@ -162,15 +164,17 @@ var theApp = (function () {
             viewer.zoomTo(tileset);
         });
 
-        jQuery('#tileset_latitude').change(function () {
-            var latitude = jQuery('#tileset_latitude').val();
+        jqTilesetLatitude.change(function () {
+            var latitude = jqTilesetLatitude.val();
             latitude = parseFloat(latitude);
 
             if(isNaN(latitude) || latitude > 90 || latitude < -90) {
-                jQuery('#tileset_latitude').val('');
+                jqTilesetLatitude.val('');
                 alert('invalid latitude: ' + latitude);
                 return;
             }
+
+            toggleGlobeSkyBoxAtmosphere(true);
 
             var origModelMatrix = tileset.modelMatrix;
 
@@ -234,6 +238,7 @@ var theApp = (function () {
                 return;
             }
 
+            toggleGlobeSkyBoxAtmosphere(true);
             changeTilesetHeight(altitude);
 
             viewer.zoomTo(tileset);
@@ -664,6 +669,7 @@ var theApp = (function () {
             console.warn('default access token is null!');
 
         viewer = new Cesium.Viewer('cesiumContainer', {
+            terrainProvider: Cesium.createWorldTerrain(),
             animation: false,
             homeButton: false, //  the HomeButton widget will not be created.
             baseLayerPicker: false, // If set to false, the BaseLayerPicker widget will not be created.
@@ -902,6 +908,8 @@ var theApp = (function () {
                             transformEditor.viewModel.deactivate();
                         }
                     } else {
+                        toggleGlobeSkyBoxAtmosphere(false);
+
                         tileset.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(Cesium.Cartesian3.fromDegrees(0, 0));
 
                         var modelMatrixUpdateTried = false;
@@ -947,8 +955,6 @@ var theApp = (function () {
                     }
                 }
                 else {
-                    viewer.terrainProvider = Cesium.createWorldTerrain();
-
                     jqTilesetLatitude.prop('disabled', true);
                     jqTilesetLongitude.prop('disabled', true);
                     jqTilesetHeading.prop('disabled', true);
@@ -983,6 +989,17 @@ var theApp = (function () {
         }).otherwise(function(error){
             window.alert(error);
         });
+    }
+
+    function toggleGlobeSkyBoxAtmosphere(show) {
+        viewer.scene.globe.show = show;
+        viewer.scene.skyAtmosphere.show = show;
+        viewer.scene.skyBox.show = show;
+
+        if(show)
+            viewer.scene.backgroundColor = Cesium.Color.BLACK.clone();
+        else
+            viewer.scene.backgroundColor = Cesium.Color.LIGHTGREY.clone();
     }
 
     function _setTilesetModelMatrix(tileset, modelMatrixData) {
