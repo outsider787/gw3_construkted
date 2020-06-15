@@ -22,7 +22,7 @@ $api_urls = CONSTRUKTED_API_URLS;
                     $tasks_failed = [];
                     $tasks_completed = [];
 
-                    if($all_tasks != null)
+                    if(!is_null($all_tasks))
                         foreach ($all_tasks as $task) {
                             $status_code = $task['status']['code'];
 
@@ -50,9 +50,9 @@ $api_urls = CONSTRUKTED_API_URLS;
 
                     <p>
                         <input id="refresh-tiling-state-<?php echo $id_suffix?>" type="button" class="button-primary" value="Click to Refresh"/>
-                        <span id = 'construkted-api-state' style="font-size: 1.5em; margin-left: 10px">
+                        <span id = 'construkted-api-state-<?php echo $id_suffix?>' style="font-size: 1.5em; margin-left: 10px">
                             <?php
-                            if($all_tasks == null)
+                            if(is_null($all_tasks))
                                 echo '<strong>Not Live</strong>(' . $api_url . ')';
                             else
                                 echo '<strong>Live</strong>(' . $api_url . ')';

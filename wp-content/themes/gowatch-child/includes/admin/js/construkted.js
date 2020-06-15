@@ -95,7 +95,14 @@
                 $('#count-of-tasks-failed-' + idSuffix).html(response.count_of_tasks_failed);
                 $('#count-of-tasks-completed-' + idSuffix).html(response.count_of_tasks_completed);
 
-                $('#construkted-api-state-' + idSuffix).html(response.construkted_api_state);
+                let apiState = response.construkted_api_state;
+
+                apiState = '<strong>' + apiState + '</strong>';
+                apiState += "(";
+                apiState += apiUrl;
+                apiState += ")";
+
+                $('#construkted-api-state-' + idSuffix).html(apiState);
 
                 connectClickDetail();
 
