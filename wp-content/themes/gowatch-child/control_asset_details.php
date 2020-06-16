@@ -10,18 +10,31 @@ header('Cache-Control: no-cache, must-revalidate');
 header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
 header('Content-type: application/json');
 header('Access-Control-Allow-Headers: Content-Type');
-header("Access-Control-Allow-Origin: 158.106.136.192");
 
-$allow = array('158.106.136.192', '::1'); //allowed IPs
+/*
+    localhost  '::1'
+    https://tile01.construkted.com '158.106.136.192'
+    https://tile02.construkted.com '135.23.228.38'
+    myLocal '185.164.35.17'
+*/
 
-if(!isset($_SERVER['REMOTE_ADDR']) || (isset($_SERVER['REMOTE_ADDR']) && !in_array($_SERVER['REMOTE_ADDR'], $allow)) ) {
+$allowedIPs = [
+    '::1',
+    '158.106.136.192',
+    '135.23.228.38',
+    '185.164.35.17'
+];
 
-    echo json_encode( array('errCode' => 1, 'errMsg' => 'Not allowed!'), 405 );
-
-    exit();
-
+foreach ($allowedIPs as $ip) {
+    header("Access-Control-Allow-Origin: " . $ip);
 }
 
+if(!isset($_SERVER['REMOTE_ADDR']) || (isset($_SERVER['REMOTE_ADDR']) && !in_array($_SERVER['REMOTE_ADDR'], $allowedIPs)) ) {
+    $addr = $_SERVER['REMOTE_ADDR'];
+    echo json_encode( array('errCode' => 1, 'errMsg' => $addr . 'Not allowed!'), 405 );
+
+    exit();
+}
 
 /**
  * Function which sets the default thumbnail with the "no-thumbnail" preset
