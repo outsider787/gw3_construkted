@@ -198,7 +198,7 @@ function onsen_article( $options ) {
                 </article>
             </div>
         </div>
-        <div id = "post-processing-state" data-post-id="<?php echo $post->ID; ?>" data-wp-state = "<?php echo get_post_status($post->ID); ?>" data-api-url =" <?php echo get_post_meta($post->ID, 'api_url', true)?>" class="onsen-td">
+        <div id = "post-processing-state" data-post-id="<?php echo $post->ID; ?>" data-wp-state = "<?php echo get_post_status($post->ID); ?>" data-api-url ="<?php echo get_post_meta($post->ID, 'api_url', true)?>" class="onsen-td">
             <?php esc_html_e('Unknown' , 'gowatch-child'); ?>
         </div>
         <div class="onsen-td">

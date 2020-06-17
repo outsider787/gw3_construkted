@@ -24,24 +24,28 @@ var apiUrls = [];
 
 function updateState() {
     apiUrls.forEach( (apiUrl, index, array) => {
-        $.ajax({
-            url : apiUrl + "/task/all",
-            type : 'get',
-            data : {
-            },
-            success : function( response ) {
-                response.apiUrl = apiUrl;
 
-                doUpdateState(response);
+        function getTaskAll() {
+            $.ajax({
+                url : apiUrl + "/task/all",
+                type : 'get',
+                data : {
+                },
+                success : function( response ) {
+                    response.apiUrl = apiUrl;
 
-                setTimeout(function(){ updateState(); }, 1000);
-            },
-            error: function(xhr, status, error) {
-                doUpdateState(null);
-                console.error(error);
-                setTimeout(function(){ updateState(); }, 1000);
-            }
-        });
+                    doUpdateState(response);
+
+                    setTimeout(function(){ getTaskAll(); }, 1000);
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                    setTimeout(function(){ getTaskAll(); }, 1000);
+                }
+            });
+        }
+
+        getTaskAll();
     })
 }
 
@@ -203,6 +207,11 @@ function aggregateAPIUrl() {
         var apiUrl = postStateDiv.getAttribute('data-api-url');
 
         if(!apiUrl)
+            continue;
+
+        apiUrl = apiUrl.trim();
+
+        if(apiUrl === "")
             continue;
 
         if(apiUrls.indexOf(apiUrl) === -1)
