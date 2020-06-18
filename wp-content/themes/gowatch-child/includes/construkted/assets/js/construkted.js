@@ -1,30 +1,30 @@
-var viewer = null;
-var cesiumFPVCameraController = null;
-var tileset_model_matrix = null;
-var originalBoundingSphereCenterHeight = 0;
+let viewer = null;
+let cesiumFPVCameraController = null;
+let tileset_model_matrix = null;
+let originalBoundingSphereCenterHeight = 0;
 
-var theApp = (function () {
-    var tileset = null;
-    var transformEditor = null;
+let theApp = (function () {
+    let tileset = null;
+    let transformEditor = null;
 
-    var jqExitFPVModeButton = jQuery('#exitFPVModeButton');
-    var jqMoveLeftButton = jQuery('.fpv-left');
-    var jqMoveRightButton = jQuery('.fpv-right');
-    var jqMoveFrontButton = jQuery('.fpv-up');
-    var jqMoveBackButton = jQuery('.fpv-down');
+    let jqExitFPVModeButton = jQuery('#exitFPVModeButton');
+    let jqMoveLeftButton = jQuery('.fpv-left');
+    let jqMoveRightButton = jQuery('.fpv-right');
+    let jqMoveFrontButton = jQuery('.fpv-up');
+    let jqMoveBackButton = jQuery('.fpv-down');
 
-    var jqTilesetLatitude = jQuery('#tileset_latitude');
-    var jqTilesetLongitude = jQuery('#tileset_longitude');
-    var jqTilesetAltitude = jQuery('#tileset_altitude');
-    var jqTilesetHeading = jQuery('#tileset_heading');
-    var jqEditAssetGeoLocationButton = jQuery('#edit_asset_geo_location_button');
-    var jqTilesetEstimateAltitude = jQuery('#tileset_estimate_altitude');
-    var jqSaveTilesetModelMatrixButton = jQuery('#save_tileset_model_matrix_button');
+    let jqTilesetLatitude = jQuery('#tileset_latitude');
+    let jqTilesetLongitude = jQuery('#tileset_longitude');
+    let jqTilesetAltitude = jQuery('#tileset_altitude');
+    let jqTilesetHeading = jQuery('#tileset_heading');
+    let jqEditAssetGeoLocationButton = jQuery('#edit_asset_geo_location_button');
+    let jqTilesetEstimateAltitude = jQuery('#tileset_estimate_altitude');
+    let jqSaveTilesetModelMatrixButton = jQuery('#save_tileset_model_matrix_button');
 
-    var jqCaptureThumbnailButton = jQuery('#capture_thumbnail');
-    var jqSaveCurrentViewButton = jQuery('#save_current_view');
-    var jqResetCameraViewButton = jQuery('#reset_camera_view');
-    var jqShowHideWireframeCheckbox = jQuery('#show-hide-wireframe-checkbox');
+    let jqCaptureThumbnailButton = jQuery('#capture_thumbnail');
+    let jqSaveCurrentViewButton = jQuery('#save_current_view');
+    let jqResetCameraViewButton = jQuery('#reset_camera_view');
+    let jqShowHideWireframeCheckbox = jQuery('#show-hide-wireframe-checkbox');
 
     function start() {
         _create3DMap();
@@ -42,7 +42,7 @@ var theApp = (function () {
 
     function _initGeoLocationPopup() {
         if(CONSTRUKTED_AJAX.asset_geo_location) {
-            var assetGeoLocationData = CONSTRUKTED_AJAX.asset_geo_location;
+            let assetGeoLocationData = CONSTRUKTED_AJAX.asset_geo_location;
 
             if(!assetGeoLocationData.longitude ||
                !assetGeoLocationData.latitude ||
@@ -58,7 +58,7 @@ var theApp = (function () {
                 assetGeoLocationData.pitch = parseFloat(assetGeoLocationData.pitch);
                 assetGeoLocationData.roll = parseFloat(assetGeoLocationData.roll);
 
-                var carto = new Cesium.Cartographic(
+                let carto = new Cesium.Cartographic(
                     Cesium.Math.toRadians(assetGeoLocationData.longitude),
                     Cesium.Math.toRadians(assetGeoLocationData.latitude),
                     assetGeoLocationData.height);
@@ -75,13 +75,13 @@ var theApp = (function () {
             }
         }
 
-        var setHprQuaternion = new Cesium.Quaternion();
-        var setHprQuaternion2 = new Cesium.Quaternion();
-        var setHprTranslation = new Cesium.Cartesian3();
-        var setHprScale = new Cesium.Cartesian3();
-        var setHprCenter = new Cesium.Cartesian3();
-        var setHprTransform = new Cesium.Matrix4();
-        var setHprRotation = new Cesium.Matrix3();
+        let setHprQuaternion = new Cesium.Quaternion();
+        let setHprQuaternion2 = new Cesium.Quaternion();
+        let setHprTranslation = new Cesium.Cartesian3();
+        let setHprScale = new Cesium.Cartesian3();
+        let setHprCenter = new Cesium.Cartesian3();
+        let setHprTransform = new Cesium.Matrix4();
+        let setHprRotation = new Cesium.Matrix3();
 
         function setHeadingPitchRoll(transform, headingPitchRoll) {
             //>>includeStart('debug', pragmas.debug);
@@ -89,21 +89,21 @@ var theApp = (function () {
             Cesium.Check.defined('headingPitchRoll', headingPitchRoll);
             //>>includeEnd('debug');
 
-            var rotationQuaternion = Cesium.Quaternion.fromHeadingPitchRoll(headingPitchRoll, setHprQuaternion);
-            var translation = Cesium.Matrix4.getTranslation(transform, setHprTranslation);
-            var scale = Cesium.Matrix4.getScale(transform, setHprScale);
-            var center = Cesium.Matrix4.multiplyByPoint(transform, Cesium.Cartesian3.ZERO, setHprCenter);
-            var backTransform = Cesium.Transforms.eastNorthUpToFixedFrame(center, undefined, setHprTransform);
+            let rotationQuaternion = Cesium.Quaternion.fromHeadingPitchRoll(headingPitchRoll, setHprQuaternion);
+            let translation = Cesium.Matrix4.getTranslation(transform, setHprTranslation);
+            let scale = Cesium.Matrix4.getScale(transform, setHprScale);
+            let center = Cesium.Matrix4.multiplyByPoint(transform, Cesium.Cartesian3.ZERO, setHprCenter);
+            let backTransform = Cesium.Transforms.eastNorthUpToFixedFrame(center, undefined, setHprTransform);
 
-            var rotationFixed = Cesium.Matrix4.getMatrix3(backTransform, setHprRotation);
-            var quaternionFixed = Cesium.Quaternion.fromRotationMatrix(rotationFixed, setHprQuaternion2);
-            var rotation = Cesium.Quaternion.multiply(quaternionFixed, rotationQuaternion, rotationFixed);
+            let rotationFixed = Cesium.Matrix4.getMatrix3(backTransform, setHprRotation);
+            let quaternionFixed = Cesium.Quaternion.fromRotationMatrix(rotationFixed, setHprQuaternion2);
+            let rotation = Cesium.Quaternion.multiply(quaternionFixed, rotationQuaternion, rotationFixed);
 
             return Cesium.Matrix4.fromTranslationQuaternionRotationScale(translation, rotation, scale, transform);
         }
 
         function changeTilesetModelMatrix(newPosition, headingPitchRoll) {
-            var origModelMatrix = tileset.modelMatrix;
+            let origModelMatrix = tileset.modelMatrix;
 
             origModelMatrix = Cesium.Matrix4.setTranslation(origModelMatrix, newPosition, origModelMatrix);
 
@@ -133,7 +133,7 @@ var theApp = (function () {
         });
 
         jqTilesetLongitude.change(function () {
-            var longitude = jqTilesetLongitude.val();
+            let longitude = jqTilesetLongitude.val();
 
             longitude = parseFloat(longitude);
 
@@ -145,19 +145,19 @@ var theApp = (function () {
 
             toggleGlobeSkyBoxAtmosphere(true);
 
-            var origModelMatrix = tileset.modelMatrix;
+            let origModelMatrix = tileset.modelMatrix;
 
-            var origPosition = Cesium.Matrix4.getTranslation(origModelMatrix, new Cesium.Cartesian3());
+            let origPosition = Cesium.Matrix4.getTranslation(origModelMatrix, new Cesium.Cartesian3());
 
-            var origCartographic = Cesium.Cartographic.fromCartesian(origPosition);
+            let origCartographic = Cesium.Cartographic.fromCartesian(origPosition);
 
             origCartographic.longitude = longitude * Cesium.Math.RADIANS_PER_DEGREE;
 
-            var newPosition = viewer.scene.globe.ellipsoid.cartographicToCartesian(origCartographic);
+            let newPosition = viewer.scene.globe.ellipsoid.cartographicToCartesian(origCartographic);
 
-            var scene = viewer.scene;
+            let scene = viewer.scene;
 
-            var headingPitchRoll = Cesium.Transforms.fixedFrameToHeadingPitchRoll(origModelMatrix, scene.mapProjection.ellipsoid, undefined, new Cesium.HeadingPitchRoll());
+            let headingPitchRoll = Cesium.Transforms.fixedFrameToHeadingPitchRoll(origModelMatrix, scene.mapProjection.ellipsoid, undefined, new Cesium.HeadingPitchRoll());
 
             changeTilesetModelMatrix(newPosition, headingPitchRoll);
 
@@ -165,7 +165,7 @@ var theApp = (function () {
         });
 
         jqTilesetLatitude.change(function () {
-            var latitude = jqTilesetLatitude.val();
+            let latitude = jqTilesetLatitude.val();
             latitude = parseFloat(latitude);
 
             if(isNaN(latitude) || latitude > 90 || latitude < -90) {
@@ -176,19 +176,19 @@ var theApp = (function () {
 
             toggleGlobeSkyBoxAtmosphere(true);
 
-            var origModelMatrix = tileset.modelMatrix;
+            let origModelMatrix = tileset.modelMatrix;
 
-            var origPosition = Cesium.Matrix4.getTranslation(origModelMatrix, new Cesium.Cartesian3());
+            let origPosition = Cesium.Matrix4.getTranslation(origModelMatrix, new Cesium.Cartesian3());
 
-            var origCartographic = Cesium.Cartographic.fromCartesian(origPosition);
+            let origCartographic = Cesium.Cartographic.fromCartesian(origPosition);
 
             origCartographic.latitude = latitude * Cesium.Math.RADIANS_PER_DEGREE;
 
-            var newPosition = viewer.scene.globe.ellipsoid.cartographicToCartesian(origCartographic);
+            let newPosition = viewer.scene.globe.ellipsoid.cartographicToCartesian(origCartographic);
 
-            var scene = viewer.scene;
+            let scene = viewer.scene;
 
-            var headingPitchRoll = Cesium.Transforms.fixedFrameToHeadingPitchRoll(origModelMatrix, scene.mapProjection.ellipsoid, undefined, new Cesium.HeadingPitchRoll());
+            let headingPitchRoll = Cesium.Transforms.fixedFrameToHeadingPitchRoll(origModelMatrix, scene.mapProjection.ellipsoid, undefined, new Cesium.HeadingPitchRoll());
 
             changeTilesetModelMatrix(newPosition, headingPitchRoll);
 
@@ -205,31 +205,31 @@ var theApp = (function () {
         }
 
         function doChangeTilesetHeightForGeoReferencedTileset(height) {
-            var heightDifference = originalBoundingSphereCenterHeight - height;
+            let heightDifference = originalBoundingSphereCenterHeight - height;
 
             tileset.modelMatrix = Cesium.Matrix4.fromTranslation(new Cesium.Cartesian3(0, 0, heightDifference));
         }
 
         function doChangeTilesetHeightForNonGeoReferencedTileset(height) {
-            var origModelMatrix = tileset.modelMatrix;
+            let origModelMatrix = tileset.modelMatrix;
 
-            var origPosition = Cesium.Matrix4.getTranslation(origModelMatrix, new Cesium.Cartesian3());
+            let origPosition = Cesium.Matrix4.getTranslation(origModelMatrix, new Cesium.Cartesian3());
 
-            var origCartographic = Cesium.Cartographic.fromCartesian(origPosition);
+            let origCartographic = Cesium.Cartographic.fromCartesian(origPosition);
 
             origCartographic.height = height;
 
-            var newPosition = viewer.scene.globe.ellipsoid.cartographicToCartesian(origCartographic);
+            let newPosition = viewer.scene.globe.ellipsoid.cartographicToCartesian(origCartographic);
 
-            var scene = viewer.scene;
+            let scene = viewer.scene;
 
-            var headingPitchRoll = Cesium.Transforms.fixedFrameToHeadingPitchRoll(origModelMatrix, scene.mapProjection.ellipsoid, undefined, new Cesium.HeadingPitchRoll());
+            let headingPitchRoll = Cesium.Transforms.fixedFrameToHeadingPitchRoll(origModelMatrix, scene.mapProjection.ellipsoid, undefined, new Cesium.HeadingPitchRoll());
 
             changeTilesetModelMatrix(newPosition, headingPitchRoll);
         }
 
         jqTilesetAltitude.change(function () {
-            var altitude = jqTilesetAltitude.val();
+            let altitude = jqTilesetAltitude.val();
             altitude = parseFloat(altitude);
 
             if(isNaN(altitude) || altitude > 15000 || altitude < -1000) {
@@ -245,7 +245,7 @@ var theApp = (function () {
         });
 
         jQuery('#tileset_heading').change(function () {
-            var heading = jQuery('#tileset_heading').val();
+            let heading = jQuery('#tileset_heading').val();
             heading = parseFloat(heading);
 
             if(isNaN(heading) || heading > 180 || heading < -180) {
@@ -254,13 +254,13 @@ var theApp = (function () {
                 return;
             }
 
-            var origModelMatrix = tileset.modelMatrix;
+            let origModelMatrix = tileset.modelMatrix;
 
-            var origPosition = Cesium.Matrix4.getTranslation(origModelMatrix, new Cesium.Cartesian3());
+            let origPosition = Cesium.Matrix4.getTranslation(origModelMatrix, new Cesium.Cartesian3());
 
-            var scene = viewer.scene;
+            let scene = viewer.scene;
 
-            var headingPitchRoll = Cesium.Transforms.fixedFrameToHeadingPitchRoll(origModelMatrix, scene.mapProjection.ellipsoid, undefined, new Cesium.HeadingPitchRoll());
+            let headingPitchRoll = Cesium.Transforms.fixedFrameToHeadingPitchRoll(origModelMatrix, scene.mapProjection.ellipsoid, undefined, new Cesium.HeadingPitchRoll());
 
             headingPitchRoll.heading = heading * Cesium.Math.RADIANS_PER_DEGREE;
 
@@ -270,7 +270,7 @@ var theApp = (function () {
         });
 
         jQuery('#tileset-transparency-slider').change(function () {
-            var value = this.value;
+            let value = this.value;
 
             tileset.style = new Cesium.Cesium3DTileStyle({
                 color: 'rgba(255, 255, 255,' + value + ')'
@@ -280,8 +280,8 @@ var theApp = (function () {
         });
 
         jqTilesetEstimateAltitude.click(function () {
-            var longitude = jqTilesetLongitude.val();
-            var latitude = jqTilesetLatitude.val();
+            let longitude = jqTilesetLongitude.val();
+            let latitude = jqTilesetLatitude.val();
 
             longitude = parseFloat(longitude);
             latitude = parseFloat(latitude);
@@ -291,10 +291,10 @@ var theApp = (function () {
                 return;
             }
 
-            var globe = viewer.scene.globe;
-            var cartographic = new Cesium.Cartographic(Cesium.Math.toRadians(longitude), Cesium.Math.toRadians(latitude));
+            let globe = viewer.scene.globe;
+            let cartographic = new Cesium.Cartographic(Cesium.Math.toRadians(longitude), Cesium.Math.toRadians(latitude));
 
-            var terrainHeight = globe.getHeight(cartographic);
+            let terrainHeight = globe.getHeight(cartographic);
 
             if (terrainHeight === undefined) {
                 alert('failed to get height!');
@@ -308,17 +308,17 @@ var theApp = (function () {
     }
 
     function _initMeasurementPopup() {
-        var measure = viewer.measure;
+        let measure = viewer.measure;
 
-        var measureViewModel = measure.viewModel;
+        let measureViewModel = measure.viewModel;
 
-        var pointMeasurement = measureViewModel._measurements[7];
-        var distanceMeasurement = measureViewModel._measurements[1];
-        var polylineMeasurement = measureViewModel._measurements[2];
-        var areaMeasurement = measureViewModel._measurements[6];
+        let pointMeasurement = measureViewModel._measurements[7];
+        let distanceMeasurement = measureViewModel._measurements[1];
+        let polylineMeasurement = measureViewModel._measurements[2];
+        let areaMeasurement = measureViewModel._measurements[6];
 
         function addMeasurementCheckbox(id, label) {
-            var newCheckBox = ' <div class="form-check">\n' +
+            let newCheckBox = ' <div class="form-check">\n' +
                 '                                    <input class="form-check-input" type="checkbox" id="' + id + '" checked>\n' +
                 '                                    <label class="form-check-label" for="' + id + '">\n' +
                 label +
@@ -328,10 +328,10 @@ var theApp = (function () {
             $('#measurement-list').append(newCheckBox);
 
             $('[id=' + id + ']').change(function () {
-                var tokens = id.split('-');
+                let tokens = id.split('-');
 
-                var measurementType = tokens[0];
-                var measurementIndex = parseInt(tokens[1]);
+                let measurementType = tokens[0];
+                let measurementIndex = parseInt(tokens[1]);
 
                 if(measurementType === 'point') {
                     showHidePointMeasurement(pointMeasurement.measurementResult[measurementIndex], this.checked);
@@ -356,7 +356,7 @@ var theApp = (function () {
         pointMeasurement.newMeasurement.addEventListener(function (measurementIndex) {
             console.log(measurementIndex);
 
-            var measurement = pointMeasurement.measurementResult[measurementIndex];
+            let measurement = pointMeasurement.measurementResult[measurementIndex];
 
             console.log(measurement);
 
@@ -366,7 +366,7 @@ var theApp = (function () {
         distanceMeasurement.newMeasurement.addEventListener(function (measurementIndex) {
             console.log(measurementIndex);
 
-            var measurement = distanceMeasurement.measurementResult[measurementIndex];
+            let measurement = distanceMeasurement.measurementResult[measurementIndex];
 
             console.log(measurement);
 
@@ -376,7 +376,7 @@ var theApp = (function () {
         polylineMeasurement.newMeasurement.addEventListener(function (measurementIndex) {
             console.log(measurementIndex);
 
-            var measurement = polylineMeasurement.measurementResult[measurementIndex];
+            let measurement = polylineMeasurement.measurementResult[measurementIndex];
 
             console.log(measurement);
 
@@ -386,7 +386,7 @@ var theApp = (function () {
         areaMeasurement.newMeasurement.addEventListener(function (measurementIndex) {
             console.log(measurementIndex);
 
-            var measurement = areaMeasurement.measurementResult[measurementIndex];
+            let measurement = areaMeasurement.measurementResult[measurementIndex];
 
             console.log(measurement);
 
@@ -467,7 +467,7 @@ var theApp = (function () {
         function showHidePolylineMeasurement(polylineMeasurement, show) {
             polylineMeasurement.label.show = show;
 
-            for (var i = 0; i < polylineMeasurement.segmentLabels.length; i++)
+            for (let i = 0; i < polylineMeasurement.segmentLabels.length; i++)
                 polylineMeasurement.segmentLabels[i].show = show;
 
             polylineMeasurement.polyline.show = show;
@@ -481,27 +481,27 @@ var theApp = (function () {
             areaMeasurement.polygon.show = show;
             areaMeasurement.polyline.show = show;
 
-            for (var i = 0; i < areaMeasurement.points.length; i++)
+            for (let i = 0; i < areaMeasurement.points.length; i++)
                 areaMeasurement.points[i].show = show;
         }
 
         function showHideAllMeasurement(show) {
-            var pointMeasurements = pointMeasurement.measurementResult;
+            let pointMeasurements = pointMeasurement.measurementResult;
 
-            for(var i = 0; i < pointMeasurements.length; i++)
+            for(let i = 0; i < pointMeasurements.length; i++)
                 showHidePointMeasurement(pointMeasurements[i], show);
 
-            var distanceMeasurements = distanceMeasurement.measurementResult;
+            let distanceMeasurements = distanceMeasurement.measurementResult;
 
             for(i = 0; i < distanceMeasurements.length; i++)
                 showHideDistanceMeasurement(distanceMeasurements[i], show);
 
-            var polylineMeasurements = polylineMeasurement.measurementResult;
+            let polylineMeasurements = polylineMeasurement.measurementResult;
 
             for(i = 0; i < polylineMeasurements.length; i++)
                 showHidePolylineMeasurement(polylineMeasurements[i], show);
 
-            var areaMeasurements = areaMeasurement.measurementResult;
+            let areaMeasurements = areaMeasurement.measurementResult;
 
             for(i = 0; i < areaMeasurements.length; i++)
                 showHideAreaMeasurement(areaMeasurements[i], show);
@@ -510,7 +510,7 @@ var theApp = (function () {
         }
 
         $('#show-hide-all-measurement-checkbox').change(function () {
-            var checked = this.checked;
+            let checked = this.checked;
 
             showHideAllMeasurement(checked);
 
@@ -569,7 +569,7 @@ var theApp = (function () {
     }
 
     function _saveTilesetModelMatrixForGeoReferencedTileset() {
-        var data = {
+        let data = {
             longitude: 0,
             latitude: 0,
             height: jqTilesetAltitude.val(),
@@ -584,21 +584,21 @@ var theApp = (function () {
 
     function _saveTilesetModelMatrixForNonGeoReferencedTileset() {
         if(transformEditor && transformEditor.active) {
-            var position = transformEditor.viewModel.position;
-            var headingPitchRoll = transformEditor.viewModel.headingPitchRoll;
-            var scale = transformEditor.viewModel.scale;
+            let position = transformEditor.viewModel.position;
+            let headingPitchRoll = transformEditor.viewModel.headingPitchRoll;
+            let scale = transformEditor.viewModel.scale;
 
             _doSaveTilesetModelMatrix(position, headingPitchRoll, scale);
         } else {
-            var currentModelMatrix = tileset.modelMatrix;
+            let currentModelMatrix = tileset.modelMatrix;
 
-            var position = Cesium.Matrix4.getTranslation(currentModelMatrix, new Cesium.Cartesian3());
+            let position = Cesium.Matrix4.getTranslation(currentModelMatrix, new Cesium.Cartesian3());
 
-            var scene = viewer.scene;
+            let scene = viewer.scene;
 
-            var headingPitchRoll = Cesium.Transforms.fixedFrameToHeadingPitchRoll(currentModelMatrix, scene.mapProjection.ellipsoid, undefined, new Cesium.HeadingPitchRoll());
+            let headingPitchRoll = Cesium.Transforms.fixedFrameToHeadingPitchRoll(currentModelMatrix, scene.mapProjection.ellipsoid, undefined, new Cesium.HeadingPitchRoll());
 
-            var scale = Cesium.Matrix4.getScale(currentModelMatrix, new Cesium.Cartesian3());
+            let scale = Cesium.Matrix4.getScale(currentModelMatrix, new Cesium.Cartesian3());
 
             _doSaveTilesetModelMatrix(position, headingPitchRoll, scale);
         }
@@ -614,11 +614,11 @@ var theApp = (function () {
     }
 
     function _doSaveTilesetModelMatrix(position, headingPitchRoll, scale) {
-        var cartographic = Cesium.Cartographic.fromCartesian(position);
+        let cartographic = Cesium.Cartographic.fromCartesian(position);
 
-        var precision = 8;
+        let precision = 8;
 
-        var data = {
+        let data = {
             longitude: Cesium.Math.toDegrees(cartographic.longitude).toFixed(precision),
             latitude: Cesium.Math.toDegrees(cartographic.latitude).toFixed(precision),
             height: cartographic.height.toFixed(precision),
@@ -645,7 +645,7 @@ var theApp = (function () {
             success : function( response ) {
                 jqSaveTilesetModelMatrixButton.prop('disabled', false);
 
-                var data = JSON.parse(response);
+                let data = JSON.parse(response);
 
                 if(data.ret === false) {
                     alert('Passed values is the same as the values that is already in the database!');
@@ -714,7 +714,7 @@ var theApp = (function () {
             }
         ];
 
-        var tilesetURL = 'https://s3.us-east-2.wasabisys.com/construkted-assets/' + CONSTRUKTED_AJAX.post_slug + '/tileset.json';
+        let tilesetURL = 'https://s3.us-east-2.wasabisys.com/construkted-assets/' + CONSTRUKTED_AJAX.post_slug + '/tileset.json';
 
         tileset = viewer.scene.primitives.add(
             new Cesium.Cesium3DTileset({
@@ -757,10 +757,10 @@ var theApp = (function () {
                 delay = delay == null ? 300 : delay;
 
                 this.bind('touchend', function(event) {
-                    var now = new Date().getTime();
+                    let now = new Date().getTime();
                     // The first time this will make delta a negative number.
-                    var lastTouch = $(this).data('lastTouch') || now + 1;
-                    var delta = now - lastTouch;
+                    let lastTouch = $(this).data('lastTouch') || now + 1;
+                    let delta = now - lastTouch;
                     if (delta < delay && 0 < delta) {
                         // After we detect a doubletap, start over.
                         $(this).data('lastTouch', null);
@@ -773,7 +773,7 @@ var theApp = (function () {
                 });
             };
 
-            var jqCesiumCanvas = jQuery('.cesium-widget > canvas');
+            let jqCesiumCanvas = jQuery('.cesium-widget > canvas');
 
             jqCesiumCanvas.doubletap(function (event) {
                 if(event && event.originalEvent && event.originalEvent.changedTouches && event.originalEvent.changedTouches[0])
@@ -796,7 +796,7 @@ var theApp = (function () {
                 }
             });
 
-            var options = {
+            let options = {
                 cesiumViewer: viewer,
                 main3dTileset: tileset,
                 defaultCameraPositionOrientationJson : CONSTRUKTED_AJAX.default_camera_position_direction,
@@ -912,14 +912,14 @@ var theApp = (function () {
 
                         tileset.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(Cesium.Cartesian3.fromDegrees(0, 0));
 
-                        var modelMatrixUpdateTried = false;
+                        let modelMatrixUpdateTried = false;
 
                         viewer.scene.globe.tileLoadProgressEvent.addEventListener(function (queuedTileCount) {
                             if(!modelMatrixUpdateTried && viewer.scene.globe.tilesLoaded){
-                                var cartographic = new Cesium.Cartographic(0, 0);
+                                let cartographic = new Cesium.Cartographic(0, 0);
 
-                                var magicTerrainHeight = 17;
-                                var terrainHeight = viewer.scene.globe.getHeight(cartographic);
+                                let magicTerrainHeight = 17;
+                                let terrainHeight = viewer.scene.globe.getHeight(cartographic);
 
                                 if(terrainHeight) {
                                     if(terrainHeight < magicTerrainHeight) {
@@ -961,16 +961,16 @@ var theApp = (function () {
                     jqEditAssetGeoLocationButton.prop('disabled', true);
                     jqTilesetEstimateAltitude.prop('disabled', true);
 
-                    var position = tileset.boundingSphere.center;
+                    let position = tileset.boundingSphere.center;
 
-                    var carto = Cesium.Cartographic.fromCartesian(position);
+                    let carto = Cesium.Cartographic.fromCartesian(position);
 
                     originalBoundingSphereCenterHeight = carto.height;
 
                     if(CONSTRUKTED_AJAX.asset_geo_location) {
-                        var assetGeoLocationData = CONSTRUKTED_AJAX.asset_geo_location;
+                        let assetGeoLocationData = CONSTRUKTED_AJAX.asset_geo_location;
 
-                        var heightDifference = originalBoundingSphereCenterHeight - parseFloat(assetGeoLocationData.height);
+                        let heightDifference = originalBoundingSphereCenterHeight - parseFloat(assetGeoLocationData.height);
 
                         tileset.modelMatrix = Cesium.Matrix4.fromTranslation(new Cesium.Cartesian3(0, 0, heightDifference));
 
@@ -1003,19 +1003,19 @@ var theApp = (function () {
     }
 
     function _setTilesetModelMatrix(tileset, modelMatrixData) {
-        var position = modelMatrixData.position;
+        let position = modelMatrixData.position;
 
-        var center = new Cesium.Cartesian3(position.x, position.y, position.z);
+        let center = new Cesium.Cartesian3(position.x, position.y, position.z);
 
-        var headingPitchRoll = modelMatrixData.headingPitchRoll;
+        let headingPitchRoll = modelMatrixData.headingPitchRoll;
 
-        var hpr = new Cesium.HeadingPitchRoll(headingPitchRoll.heading ,headingPitchRoll.pitch, headingPitchRoll.roll);
+        let hpr = new Cesium.HeadingPitchRoll(headingPitchRoll.heading ,headingPitchRoll.pitch, headingPitchRoll.roll);
 
-        var scale = modelMatrixData.scale;
+        let scale = modelMatrixData.scale;
 
-        var scaleCartesian3 = new Cesium.Cartesian3(scale.x, scale.y, scale.z);
+        let scaleCartesian3 = new Cesium.Cartesian3(scale.x, scale.y, scale.z);
 
-        var modelMatrix = Cesium.Transforms.headingPitchRollToFixedFrame(center, hpr);
+        let modelMatrix = Cesium.Transforms.headingPitchRollToFixedFrame(center, hpr);
 
         tileset.modelMatrix = Cesium.Matrix4.setScale(modelMatrix, scaleCartesian3, new Cesium.Matrix4());
     }
@@ -1024,7 +1024,7 @@ var theApp = (function () {
         viewer.scene.requestRender();
         viewer.render();
 
-        var mediumQuality  = viewer.canvas.toDataURL('image/jpeg', 0.5);
+        let mediumQuality  = viewer.canvas.toDataURL('image/jpeg', 0.5);
 
         jqCaptureThumbnailButton.prop('disabled', true);
 
@@ -1100,9 +1100,9 @@ var theApp = (function () {
     // https://github.com/outsider787/gw3_construkted/wiki/Construkted-Meta-Data-Definition
 
     function _getRelativeCurrentCameraPositionOrientationJsonString() {
-        var camera = viewer.camera;
+        let camera = viewer.camera;
 
-        var data = {};
+        let data = {};
 
         data.offsetX = camera.position.x - tileset.boundingSphere.center.x;
         data.offsetY = camera.position.y - tileset.boundingSphere.center.y;

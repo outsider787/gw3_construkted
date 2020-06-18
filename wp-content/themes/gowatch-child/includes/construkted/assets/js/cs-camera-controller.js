@@ -17,7 +17,7 @@ const CesiumFVPCameraController = (function () {
     const COLLISION_RAY_HEIGHT = 0.5;
     const HUMAN_EYE_HEIGHT = 1.65;
 
-    var scratchDirection = new Cesium.Cartesian3();
+    let scratchDirection = new Cesium.Cartesian3();
 
     //constructor
     function CesiumFVPCameraController(options) {
@@ -318,12 +318,12 @@ const CesiumFVPCameraController = (function () {
     };
 
     CesiumFVPCameraController.prototype._getRayPosition = function () {
-        var currentCameraPosition = this._camera.position;
+        let currentCameraPosition = this._camera.position;
 
-        var magnitude = Cesium.Cartesian3.magnitude(currentCameraPosition);
-        var scalar = (magnitude - HUMAN_EYE_HEIGHT + COLLISION_RAY_HEIGHT )  /magnitude;
+        let magnitude = Cesium.Cartesian3.magnitude(currentCameraPosition);
+        let scalar = (magnitude - HUMAN_EYE_HEIGHT + COLLISION_RAY_HEIGHT )  /magnitude;
 
-        var ret = new Cesium.Cartesian3();
+        let ret = new Cesium.Cartesian3();
 
         return Cesium.Cartesian3.multiplyByScalar(currentCameraPosition, scalar, ret);
     };
@@ -338,22 +338,22 @@ const CesiumFVPCameraController = (function () {
         else if(this._direction === DIRECTION_RIGHT)
             Cesium.Cartesian3.multiplyByScalar(this._camera.right, 1, scratchDirection);
 
-        var stepDistance = this._fpsConsideredWalkingSpeed() * dt;
+        let stepDistance = this._fpsConsideredWalkingSpeed() * dt;
 
-        var deltaPosition = Cesium.Cartesian3.multiplyByScalar(scratchDirection, stepDistance, new Cesium.Cartesian3());
+        let deltaPosition = Cesium.Cartesian3.multiplyByScalar(scratchDirection, stepDistance, new Cesium.Cartesian3());
 
-        var rayPosition = this._getRayPosition();
+        let rayPosition = this._getRayPosition();
 
-        var endPosition = Cesium.Cartesian3.add(rayPosition, deltaPosition, new Cesium.Cartesian3());
+        let endPosition = Cesium.Cartesian3.add(rayPosition, deltaPosition, new Cesium.Cartesian3());
 
-        var rayDirection = Cesium.Cartesian3.normalize(Cesium.Cartesian3.subtract(endPosition, rayPosition, new Cesium.Cartesian3()), new Cesium.Cartesian3());
+        let rayDirection = Cesium.Cartesian3.normalize(Cesium.Cartesian3.subtract(endPosition, rayPosition, new Cesium.Cartesian3()), new Cesium.Cartesian3());
 
-        var ray = new Cesium.Ray(rayPosition, rayDirection);
+        let ray = new Cesium.Ray(rayPosition, rayDirection);
 
-        var result = this._cesiumViewer.scene.pickFromRay(ray);
+        let result = this._cesiumViewer.scene.pickFromRay(ray);
 
         if(Cesium.defined(result)) {
-            var distanceToIntersection = Cesium.Cartesian3.distanceSquared(rayPosition, result.position);
+            let distanceToIntersection = Cesium.Cartesian3.distanceSquared(rayPosition, result.position);
 
             if(distanceToIntersection > stepDistance) {
                 this._setCameraPosition(endPosition);
@@ -367,16 +367,16 @@ const CesiumFVPCameraController = (function () {
     };
 
     CesiumFVPCameraController.prototype._setCameraPosition = function (position) {
-        var globe = this._cesiumViewer.scene.globe;
-        var ellipsoid = globe.ellipsoid;
+        let globe = this._cesiumViewer.scene.globe;
+        let ellipsoid = globe.ellipsoid;
 
-        var cartographic = ellipsoid.cartesianToCartographic(position);
+        let cartographic = ellipsoid.cartesianToCartographic(position);
 
         cartographic.height = 0;
 
-        var sampledHeight = this._cesiumViewer.scene.sampleHeight(cartographic);
+        let sampledHeight = this._cesiumViewer.scene.sampleHeight(cartographic);
 
-        var currentCameraCartographic = ellipsoid.cartesianToCartographic(this._camera.position);
+        let currentCameraCartographic = ellipsoid.cartesianToCartographic(this._camera.position);
 
         if(sampledHeight === undefined) {
             console.warn('sampled height is undefined');
@@ -587,9 +587,9 @@ const CesiumFVPCameraController = (function () {
                 return;
             }
 
-            var offset = new Cesium.Cartesian3(defaultCameraPositionDirection.offsetX, defaultCameraPositionDirection.offsetY, defaultCameraPositionDirection.offsetZ);
+            let offset = new Cesium.Cartesian3(defaultCameraPositionDirection.offsetX, defaultCameraPositionDirection.offsetY, defaultCameraPositionDirection.offsetZ);
 
-            var destination = Cesium.Cartesian3.add(this._main3dTileset.boundingSphere.center, offset, new Cesium.Cartesian3());
+            let destination = Cesium.Cartesian3.add(this._main3dTileset.boundingSphere.center, offset, new Cesium.Cartesian3());
 
             this._cesiumViewer.camera.flyTo({
                 destination : destination,
