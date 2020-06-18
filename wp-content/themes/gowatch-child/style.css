@@ -834,6 +834,11 @@ article .entry-meta-date a::after{
     float: left;
 }
 
+#xr-canvas{
+    width: 100%; height: 0;
+    background-color: red;
+}
+
 
 
 /**

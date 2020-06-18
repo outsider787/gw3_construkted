@@ -1,7 +1,16 @@
+// ajax parameter from WP
+/* global Cesium */
+/* global Cesium.Math */
+
+/* global jQuery */
+
+/* global CONSTRUKTED_AJAX */
+
 let viewer = null;
 let cesiumFPVCameraController = null;
 let tileset_model_matrix = null;
 let originalBoundingSphereCenterHeight = 0;
+let assetGeoLocationData;
 
 let theApp = (function () {
     let tileset = null;
@@ -26,7 +35,7 @@ let theApp = (function () {
     let jqResetCameraViewButton = jQuery('#reset_camera_view');
     let jqShowHideWireframeCheckbox = jQuery('#show-hide-wireframe-checkbox');
 
-    function start() {
+    function _start() {
         _create3DMap();
         _initGeoLocationPopup();
         _initMeasurementPopup();
@@ -42,7 +51,7 @@ let theApp = (function () {
 
     function _initGeoLocationPopup() {
         if(CONSTRUKTED_AJAX.asset_geo_location) {
-            let assetGeoLocationData = CONSTRUKTED_AJAX.asset_geo_location;
+            assetGeoLocationData = CONSTRUKTED_AJAX.asset_geo_location;
 
             if(!assetGeoLocationData.longitude ||
                !assetGeoLocationData.latitude ||
@@ -143,7 +152,7 @@ let theApp = (function () {
                 return;
             }
 
-            toggleGlobeSkyBoxAtmosphere(true);
+            _toggleGlobeSkyBoxAtmosphere(true);
 
             let origModelMatrix = tileset.modelMatrix;
 
@@ -174,7 +183,7 @@ let theApp = (function () {
                 return;
             }
 
-            toggleGlobeSkyBoxAtmosphere(true);
+            _toggleGlobeSkyBoxAtmosphere(true);
 
             let origModelMatrix = tileset.modelMatrix;
 
@@ -238,7 +247,7 @@ let theApp = (function () {
                 return;
             }
 
-            toggleGlobeSkyBoxAtmosphere(true);
+            _toggleGlobeSkyBoxAtmosphere(true);
             changeTilesetHeight(altitude);
 
             viewer.zoomTo(tileset);
@@ -908,7 +917,7 @@ let theApp = (function () {
                             transformEditor.viewModel.deactivate();
                         }
                     } else {
-                        toggleGlobeSkyBoxAtmosphere(false);
+                        _toggleGlobeSkyBoxAtmosphere(false);
 
                         tileset.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(Cesium.Cartesian3.fromDegrees(0, 0));
 
@@ -991,7 +1000,7 @@ let theApp = (function () {
         });
     }
 
-    function toggleGlobeSkyBoxAtmosphere(show) {
+    function _toggleGlobeSkyBoxAtmosphere(show) {
         viewer.scene.globe.show = show;
         viewer.scene.skyAtmosphere.show = show;
         viewer.scene.skyBox.show = show;
@@ -1090,7 +1099,7 @@ let theApp = (function () {
         });
     }
 
-    function tryDeactivateTransformEditor() {
+    function _tryDeactivateTransformEditor() {
         if(!transformEditor)
             return;
 
@@ -1118,13 +1127,15 @@ let theApp = (function () {
     return {
         viewer: viewer,
         cameraController: cesiumFPVCameraController,
-        start: start,
-        tryDeactivateTransformEditor: tryDeactivateTransformEditor
+        start: _start,
+        tryDeactivateTransformEditor: _tryDeactivateTransformEditor
     };
 })();
 
 jQuery(document).ready(function(){
     window.$ = jQuery;
+
+    initAssetModelFeatures();
 
     if(CONSTRUKTED_AJAX.asset_geo_location && CONSTRUKTED_AJAX.asset_geo_location !== '') {
         CONSTRUKTED_AJAX.asset_geo_location = JSON.parse(CONSTRUKTED_AJAX.asset_geo_location);
@@ -1135,10 +1146,8 @@ jQuery(document).ready(function(){
     theApp.start();
 });
 
-
-
 // Create the asset modal features
-jQuery(document).ready(function(){
+function initAssetModelFeatures() {
     // Check if we have a cookie with the modal box closed
     let ckAssetModal = jQuery.cookie('ck-asset-modal');
     if( ckAssetModal == 'y' ) {
@@ -1167,6 +1176,5 @@ jQuery(document).ready(function(){
 
     jQuery('.fpv-nav-btn').on('click', function(e){
         e.preventDefault();
-    })
-});
-
+    });
+}

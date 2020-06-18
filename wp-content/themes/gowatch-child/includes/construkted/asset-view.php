@@ -11,6 +11,8 @@ function enqueue_styles_for_asset_view(){
 
 function render_construkted_cesium_viewer() {
     echo '<div id="cesiumContainer"></div>';
+    echo '<canvas id="xr-canvas"></canvas>';
+
     // echo '<div id="toolbar">';
     // echo ' </br> ';
     // echo '<button id="moveLeftButton" style="display: none" class="cesium-button">MOVE LEFT</button> </br>';
@@ -18,7 +20,6 @@ function render_construkted_cesium_viewer() {
     // echo '<button id="moveFrontButton" style="display: none" class="cesium-button">MOVE FRONT</button> </br>';
     // echo '<button id="moveBackButton" style="display: none" class="cesium-button">MOVE BACK</button> </br>';
     // echo '</div>';
-
 
     enqueue_styles_for_asset_view();
 }
