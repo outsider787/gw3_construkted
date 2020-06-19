@@ -117,9 +117,7 @@
 
 
     jQuery('#add-new-construkted-url').click(function () {
-        var rowCount = jQuery('#construkted-api-url-settings-table tr').size();
-
-        console.log(rowCount);
+        const rowCount = jQuery('#construkted-api-url-settings-table tr').size();
 
         // last row : for "Save Changes" button
         // just before last row : for "ADD URL" button
@@ -128,7 +126,7 @@
             return;
         }
 
-        const index = (rowCount - 2);
+        const index = (rowCount - 1);
 
         const newRowHtml = '<tr>' +
                                '<td>' +
