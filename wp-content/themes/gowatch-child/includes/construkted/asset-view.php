@@ -10,7 +10,10 @@ function enqueue_styles_for_asset_view(){
 }
 
 function render_construkted_cesium_viewer() {
+    echo '<div id="overlay-content">';
     echo '<div id="cesiumContainer"></div>';
+    echo '</div>';
+
     echo '<canvas id="xr-canvas"></canvas>';
 
     // echo '<div id="toolbar">';

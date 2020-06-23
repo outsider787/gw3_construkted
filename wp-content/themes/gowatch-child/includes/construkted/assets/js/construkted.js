@@ -816,7 +816,8 @@ let theApp = (function () {
                 main3dTileset: tileset,
                 defaultCameraPositionOrientationJson : CONSTRUKTED_AJAX.default_camera_position_direction,
                 isMobile: isMobile(),
-                ignoreCollisionDetection: false
+                ignoreCollisionDetection: false,
+                immersiveArEnabled : xrButton.enabled
             };
 
             cesiumFPVCameraController = new CesiumFVPCameraController(options);
@@ -1159,12 +1160,14 @@ let theApp = (function () {
         session.addEventListener("end", onSessionEnded);
 
         if (session.isImmersive) {
-            if (cesiumFPVCameraController.startFPVPositionMobile() == null) {
-                alert("Please tap on 3d tile to start FPV!");
-                cesiumFPVCameraController.setAllowStartPositionTap(true);
-                return;
-            } else {
-                cesiumFPVCameraController.startFPVMobile();
+            if(!cesiumFPVCameraController.started()) {
+                if (cesiumFPVCameraController.startFPVPositionMobile() == null) {
+                    alert("Please tap on 3d tile to start FPV!");
+                    cesiumFPVCameraController.setAllowStartPositionTap(true);
+                    return;
+                } else {
+                    cesiumFPVCameraController.startFPVMobile();
+                }
             }
         }
 
@@ -1245,7 +1248,7 @@ let theApp = (function () {
     ) {
         if (!cesiumFPVCameraController) return;
 
-        if (!cesiumFPVCameraController.isEnabled()) return;
+        if (!cesiumFPVCameraController.started()) return;
 
         cesiumFPVCameraController.setView(
             translationX * sensitivity,
@@ -1290,24 +1293,29 @@ let theApp = (function () {
     }
 
     function initXR() {
-        xrButton = new CONSTRUKTEDXR.WebXRButton({
-            onRequestSession: onRequestSession,
-            onEndSession: onEndSession,
-            textEnterXRTitle: "START AR",
-            textXRNotFoundTitle: "AR NOT FOUND",
-            textExitXRTitle: "EXIT  AR",
-        });
-
-        document.querySelector("header").appendChild(xrButton.domElement);
-
-        if (navigator.xr) {
-            // Checks to ensure that 'immersive-ar' mode is available, and only
-            // enables the button if so.
-            navigator.xr.isSessionSupported("immersive-ar").then((supported) => {
-                xrButton.enabled = supported;
+        try {
+            xrButton = new CONSTRUKTEDXR.WebXRButton({
+                onRequestSession: onRequestSession,
+                onEndSession: onEndSession,
+                textEnterXRTitle: "START AR",
+                textXRNotFoundTitle: "AR NOT FOUND",
+                textExitXRTitle: "EXIT  AR",
             });
 
-            navigator.xr.requestSession("inline").then(onSessionStarted);
+            document.querySelector("header").appendChild(xrButton.domElement);
+
+            if (navigator.xr) {
+                // Checks to ensure that 'immersive-ar' mode is available, and only
+                // enables the button if so.
+                navigator.xr.isSessionSupported("immersive-ar").then((supported) => {
+                    xrButton.enabled = supported;
+                });
+
+                navigator.xr.requestSession("inline").then(onSessionStarted);
+            }
+        }
+        catch (e) {
+            alert(e.message);
         }
     }
 

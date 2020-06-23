@@ -68,6 +68,9 @@ const CesiumFVPCameraController = (function () {
 
         this._allowStartPositionTap = false;
         this._walkingSpeed = DEFAULT_WALKING_SPEED;
+
+        // this flag has meaning on mobile device
+        this._immersiveArEnabled = options.immersiveArEnabled;
     }
 
     CesiumFVPCameraController.prototype.setAllowStartPositionTap = function(value) {
@@ -216,7 +219,6 @@ const CesiumFVPCameraController = (function () {
 
         if(!result)
         {
-            alert("Unfortunately failed to enter FPV!");
             console.warn('pickFromRay failed!');
             return null;
         }
@@ -228,17 +230,13 @@ const CesiumFVPCameraController = (function () {
 
         if(terrainHeightAtPickedCartographic === undefined)
         {
-            alert("Unfortunately failed to enter FPV!");
             console.warn('globe.getHeight(cartographic) failed!');
             return null;
         }
 
         // determine if we clicked out of main 3d tileset
         if (Cesium.Math.equalsEpsilon(pickedCartographic.height, terrainHeightAtPickedCartographic, Cesium.Math.EPSILON4, Cesium.Math.EPSILON1)) {
-            if(!this._isMobile)
-                alert("Please double click exactly on target 3d tile!");
-            else
-                alert("Please double tap exactly on target 3d tile!");
+            console.warn('out of 3d tile!');
 
             return null;
         }
@@ -254,12 +252,19 @@ const CesiumFVPCameraController = (function () {
     };
 
     CesiumFVPCameraController.prototype._onMouseLButtonDoubleClicked = function (movement) {
+        // first we get clicked(taped) position
+
         const pickedCartographic = this._getPickedCartographic(movement.position);
 
-        if(!pickedCartographic)
-            return;
+        /**
+         * FPV was already started
+         * In this case we fly to double clicked(taped) position
+         */
 
         if(this._enabled){
+            if(!pickedCartographic)
+                return;
+
             const globe = this._cesiumViewer.scene.globe;
 
             this._camera.flyTo({
@@ -271,6 +276,13 @@ const CesiumFVPCameraController = (function () {
                 }
             });
 
+            return;
+        }
+
+        // we can directly start FPV
+
+        if(!pickedCartographic) {
+            alert("Unfortunately failed to enter FPV!");
             return;
         }
 
@@ -515,7 +527,7 @@ const CesiumFVPCameraController = (function () {
         }
     };
 
-    CesiumFVPCameraController.prototype.isEnabled = function () {
+    CesiumFVPCameraController.prototype.started = function () {
         return this._enabled;
     };
 
@@ -628,14 +640,7 @@ const CesiumFVPCameraController = (function () {
     };
 
     CesiumFVPCameraController.prototype.startFPVMobile = function () {
-        /*
-         const width = this._canvas.clientWidth;
-         const height = this._canvas.clientHeight;
-
-         const screenCenterPosition = new Cesium.Cartesian2(width / 2 , height / 2);
-         */
-
-        this._getPickedCartographic(this._startFPVPositionMobile);
+        this._doStartFPV(this._startFPVPositionMobile);
     };
 
     CesiumFVPCameraController.prototype._getModifiedCurrentCameraPositionMobile = function () {
@@ -757,6 +762,10 @@ const CesiumFVPCameraController = (function () {
 
     CesiumFVPCameraController.prototype.setWorkingSpeed = function (speed) {
         this._walkingSpeed = speed;
+    };
+
+    CesiumFVPCameraController.prototype.setImmersiveArEnabled = function (b) {
+        this._immersiveArEnabled = b;
     };
 
     return CesiumFVPCameraController;

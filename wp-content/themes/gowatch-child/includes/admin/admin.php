@@ -134,6 +134,7 @@ function construkted_get_all_task($api_url) {
 
     // check error
     if(is_wp_error($ret)) {
+        error_log('construkted_get_all_task error message : ' . $ret->get_error_message());
         return null;
     }
     else {
