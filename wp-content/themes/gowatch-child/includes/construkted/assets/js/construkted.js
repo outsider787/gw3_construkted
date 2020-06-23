@@ -63,6 +63,11 @@ let theApp = (function () {
         }
     }
 
+    function toggleXrItems() {
+        jQuery('.webvr-ui-button, #xr-canvas').toggle();
+        jQuery('#overlay-content').toggleClass('full-overlay');
+    }
+
     function _initGeoLocationPopup() {
         if(CONSTRUKTED_AJAX.asset_geo_location) {
             assetGeoLocationData = CONSTRUKTED_AJAX.asset_geo_location;
@@ -823,10 +828,12 @@ let theApp = (function () {
             cesiumFPVCameraController = new CesiumFVPCameraController(options);
 
             cesiumFPVCameraController.FPVStarted().addEventListener(function() {
+
                 jqExitFPVModeButton.show();
                 jQuery('body').addClass('fpv-mode-on');
                 jQuery('.fpv-navigation').show();
 
+                toggleXrItems();
                 window.addEventListener("keydown", _block_keys, false);
             });
 
@@ -834,6 +841,8 @@ let theApp = (function () {
                 jqExitFPVModeButton.hide();
                 jQuery('body').removeClass('fpv-mode-on');
                 jQuery('.fpv-navigation').hide();
+
+                toggleXrItems();
 
                 window.removeEventListener("keydown", _block_keys, false);
             });
@@ -1302,7 +1311,7 @@ let theApp = (function () {
                 textExitXRTitle: "EXIT  AR",
             });
 
-            document.querySelector("header").appendChild(xrButton.domElement);
+            document.querySelector(".video-figure-content").appendChild(xrButton.domElement);
 
             if (navigator.xr) {
                 // Checks to ensure that 'immersive-ar' mode is available, and only
