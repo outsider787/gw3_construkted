@@ -1311,8 +1311,8 @@ let theApp = (function () {
                 textExitXRTitle: "EXIT  AR",
             });
 
-            document.querySelector(".video-figure-content").appendChild(xrButton.domElement);
 
+            document.querySelector("#cesiumContainer").appendChild(xrButton.domElement);
             if (navigator.xr) {
                 // Checks to ensure that 'immersive-ar' mode is available, and only
                 // enables the button if so.
