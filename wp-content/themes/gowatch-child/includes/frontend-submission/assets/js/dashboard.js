@@ -90,8 +90,13 @@ function doUpdateState(data) {
 
         var percent = getProcessingProgress(taskInfo);
 
-        if(percent == 100)
-            postStateDiv.innerHTML = 'Completed';
+        if(percent == 100) {
+            if(statusCode !== statusCode.COMPLETED) {
+                postStateDiv.innerHTML = 'ERROR<br>Please contact<br>support@construkted.com';
+            }
+            else
+                postStateDiv.innerHTML = 'Completed';
+        }
         else
             postStateDiv.innerHTML = percent + ' %';
     }
@@ -134,8 +139,9 @@ function getProcessingProgress(taskInfo) {
     }
     else if(runningStatus === runningStatusCodes.PACKAGING)
         return 80;
-    else if(runningStatus === runningStatusCodes.PUBLISHING_CONSTRUKTED_ASSET)
+    else if(runningStatus === runningStatusCodes.PUBLISHING_CONSTRUKTED_ASSET) {
         return 100;
+    }
     else
         return 0;
 }
