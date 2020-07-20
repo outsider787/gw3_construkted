@@ -373,6 +373,10 @@
                 submitButton = form.find('input[type=submit]'),
             form_data = TSZF_User_Frontend.validateForm(form);
 
+            if(form_data === false) {
+                return;
+            }
+
             form_data += "&";
             form_data += 'first_found_valid_api_url=';
             form_data += firstFoundValidAPIUrl;
