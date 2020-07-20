@@ -1703,7 +1703,7 @@ class TSZF_Render_Form {
             'ajaxurl'       => admin_url( 'admin-ajax.php' ),
             'error_message' => __( 'There were validation errors. Please fix the errors to proceed.', 'gowatch' ),
             'nonce'         => wp_create_nonce( 'tszf_nonce' ),
-            'construkted_api_url' => CONSTRUKTED_TILING_SERVER
+            'construkted_api_urls' => CONSTRUKTED_API_URLS
             )
         );
     }

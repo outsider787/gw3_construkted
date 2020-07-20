@@ -13,24 +13,10 @@ if (!defined('DEFAULT_DISK_QUOTA')) {
     define('DEFAULT_DISK_QUOTA', 2);
 }
 
-$api_options = get_option( 'api_options' );
+$api_urls = get_option( 'api_urls' );
 
-$construkted_api_url = $api_options['construkted-api-url'];
-
-if (!defined('CONSTRUKTED_TILING_SERVER')) {
-    define('CONSTRUKTED_TILING_SERVER', $construkted_api_url);
-}
-
-if (!defined('CONSTRUKTED_EC2_API_REQUEST_TILING')) {
-    define('CONSTRUKTED_EC2_API_REQUEST_TILING', CONSTRUKTED_TILING_SERVER . '/request_tiling');
-}
-
-if (!defined('CONSTRUKTED_EC2_API_TASK_ALL')) {
-    define('CONSTRUKTED_EC2_API_TASK_ALL', CONSTRUKTED_TILING_SERVER . '/task/all');
-}
-
-if (!defined('CONSTRUKTED_EC2_API_DELETE_ASSET')) {
-    define('CONSTRUKTED_EC2_API_DELETE_ASSET', CONSTRUKTED_TILING_SERVER . '/delete_asset');
+if (!defined('CONSTRUKTED_API_URLS')) {
+    define('CONSTRUKTED_API_URLS', $api_urls);
 }
 
 define('CESIUMJS_VER', '1.66');
@@ -212,7 +198,7 @@ function onsen_article( $options ) {
                 </article>
             </div>
         </div>
-        <div id = "post-processing-state" data-post-id="<?php echo $post->ID; ?>" data-wp-state = "<?php echo get_post_status($post->ID); ?>" class="onsen-td">
+        <div id = "post-processing-state" data-post-id="<?php echo $post->ID; ?>" data-wp-state = "<?php echo get_post_status($post->ID); ?>" data-api-url ="<?php echo get_post_meta($post->ID, 'api_url', true)?>" class="onsen-td">
             <?php esc_html_e('Unknown' , 'gowatch-child'); ?>
         </div>
         <div class="onsen-td">

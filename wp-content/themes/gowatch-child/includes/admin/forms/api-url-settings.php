@@ -10,27 +10,35 @@ if ( !defined( 'ABSPATH' ) ) exit;
 <div class="wrap">
     <form  method="post" action="options.php" enctype="multipart/form-data">
         <?php
-        settings_fields( 'construkted_api_options' );
-        $api_options = get_option( 'api_options' );
+        settings_fields( 'construkted_api_options' );  // group name
+        $api_urls = get_option( 'api_urls' );          // option 's name
         ?>
         <div class="postbox">
             <div class="inside">
-                <table class="form-table">
+                <table id = "construkted-api-url-settings-table" class="form-table">
                     <tbody>
-                    <tr>
-                        <th scope="row">
-                            <label><strong><?php echo __( 'API URL:', 'construkted' ) ?></strong></label>
-                        </th>
-                        <td>
-                            <input type="text" id="construkted-api-url" name="api_options[construkted-api-url]" value="<?php echo !empty($api_options['construkted-api-url']) ? $api_options['construkted-api-url'] : '' ?>" size="63" /><br />
-                        </td>
-                    </tr>
+                    <?php
+                        foreach ($api_urls as $key => $url){
+                            echo '<tr>';
+                            echo '    <td colspan="2">';
 
-                    <tr>
-                        <td colspan="2">
-                            <input type="submit" class="button-primary" value="<?php echo __( 'Save Changes', 'construkted' ) ?>" />
-                        </td>
-                    </tr>
+                            echo '<input type="text" id="' . $key . '" name=api_urls[' . $key . ']" value="' . $url . '" size="63">';
+                            echo '<input type="button" class="button-primary construkted-api-delete-button" value="Delete"/>';
+                            echo '    </td>';
+                            echo '</tr>';
+                        }
+                    ?>
+                        <tr>
+                            <td colspan="2">
+                                <input type="button" id="add-new-construkted-url" class="button-primary" value="<?php echo __( 'ADD URL', 'construkted' ) ?>" />
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2">
+                                <input type="submit" class="button-primary" value="<?php echo __( 'Save Changes', 'construkted' ) ?>" />
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

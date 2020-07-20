@@ -1,36 +1,59 @@
-var viewer = null;
-var cesiumFPVCameraController = null;
-var tileset_model_matrix = null;
-var originalBoundingSphereCenterHeight = 0;
+// ajax parameter from WP
+/* global Cesium */
+/* global Cesium.Math */
 
-var theApp = (function () {
-    var tileset = null;
-    var transformEditor = null;
+/* global jQuery */
 
-    var jqExitFPVModeButton = jQuery('#exitFPVModeButton');
-    var jqMoveLeftButton = jQuery('.fpv-left');
-    var jqMoveRightButton = jQuery('.fpv-right');
-    var jqMoveFrontButton = jQuery('.fpv-up');
-    var jqMoveBackButton = jQuery('.fpv-down');
+/* global CONSTRUKTED_AJAX */
 
-    var jqTilesetLatitude = jQuery('#tileset_latitude');
-    var jqTilesetLongitude = jQuery('#tileset_longitude');
-    var jqTilesetAltitude = jQuery('#tileset_altitude');
-    var jqTilesetHeading = jQuery('#tileset_heading');
-    var jqEditAssetGeoLocationButton = jQuery('#edit_asset_geo_location_button');
-    var jqTilesetEstimateAltitude = jQuery('#tileset_estimate_altitude');
-    var jqSaveTilesetModelMatrixButton = jQuery('#save_tileset_model_matrix_button');
+window.isMobile = function() {
+    let check = false;
 
-    var jqCaptureThumbnailButton = jQuery('#capture_thumbnail');
-    var jqSaveCurrentViewButton = jQuery('#save_current_view');
-    var jqResetCameraViewButton = jQuery('#reset_camera_view');
-    var jqShowHideWireframeCheckbox = jQuery('#show-hide-wireframe-checkbox');
+    (function(a){if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0,4))) check = true;})(navigator.userAgent||navigator.vendor||window.opera);
 
-    function start() {
+    return check;
+};
+
+const mobile = isMobile();
+let viewer = null;
+let cesiumFPVCameraController = null;
+let tileset_model_matrix = null;
+let originalBoundingSphereCenterHeight = 0;
+let assetGeoLocationData;
+
+let gl = null;
+let xrButton;
+const sensitivity = 1;
+
+let theApp = (function () {
+    let tileset = null;
+    let transformEditor = null;
+
+    let jqExitFPVModeButton = jQuery('#exitFPVModeButton');
+    let jqMoveLeftButton = jQuery('.fpv-left');
+    let jqMoveRightButton = jQuery('.fpv-right');
+    let jqMoveFrontButton = jQuery('.fpv-up');
+    let jqMoveBackButton = jQuery('.fpv-down');
+
+    let jqTilesetLatitude = jQuery('#tileset_latitude');
+    let jqTilesetLongitude = jQuery('#tileset_longitude');
+    let jqTilesetAltitude = jQuery('#tileset_altitude');
+    let jqTilesetHeading = jQuery('#tileset_heading');
+    let jqEditAssetGeoLocationButton = jQuery('#edit_asset_geo_location_button');
+    let jqTilesetEstimateAltitude = jQuery('#tileset_estimate_altitude');
+    let jqSaveTilesetModelMatrixButton = jQuery('#save_tileset_model_matrix_button');
+
+    let jqCaptureThumbnailButton = jQuery('#capture_thumbnail');
+    let jqSaveCurrentViewButton = jQuery('#save_current_view');
+    let jqResetCameraViewButton = jQuery('#reset_camera_view');
+    let jqShowHideWireframeCheckbox = jQuery('#show-hide-wireframe-checkbox');
+
+    function _start() {
         _create3DMap();
         _initGeoLocationPopup();
         _initMeasurementPopup();
         _initSettingsPopup();
+        initXR();
     }
 
     function _block_keys(e) {
@@ -40,9 +63,14 @@ var theApp = (function () {
         }
     }
 
+    function toggleXrItems() {
+        jQuery('.webvr-ui-button, #xr-canvas').toggle();
+        jQuery('#overlay-content').toggleClass('full-overlay');
+    }
+
     function _initGeoLocationPopup() {
         if(CONSTRUKTED_AJAX.asset_geo_location) {
-            var assetGeoLocationData = CONSTRUKTED_AJAX.asset_geo_location;
+            assetGeoLocationData = CONSTRUKTED_AJAX.asset_geo_location;
 
             if(!assetGeoLocationData.longitude ||
                !assetGeoLocationData.latitude ||
@@ -58,7 +86,7 @@ var theApp = (function () {
                 assetGeoLocationData.pitch = parseFloat(assetGeoLocationData.pitch);
                 assetGeoLocationData.roll = parseFloat(assetGeoLocationData.roll);
 
-                var carto = new Cesium.Cartographic(
+                let carto = new Cesium.Cartographic(
                     Cesium.Math.toRadians(assetGeoLocationData.longitude),
                     Cesium.Math.toRadians(assetGeoLocationData.latitude),
                     assetGeoLocationData.height);
@@ -75,13 +103,13 @@ var theApp = (function () {
             }
         }
 
-        var setHprQuaternion = new Cesium.Quaternion();
-        var setHprQuaternion2 = new Cesium.Quaternion();
-        var setHprTranslation = new Cesium.Cartesian3();
-        var setHprScale = new Cesium.Cartesian3();
-        var setHprCenter = new Cesium.Cartesian3();
-        var setHprTransform = new Cesium.Matrix4();
-        var setHprRotation = new Cesium.Matrix3();
+        let setHprQuaternion = new Cesium.Quaternion();
+        let setHprQuaternion2 = new Cesium.Quaternion();
+        let setHprTranslation = new Cesium.Cartesian3();
+        let setHprScale = new Cesium.Cartesian3();
+        let setHprCenter = new Cesium.Cartesian3();
+        let setHprTransform = new Cesium.Matrix4();
+        let setHprRotation = new Cesium.Matrix3();
 
         function setHeadingPitchRoll(transform, headingPitchRoll) {
             //>>includeStart('debug', pragmas.debug);
@@ -89,21 +117,21 @@ var theApp = (function () {
             Cesium.Check.defined('headingPitchRoll', headingPitchRoll);
             //>>includeEnd('debug');
 
-            var rotationQuaternion = Cesium.Quaternion.fromHeadingPitchRoll(headingPitchRoll, setHprQuaternion);
-            var translation = Cesium.Matrix4.getTranslation(transform, setHprTranslation);
-            var scale = Cesium.Matrix4.getScale(transform, setHprScale);
-            var center = Cesium.Matrix4.multiplyByPoint(transform, Cesium.Cartesian3.ZERO, setHprCenter);
-            var backTransform = Cesium.Transforms.eastNorthUpToFixedFrame(center, undefined, setHprTransform);
+            let rotationQuaternion = Cesium.Quaternion.fromHeadingPitchRoll(headingPitchRoll, setHprQuaternion);
+            let translation = Cesium.Matrix4.getTranslation(transform, setHprTranslation);
+            let scale = Cesium.Matrix4.getScale(transform, setHprScale);
+            let center = Cesium.Matrix4.multiplyByPoint(transform, Cesium.Cartesian3.ZERO, setHprCenter);
+            let backTransform = Cesium.Transforms.eastNorthUpToFixedFrame(center, undefined, setHprTransform);
 
-            var rotationFixed = Cesium.Matrix4.getMatrix3(backTransform, setHprRotation);
-            var quaternionFixed = Cesium.Quaternion.fromRotationMatrix(rotationFixed, setHprQuaternion2);
-            var rotation = Cesium.Quaternion.multiply(quaternionFixed, rotationQuaternion, rotationFixed);
+            let rotationFixed = Cesium.Matrix4.getMatrix3(backTransform, setHprRotation);
+            let quaternionFixed = Cesium.Quaternion.fromRotationMatrix(rotationFixed, setHprQuaternion2);
+            let rotation = Cesium.Quaternion.multiply(quaternionFixed, rotationQuaternion, rotationFixed);
 
             return Cesium.Matrix4.fromTranslationQuaternionRotationScale(translation, rotation, scale, transform);
         }
 
         function changeTilesetModelMatrix(newPosition, headingPitchRoll) {
-            var origModelMatrix = tileset.modelMatrix;
+            let origModelMatrix = tileset.modelMatrix;
 
             origModelMatrix = Cesium.Matrix4.setTranslation(origModelMatrix, newPosition, origModelMatrix);
 
@@ -111,14 +139,14 @@ var theApp = (function () {
         }
 
         if(tileset_model_matrix){
-            jQuery('#tileset_latitude').val(assetGeoLocationData.latitude);
-            jQuery('#tileset_longitude').val(assetGeoLocationData.longitude);
+            jqTilesetLatitude.val(assetGeoLocationData.latitude);
+            jqTilesetLongitude.val(assetGeoLocationData.longitude);
             jqTilesetAltitude.val(assetGeoLocationData.height);
             jQuery('#tileset_heading').val(assetGeoLocationData.heading);
         }
         else{
-            jQuery('#tileset_latitude').val(0);
-            jQuery('#tileset_longitude').val(0);
+            jqTilesetLatitude.val(0);
+            jqTilesetLongitude.val(0);
             jqTilesetAltitude.val(0);
             jQuery('#tileset_heading').val(0);
         }
@@ -132,59 +160,63 @@ var theApp = (function () {
             _saveTilesetModelMatrix();
         });
 
-        jQuery('#tileset_longitude').change(function () {
-            var longitude = jQuery('#tileset_longitude').val();
+        jqTilesetLongitude.change(function () {
+            let longitude = jqTilesetLongitude.val();
 
             longitude = parseFloat(longitude);
 
             if(isNaN(longitude) || longitude > 180 || longitude < -180) {
-                jQuery('#tileset_longitude').val('');
+                jqTilesetLongitude.val('');
                 alert('invalid longitude: ' + longitude);
                 return;
             }
 
-            var origModelMatrix = tileset.modelMatrix;
+            _toggleGlobeSkyBoxAtmosphere(true);
 
-            var origPosition = Cesium.Matrix4.getTranslation(origModelMatrix, new Cesium.Cartesian3());
+            let origModelMatrix = tileset.modelMatrix;
 
-            var origCartographic = Cesium.Cartographic.fromCartesian(origPosition);
+            let origPosition = Cesium.Matrix4.getTranslation(origModelMatrix, new Cesium.Cartesian3());
+
+            let origCartographic = Cesium.Cartographic.fromCartesian(origPosition);
 
             origCartographic.longitude = longitude * Cesium.Math.RADIANS_PER_DEGREE;
 
-            var newPosition = viewer.scene.globe.ellipsoid.cartographicToCartesian(origCartographic);
+            let newPosition = viewer.scene.globe.ellipsoid.cartographicToCartesian(origCartographic);
 
-            var scene = viewer.scene;
+            let scene = viewer.scene;
 
-            var headingPitchRoll = Cesium.Transforms.fixedFrameToHeadingPitchRoll(origModelMatrix, scene.mapProjection.ellipsoid, undefined, new Cesium.HeadingPitchRoll());
+            let headingPitchRoll = Cesium.Transforms.fixedFrameToHeadingPitchRoll(origModelMatrix, scene.mapProjection.ellipsoid, undefined, new Cesium.HeadingPitchRoll());
 
             changeTilesetModelMatrix(newPosition, headingPitchRoll);
 
             viewer.zoomTo(tileset);
         });
 
-        jQuery('#tileset_latitude').change(function () {
-            var latitude = jQuery('#tileset_latitude').val();
+        jqTilesetLatitude.change(function () {
+            let latitude = jqTilesetLatitude.val();
             latitude = parseFloat(latitude);
 
             if(isNaN(latitude) || latitude > 90 || latitude < -90) {
-                jQuery('#tileset_latitude').val('');
+                jqTilesetLatitude.val('');
                 alert('invalid latitude: ' + latitude);
                 return;
             }
 
-            var origModelMatrix = tileset.modelMatrix;
+            _toggleGlobeSkyBoxAtmosphere(true);
 
-            var origPosition = Cesium.Matrix4.getTranslation(origModelMatrix, new Cesium.Cartesian3());
+            let origModelMatrix = tileset.modelMatrix;
 
-            var origCartographic = Cesium.Cartographic.fromCartesian(origPosition);
+            let origPosition = Cesium.Matrix4.getTranslation(origModelMatrix, new Cesium.Cartesian3());
+
+            let origCartographic = Cesium.Cartographic.fromCartesian(origPosition);
 
             origCartographic.latitude = latitude * Cesium.Math.RADIANS_PER_DEGREE;
 
-            var newPosition = viewer.scene.globe.ellipsoid.cartographicToCartesian(origCartographic);
+            let newPosition = viewer.scene.globe.ellipsoid.cartographicToCartesian(origCartographic);
 
-            var scene = viewer.scene;
+            let scene = viewer.scene;
 
-            var headingPitchRoll = Cesium.Transforms.fixedFrameToHeadingPitchRoll(origModelMatrix, scene.mapProjection.ellipsoid, undefined, new Cesium.HeadingPitchRoll());
+            let headingPitchRoll = Cesium.Transforms.fixedFrameToHeadingPitchRoll(origModelMatrix, scene.mapProjection.ellipsoid, undefined, new Cesium.HeadingPitchRoll());
 
             changeTilesetModelMatrix(newPosition, headingPitchRoll);
 
@@ -201,31 +233,31 @@ var theApp = (function () {
         }
 
         function doChangeTilesetHeightForGeoReferencedTileset(height) {
-            var heightDifference = originalBoundingSphereCenterHeight - height;
+            let heightDifference = originalBoundingSphereCenterHeight - height;
 
             tileset.modelMatrix = Cesium.Matrix4.fromTranslation(new Cesium.Cartesian3(0, 0, heightDifference));
         }
 
         function doChangeTilesetHeightForNonGeoReferencedTileset(height) {
-            var origModelMatrix = tileset.modelMatrix;
+            let origModelMatrix = tileset.modelMatrix;
 
-            var origPosition = Cesium.Matrix4.getTranslation(origModelMatrix, new Cesium.Cartesian3());
+            let origPosition = Cesium.Matrix4.getTranslation(origModelMatrix, new Cesium.Cartesian3());
 
-            var origCartographic = Cesium.Cartographic.fromCartesian(origPosition);
+            let origCartographic = Cesium.Cartographic.fromCartesian(origPosition);
 
             origCartographic.height = height;
 
-            var newPosition = viewer.scene.globe.ellipsoid.cartographicToCartesian(origCartographic);
+            let newPosition = viewer.scene.globe.ellipsoid.cartographicToCartesian(origCartographic);
 
-            var scene = viewer.scene;
+            let scene = viewer.scene;
 
-            var headingPitchRoll = Cesium.Transforms.fixedFrameToHeadingPitchRoll(origModelMatrix, scene.mapProjection.ellipsoid, undefined, new Cesium.HeadingPitchRoll());
+            let headingPitchRoll = Cesium.Transforms.fixedFrameToHeadingPitchRoll(origModelMatrix, scene.mapProjection.ellipsoid, undefined, new Cesium.HeadingPitchRoll());
 
             changeTilesetModelMatrix(newPosition, headingPitchRoll);
         }
 
         jqTilesetAltitude.change(function () {
-            var altitude = jqTilesetAltitude.val();
+            let altitude = jqTilesetAltitude.val();
             altitude = parseFloat(altitude);
 
             if(isNaN(altitude) || altitude > 15000 || altitude < -1000) {
@@ -234,13 +266,14 @@ var theApp = (function () {
                 return;
             }
 
+            _toggleGlobeSkyBoxAtmosphere(true);
             changeTilesetHeight(altitude);
 
             viewer.zoomTo(tileset);
         });
 
         jQuery('#tileset_heading').change(function () {
-            var heading = jQuery('#tileset_heading').val();
+            let heading = jQuery('#tileset_heading').val();
             heading = parseFloat(heading);
 
             if(isNaN(heading) || heading > 180 || heading < -180) {
@@ -249,13 +282,13 @@ var theApp = (function () {
                 return;
             }
 
-            var origModelMatrix = tileset.modelMatrix;
+            let origModelMatrix = tileset.modelMatrix;
 
-            var origPosition = Cesium.Matrix4.getTranslation(origModelMatrix, new Cesium.Cartesian3());
+            let origPosition = Cesium.Matrix4.getTranslation(origModelMatrix, new Cesium.Cartesian3());
 
-            var scene = viewer.scene;
+            let scene = viewer.scene;
 
-            var headingPitchRoll = Cesium.Transforms.fixedFrameToHeadingPitchRoll(origModelMatrix, scene.mapProjection.ellipsoid, undefined, new Cesium.HeadingPitchRoll());
+            let headingPitchRoll = Cesium.Transforms.fixedFrameToHeadingPitchRoll(origModelMatrix, scene.mapProjection.ellipsoid, undefined, new Cesium.HeadingPitchRoll());
 
             headingPitchRoll.heading = heading * Cesium.Math.RADIANS_PER_DEGREE;
 
@@ -265,7 +298,7 @@ var theApp = (function () {
         });
 
         jQuery('#tileset-transparency-slider').change(function () {
-            var value = this.value;
+            let value = this.value;
 
             tileset.style = new Cesium.Cesium3DTileStyle({
                 color: 'rgba(255, 255, 255,' + value + ')'
@@ -275,8 +308,8 @@ var theApp = (function () {
         });
 
         jqTilesetEstimateAltitude.click(function () {
-            var longitude = jqTilesetLongitude.val();
-            var latitude = jqTilesetLatitude.val();
+            let longitude = jqTilesetLongitude.val();
+            let latitude = jqTilesetLatitude.val();
 
             longitude = parseFloat(longitude);
             latitude = parseFloat(latitude);
@@ -286,10 +319,10 @@ var theApp = (function () {
                 return;
             }
 
-            var globe = viewer.scene.globe;
-            var cartographic = new Cesium.Cartographic(Cesium.Math.toRadians(longitude), Cesium.Math.toRadians(latitude));
+            let globe = viewer.scene.globe;
+            let cartographic = new Cesium.Cartographic(Cesium.Math.toRadians(longitude), Cesium.Math.toRadians(latitude));
 
-            var terrainHeight = globe.getHeight(cartographic);
+            let terrainHeight = globe.getHeight(cartographic);
 
             if (terrainHeight === undefined) {
                 alert('failed to get height!');
@@ -303,17 +336,17 @@ var theApp = (function () {
     }
 
     function _initMeasurementPopup() {
-        var measure = viewer.measure;
+        let measure = viewer.measure;
 
-        var measureViewModel = measure.viewModel;
+        let measureViewModel = measure.viewModel;
 
-        var pointMeasurement = measureViewModel._measurements[7];
-        var distanceMeasurement = measureViewModel._measurements[1];
-        var polylineMeasurement = measureViewModel._measurements[2];
-        var areaMeasurement = measureViewModel._measurements[6];
+        let pointMeasurement = measureViewModel._measurements[7];
+        let distanceMeasurement = measureViewModel._measurements[1];
+        let polylineMeasurement = measureViewModel._measurements[2];
+        let areaMeasurement = measureViewModel._measurements[6];
 
         function addMeasurementCheckbox(id, label) {
-            var newCheckBox = ' <div class="form-check">\n' +
+            let newCheckBox = ' <div class="form-check">\n' +
                 '                                    <input class="form-check-input" type="checkbox" id="' + id + '" checked>\n' +
                 '                                    <label class="form-check-label" for="' + id + '">\n' +
                 label +
@@ -323,10 +356,10 @@ var theApp = (function () {
             $('#measurement-list').append(newCheckBox);
 
             $('[id=' + id + ']').change(function () {
-                var tokens = id.split('-');
+                let tokens = id.split('-');
 
-                var measurementType = tokens[0];
-                var measurementIndex = parseInt(tokens[1]);
+                let measurementType = tokens[0];
+                let measurementIndex = parseInt(tokens[1]);
 
                 if(measurementType === 'point') {
                     showHidePointMeasurement(pointMeasurement.measurementResult[measurementIndex], this.checked);
@@ -351,7 +384,7 @@ var theApp = (function () {
         pointMeasurement.newMeasurement.addEventListener(function (measurementIndex) {
             console.log(measurementIndex);
 
-            var measurement = pointMeasurement.measurementResult[measurementIndex];
+            let measurement = pointMeasurement.measurementResult[measurementIndex];
 
             console.log(measurement);
 
@@ -361,7 +394,7 @@ var theApp = (function () {
         distanceMeasurement.newMeasurement.addEventListener(function (measurementIndex) {
             console.log(measurementIndex);
 
-            var measurement = distanceMeasurement.measurementResult[measurementIndex];
+            let measurement = distanceMeasurement.measurementResult[measurementIndex];
 
             console.log(measurement);
 
@@ -371,7 +404,7 @@ var theApp = (function () {
         polylineMeasurement.newMeasurement.addEventListener(function (measurementIndex) {
             console.log(measurementIndex);
 
-            var measurement = polylineMeasurement.measurementResult[measurementIndex];
+            let measurement = polylineMeasurement.measurementResult[measurementIndex];
 
             console.log(measurement);
 
@@ -381,7 +414,7 @@ var theApp = (function () {
         areaMeasurement.newMeasurement.addEventListener(function (measurementIndex) {
             console.log(measurementIndex);
 
-            var measurement = areaMeasurement.measurementResult[measurementIndex];
+            let measurement = areaMeasurement.measurementResult[measurementIndex];
 
             console.log(measurement);
 
@@ -462,7 +495,7 @@ var theApp = (function () {
         function showHidePolylineMeasurement(polylineMeasurement, show) {
             polylineMeasurement.label.show = show;
 
-            for (var i = 0; i < polylineMeasurement.segmentLabels.length; i++)
+            for (let i = 0; i < polylineMeasurement.segmentLabels.length; i++)
                 polylineMeasurement.segmentLabels[i].show = show;
 
             polylineMeasurement.polyline.show = show;
@@ -476,27 +509,27 @@ var theApp = (function () {
             areaMeasurement.polygon.show = show;
             areaMeasurement.polyline.show = show;
 
-            for (var i = 0; i < areaMeasurement.points.length; i++)
+            for (let i = 0; i < areaMeasurement.points.length; i++)
                 areaMeasurement.points[i].show = show;
         }
 
         function showHideAllMeasurement(show) {
-            var pointMeasurements = pointMeasurement.measurementResult;
+            let pointMeasurements = pointMeasurement.measurementResult;
 
-            for(var i = 0; i < pointMeasurements.length; i++)
+            for(let i = 0; i < pointMeasurements.length; i++)
                 showHidePointMeasurement(pointMeasurements[i], show);
 
-            var distanceMeasurements = distanceMeasurement.measurementResult;
+            let distanceMeasurements = distanceMeasurement.measurementResult;
 
             for(i = 0; i < distanceMeasurements.length; i++)
                 showHideDistanceMeasurement(distanceMeasurements[i], show);
 
-            var polylineMeasurements = polylineMeasurement.measurementResult;
+            let polylineMeasurements = polylineMeasurement.measurementResult;
 
             for(i = 0; i < polylineMeasurements.length; i++)
                 showHidePolylineMeasurement(polylineMeasurements[i], show);
 
-            var areaMeasurements = areaMeasurement.measurementResult;
+            let areaMeasurements = areaMeasurement.measurementResult;
 
             for(i = 0; i < areaMeasurements.length; i++)
                 showHideAreaMeasurement(areaMeasurements[i], show);
@@ -505,7 +538,7 @@ var theApp = (function () {
         }
 
         $('#show-hide-all-measurement-checkbox').change(function () {
-            var checked = this.checked;
+            let checked = this.checked;
 
             showHideAllMeasurement(checked);
 
@@ -564,7 +597,7 @@ var theApp = (function () {
     }
 
     function _saveTilesetModelMatrixForGeoReferencedTileset() {
-        var data = {
+        let data = {
             longitude: 0,
             latitude: 0,
             height: jqTilesetAltitude.val(),
@@ -579,21 +612,21 @@ var theApp = (function () {
 
     function _saveTilesetModelMatrixForNonGeoReferencedTileset() {
         if(transformEditor && transformEditor.active) {
-            var position = transformEditor.viewModel.position;
-            var headingPitchRoll = transformEditor.viewModel.headingPitchRoll;
-            var scale = transformEditor.viewModel.scale;
+            let position = transformEditor.viewModel.position;
+            let headingPitchRoll = transformEditor.viewModel.headingPitchRoll;
+            let scale = transformEditor.viewModel.scale;
 
             _doSaveTilesetModelMatrix(position, headingPitchRoll, scale);
         } else {
-            var currentModelMatrix = tileset.modelMatrix;
+            let currentModelMatrix = tileset.modelMatrix;
 
-            var position = Cesium.Matrix4.getTranslation(currentModelMatrix, new Cesium.Cartesian3());
+            let position = Cesium.Matrix4.getTranslation(currentModelMatrix, new Cesium.Cartesian3());
 
-            var scene = viewer.scene;
+            let scene = viewer.scene;
 
-            var headingPitchRoll = Cesium.Transforms.fixedFrameToHeadingPitchRoll(currentModelMatrix, scene.mapProjection.ellipsoid, undefined, new Cesium.HeadingPitchRoll());
+            let headingPitchRoll = Cesium.Transforms.fixedFrameToHeadingPitchRoll(currentModelMatrix, scene.mapProjection.ellipsoid, undefined, new Cesium.HeadingPitchRoll());
 
-            var scale = Cesium.Matrix4.getScale(currentModelMatrix, new Cesium.Cartesian3());
+            let scale = Cesium.Matrix4.getScale(currentModelMatrix, new Cesium.Cartesian3());
 
             _doSaveTilesetModelMatrix(position, headingPitchRoll, scale);
         }
@@ -609,11 +642,11 @@ var theApp = (function () {
     }
 
     function _doSaveTilesetModelMatrix(position, headingPitchRoll, scale) {
-        var cartographic = Cesium.Cartographic.fromCartesian(position);
+        let cartographic = Cesium.Cartographic.fromCartesian(position);
 
-        var precision = 8;
+        let precision = 8;
 
-        var data = {
+        let data = {
             longitude: Cesium.Math.toDegrees(cartographic.longitude).toFixed(precision),
             latitude: Cesium.Math.toDegrees(cartographic.latitude).toFixed(precision),
             height: cartographic.height.toFixed(precision),
@@ -640,7 +673,7 @@ var theApp = (function () {
             success : function( response ) {
                 jqSaveTilesetModelMatrixButton.prop('disabled', false);
 
-                var data = JSON.parse(response);
+                let data = JSON.parse(response);
 
                 if(data.ret === false) {
                     alert('Passed values is the same as the values that is already in the database!');
@@ -709,7 +742,7 @@ var theApp = (function () {
             }
         ];
 
-        var tilesetURL = 'https://s3.us-east-2.wasabisys.com/construkted-assets/' + CONSTRUKTED_AJAX.post_slug + '/tileset.json';
+        let tilesetURL = 'https://s3.us-east-2.wasabisys.com/construkted-assets/' + CONSTRUKTED_AJAX.post_slug + '/tileset.json';
 
         tileset = viewer.scene.primitives.add(
             new Cesium.Cesium3DTileset({
@@ -740,22 +773,14 @@ var theApp = (function () {
         tileset.pointCloudShading.eyeDomeLightingRadius = 0.5;
 
         tileset.readyPromise.then(function(){
-            window.isMobile = function() {
-                let check = false;
-
-                (function(a){if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0,4))) check = true;})(navigator.userAgent||navigator.vendor||window.opera);
-
-                return check;
-            };
-
             jQuery.fn.doubletap = jQuery.fn.doubletap || function(handler, delay) {
                 delay = delay == null ? 300 : delay;
 
                 this.bind('touchend', function(event) {
-                    var now = new Date().getTime();
+                    let now = new Date().getTime();
                     // The first time this will make delta a negative number.
-                    var lastTouch = $(this).data('lastTouch') || now + 1;
-                    var delta = now - lastTouch;
+                    let lastTouch = $(this).data('lastTouch') || now + 1;
+                    let delta = now - lastTouch;
                     if (delta < delay && 0 < delta) {
                         // After we detect a doubletap, start over.
                         $(this).data('lastTouch', null);
@@ -768,7 +793,7 @@ var theApp = (function () {
                 });
             };
 
-            var jqCesiumCanvas = jQuery('.cesium-widget > canvas');
+            let jqCesiumCanvas = jQuery('.cesium-widget > canvas');
 
             jqCesiumCanvas.doubletap(function (event) {
                 if(event && event.originalEvent && event.originalEvent.changedTouches && event.originalEvent.changedTouches[0])
@@ -791,21 +816,24 @@ var theApp = (function () {
                 }
             });
 
-            var options = {
+            let options = {
                 cesiumViewer: viewer,
                 main3dTileset: tileset,
                 defaultCameraPositionOrientationJson : CONSTRUKTED_AJAX.default_camera_position_direction,
                 isMobile: isMobile(),
-                ignoreCollisionDetection: false
+                ignoreCollisionDetection: false,
+                immersiveArEnabled : xrButton.enabled
             };
 
             cesiumFPVCameraController = new CesiumFVPCameraController(options);
 
             cesiumFPVCameraController.FPVStarted().addEventListener(function() {
+
                 jqExitFPVModeButton.show();
                 jQuery('body').addClass('fpv-mode-on');
                 jQuery('.fpv-navigation').show();
 
+                toggleXrItems();
                 window.addEventListener("keydown", _block_keys, false);
             });
 
@@ -813,6 +841,8 @@ var theApp = (function () {
                 jqExitFPVModeButton.hide();
                 jQuery('body').removeClass('fpv-mode-on');
                 jQuery('.fpv-navigation').hide();
+
+                toggleXrItems();
 
                 window.removeEventListener("keydown", _block_keys, false);
             });
@@ -903,16 +933,18 @@ var theApp = (function () {
                             transformEditor.viewModel.deactivate();
                         }
                     } else {
+                        _toggleGlobeSkyBoxAtmosphere(false);
+
                         tileset.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(Cesium.Cartesian3.fromDegrees(0, 0));
 
-                        var modelMatrixUpdateTried = false;
+                        let modelMatrixUpdateTried = false;
 
                         viewer.scene.globe.tileLoadProgressEvent.addEventListener(function (queuedTileCount) {
                             if(!modelMatrixUpdateTried && viewer.scene.globe.tilesLoaded){
-                                var cartographic = new Cesium.Cartographic(0, 0);
+                                let cartographic = new Cesium.Cartographic(0, 0);
 
-                                var magicTerrainHeight = 17;
-                                var terrainHeight = viewer.scene.globe.getHeight(cartographic);
+                                let magicTerrainHeight = 17;
+                                let terrainHeight = viewer.scene.globe.getHeight(cartographic);
 
                                 if(terrainHeight) {
                                     if(terrainHeight < magicTerrainHeight) {
@@ -954,16 +986,16 @@ var theApp = (function () {
                     jqEditAssetGeoLocationButton.prop('disabled', true);
                     jqTilesetEstimateAltitude.prop('disabled', true);
 
-                    var position = tileset.boundingSphere.center;
+                    let position = tileset.boundingSphere.center;
 
-                    var carto = Cesium.Cartographic.fromCartesian(position);
+                    let carto = Cesium.Cartographic.fromCartesian(position);
 
                     originalBoundingSphereCenterHeight = carto.height;
 
                     if(CONSTRUKTED_AJAX.asset_geo_location) {
-                        var assetGeoLocationData = CONSTRUKTED_AJAX.asset_geo_location;
+                        let assetGeoLocationData = CONSTRUKTED_AJAX.asset_geo_location;
 
-                        var heightDifference = originalBoundingSphereCenterHeight - parseFloat(assetGeoLocationData.height);
+                        let heightDifference = originalBoundingSphereCenterHeight - parseFloat(assetGeoLocationData.height);
 
                         tileset.modelMatrix = Cesium.Matrix4.fromTranslation(new Cesium.Cartesian3(0, 0, heightDifference));
 
@@ -984,20 +1016,31 @@ var theApp = (function () {
         });
     }
 
+    function _toggleGlobeSkyBoxAtmosphere(show) {
+        viewer.scene.globe.show = show;
+        viewer.scene.skyAtmosphere.show = show;
+        viewer.scene.skyBox.show = show;
+
+        if(show)
+            viewer.scene.backgroundColor = Cesium.Color.BLACK.clone();
+        else
+            viewer.scene.backgroundColor = Cesium.Color.LIGHTGREY.clone();
+    }
+
     function _setTilesetModelMatrix(tileset, modelMatrixData) {
-        var position = modelMatrixData.position;
+        let position = modelMatrixData.position;
 
-        var center = new Cesium.Cartesian3(position.x, position.y, position.z);
+        let center = new Cesium.Cartesian3(position.x, position.y, position.z);
 
-        var headingPitchRoll = modelMatrixData.headingPitchRoll;
+        let headingPitchRoll = modelMatrixData.headingPitchRoll;
 
-        var hpr = new Cesium.HeadingPitchRoll(headingPitchRoll.heading ,headingPitchRoll.pitch, headingPitchRoll.roll);
+        let hpr = new Cesium.HeadingPitchRoll(headingPitchRoll.heading ,headingPitchRoll.pitch, headingPitchRoll.roll);
 
-        var scale = modelMatrixData.scale;
+        let scale = modelMatrixData.scale;
 
-        var scaleCartesian3 = new Cesium.Cartesian3(scale.x, scale.y, scale.z);
+        let scaleCartesian3 = new Cesium.Cartesian3(scale.x, scale.y, scale.z);
 
-        var modelMatrix = Cesium.Transforms.headingPitchRollToFixedFrame(center, hpr);
+        let modelMatrix = Cesium.Transforms.headingPitchRollToFixedFrame(center, hpr);
 
         tileset.modelMatrix = Cesium.Matrix4.setScale(modelMatrix, scaleCartesian3, new Cesium.Matrix4());
     }
@@ -1006,7 +1049,7 @@ var theApp = (function () {
         viewer.scene.requestRender();
         viewer.render();
 
-        var mediumQuality  = viewer.canvas.toDataURL('image/jpeg', 0.5);
+        let mediumQuality  = viewer.canvas.toDataURL('image/jpeg', 0.5);
 
         jqCaptureThumbnailButton.prop('disabled', true);
 
@@ -1072,7 +1115,7 @@ var theApp = (function () {
         });
     }
 
-    function tryDeactivateTransformEditor() {
+    function _tryDeactivateTransformEditor() {
         if(!transformEditor)
             return;
 
@@ -1082,9 +1125,9 @@ var theApp = (function () {
     // https://github.com/outsider787/gw3_construkted/wiki/Construkted-Meta-Data-Definition
 
     function _getRelativeCurrentCameraPositionOrientationJsonString() {
-        var camera = viewer.camera;
+        let camera = viewer.camera;
 
-        var data = {};
+        let data = {};
 
         data.offsetX = camera.position.x - tileset.boundingSphere.center.x;
         data.offsetY = camera.position.y - tileset.boundingSphere.center.y;
@@ -1097,16 +1140,206 @@ var theApp = (function () {
         return JSON.stringify(data);
     }
 
+    function onRequestSession() {
+        // Requests an 'immersive-ar' session, which ensures that the users
+        // environment will be visible either via video passthrough or a
+        // transparent display. This may be presented either in a headset or
+        // fullscreen on a mobile device.
+        let uiElement = document.getElementById("overlay-content"); //ui
+        return navigator.xr
+            .requestSession("immersive-ar", {
+                optionalFeatures: ["dom-overlay", "dom-overlay-for-handheld-ar"],
+                domOverlay: { root: uiElement },
+            })
+            .then((session) => {
+                xrButton.setSession(session);
+                session.isImmersive = true;
+                onSessionStarted(session);
+            });
+    }
+
+    function onEndSession(session) {
+        session.end();
+
+        cesiumFPVCameraController.setAllowStartPositionTap(true);
+        cesiumFPVCameraController.exitFPV();
+    }
+
+    function onSessionStarted(session) {
+        session.addEventListener("end", onSessionEnded);
+
+        if (session.isImmersive) {
+            if(!cesiumFPVCameraController.started()) {
+                if (cesiumFPVCameraController.startFPVPositionMobile() == null) {
+                    alert("Please tap on 3d tile to start FPV!");
+                    cesiumFPVCameraController.setAllowStartPositionTap(true);
+                    return;
+                } else {
+                    cesiumFPVCameraController.startFPVMobile();
+                }
+            }
+        }
+
+        initGL();
+
+        session.updateRenderState({ baseLayer: new XRWebGLLayer(session, gl) });
+
+        let refSpaceType = session.isImmersive ? "local" : "viewer";
+
+        session.requestReferenceSpace(refSpaceType).then((refSpace) => {
+            if (session.isImmersive) {
+                xrImmersiveRefSpace = refSpace;
+            } else {
+                inlineViewerHelper = new CONSTRUKTEDXR.InlineViewerHelper(gl.canvas, refSpace);
+            }
+            session.requestAnimationFrame(onXRFrame);
+        });
+    }
+
+    function onSessionEnded(event) {
+        if (event.session.isImmersive) {
+            xrButton.setSession(null);
+            // Turn the background back on when we go back to the inlive view.
+        }
+    }
+
+    function onXRFrame(t, frame) {
+        let session = frame.session;
+        let refSpace = session.isImmersive
+            ? xrImmersiveRefSpace
+            : inlineViewerHelper.referenceSpace;
+        let pose = frame.getViewerPose(refSpace);
+
+        if (pose) {
+            let headEuler = CONSTRUKTEDXR.create$1();
+            let or = pose.transform.orientation;
+            CONSTRUKTEDXR.eulerFromQuaternionDegree(headEuler, [or.x, or.y, or.z, or.w], "YXZ");
+
+            const event = new CustomEvent("viewerPoseUpdatedEvent", {
+                detail: {
+                    posX: pose.transform.position.x,
+                    posY: pose.transform.position.y,
+                    posZ: pose.transform.position.z,
+                    rotX: -headEuler[1],
+                    rotY: headEuler[0],
+                    rotZ: headEuler[2],
+                },
+            });
+
+            // customEventTarget.dispatchEvent(event);
+
+            if (mobile)
+                changeCesiumCamera(
+                    pose.transform.position.x,
+                    pose.transform.position.y,
+                    pose.transform.position.z,
+                    -headEuler[1],
+                    headEuler[0],
+                    headEuler[2]
+                );
+        }
+
+        session.requestAnimationFrame(onXRFrame);
+
+        // Assumed to be a XRWebGLLayer for now.
+        let layer = session.renderState.baseLayer;
+
+        gl.bindFramebuffer(gl.FRAMEBUFFER, layer.framebuffer);
+    }
+
+    function changeCesiumCamera(
+        translationX,
+        translationY,
+        translationZ,
+        rotationX,
+        rotationY,
+        rotationZ
+    ) {
+        if (!cesiumFPVCameraController) return;
+
+        if (!cesiumFPVCameraController.started()) return;
+
+        cesiumFPVCameraController.setView(
+            translationX * sensitivity,
+            translationY * sensitivity,
+            translationZ * sensitivity,
+            rotationX,
+            rotationY,
+            rotationZ
+        );
+    }
+
+    // Creates a WebGL context and initializes it with some common default state.
+    function createWebGLContext(glAttribs) {
+        glAttribs = glAttribs || { alpha: false };
+
+        let webglCanvas = document.getElementById("xr-canvas");
+        let contextTypes = glAttribs.webgl2
+            ? ["webgl2"]
+            : ["webgl", "experimental-webgl"];
+        let context = null;
+
+        for (let contextType of contextTypes) {
+            context = webglCanvas.getContext(contextType, glAttribs);
+            if (context) {
+                break;
+            }
+        }
+
+        if (!context) {
+            let webglType = glAttribs.webgl2 ? "WebGL 2" : "WebGL";
+            console.error("This browser does not support " + webglType + ".");
+            return null;
+        }
+
+        return context;
+    }
+
+    function initGL() {
+        gl = createWebGLContext({
+            xrCompatible: true,
+        });
+    }
+
+    function initXR() {
+        try {
+            xrButton = new CONSTRUKTEDXR.WebXRButton({
+                onRequestSession: onRequestSession,
+                onEndSession: onEndSession,
+                textEnterXRTitle: "START AR",
+                textXRNotFoundTitle: "AR NOT FOUND",
+                textExitXRTitle: "EXIT  AR",
+            });
+
+            document.querySelector("#cesiumContainer").appendChild(xrButton.domElement);
+
+            if (navigator.xr) {
+                // Checks to ensure that 'immersive-ar' mode is available, and only
+                // enables the button if so.
+                navigator.xr.isSessionSupported("immersive-ar").then((supported) => {
+                    xrButton.enabled = supported;
+                });
+
+                navigator.xr.requestSession("inline").then(onSessionStarted);
+            }
+        }
+        catch (e) {
+            alert(e.message);
+        }
+    }
+
     return {
         viewer: viewer,
         cameraController: cesiumFPVCameraController,
-        start: start,
-        tryDeactivateTransformEditor: tryDeactivateTransformEditor
+        start: _start,
+        tryDeactivateTransformEditor: _tryDeactivateTransformEditor
     };
 })();
 
 jQuery(document).ready(function(){
     window.$ = jQuery;
+
+    initAssetModelFeatures();
 
     if(CONSTRUKTED_AJAX.asset_geo_location && CONSTRUKTED_AJAX.asset_geo_location !== '') {
         CONSTRUKTED_AJAX.asset_geo_location = JSON.parse(CONSTRUKTED_AJAX.asset_geo_location);
@@ -1117,10 +1350,8 @@ jQuery(document).ready(function(){
     theApp.start();
 });
 
-
-
 // Create the asset modal features
-jQuery(document).ready(function(){
+function initAssetModelFeatures() {
     // Check if we have a cookie with the modal box closed
     let ckAssetModal = jQuery.cookie('ck-asset-modal');
     if( ckAssetModal == 'y' ) {
@@ -1149,6 +1380,5 @@ jQuery(document).ready(function(){
 
     jQuery('.fpv-nav-btn').on('click', function(e){
         e.preventDefault();
-    })
-});
-
+    });
+}

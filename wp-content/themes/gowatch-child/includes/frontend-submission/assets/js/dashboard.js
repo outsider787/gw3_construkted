@@ -20,25 +20,33 @@ var runningStatusCodes = {
     PUBLISHING_CONSTRUKTED_ASSET: 70
 };
 
+var apiUrls = [];
+
 function updateState() {
-    var url = dashboard_ajax.construkted_api_url + "/task/all";
+    apiUrls.forEach( (apiUrl, index, array) => {
 
-    $.ajax({
-        url : url,
-        type : 'get',
-        data : {
-        },
-        success : function( response ) {
-            doUpdateState(response);
+        function getTaskAll() {
+            $.ajax({
+                url : apiUrl + "/task/all",
+                type : 'get',
+                data : {
+                },
+                success : function( response ) {
+                    response.apiUrl = apiUrl;
 
-            setTimeout(function(){ updateState(); }, 1000);
-        },
-        error: function(xhr, status, error) {
-            doUpdateState(null);
-            console.error(error);
-            setTimeout(function(){ updateState(); }, 1000);
+                    doUpdateState(response);
+
+                    setTimeout(function(){ getTaskAll(); }, 1000);
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                    setTimeout(function(){ getTaskAll(); }, 1000);
+                }
+            });
         }
-    });
+
+        getTaskAll();
+    })
 }
 
 function doUpdateState(data) {
@@ -50,6 +58,10 @@ function doUpdateState(data) {
 
         var postId = postStateDiv.getAttribute('data-post-id');
         var wpPostState = postStateDiv.getAttribute('data-wp-state');
+        let apiUrl = postStateDiv.getAttribute('data-api-url');
+
+        if(data.apiUrl !== apiUrl)
+            continue;
 
         // we do not need to update state.
         if(wpPostState === 'publish'){
@@ -185,6 +197,28 @@ function initState() {
     }
 }
 
+function aggregateAPIUrl() {
+    var postStateDivList = $("div[id^='post-processing-state']");
+
+    for(var i = 0; i < postStateDivList.length; i++) {
+        // this is HTML element
+        var postStateDiv = postStateDivList[i];
+
+        var apiUrl = postStateDiv.getAttribute('data-api-url');
+
+        if(!apiUrl)
+            continue;
+
+        apiUrl = apiUrl.trim();
+
+        if(apiUrl === "")
+            continue;
+
+        if(apiUrls.indexOf(apiUrl) === -1)
+            apiUrls.push(apiUrl);
+    }
+}
+
 function showErrorMessage(message) {
     var data = {
         alert: 'error',
@@ -216,6 +250,7 @@ jQuery(document).ready(function(){
     window.$ = jQuery;
     console.log("jquery initialized");
 
+    aggregateAPIUrl();
     initState();
     updateState();
 });

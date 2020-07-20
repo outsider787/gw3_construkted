@@ -472,10 +472,10 @@ $frontend_dashboard->profile_tabs = array_insert_after($frontend_dashboard->prof
 
 wp_enqueue_script( 'dashboard-js', get_stylesheet_directory_uri() . '/includes/frontend-submission/assets/js/dashboard.js', array('jquery'), false, true );
 
-wp_localize_script( 'dashboard-js', 'dashboard_ajax', array(
-        'construkted_api_url' =>CONSTRUKTED_TILING_SERVER
-    )
-);
+//wp_localize_script( 'dashboard-js', 'dashboard_ajax', array(
+//        'construkted_api_url' =>CONSTRUKTED_TILING_SERVER
+//    )
+//);
 ?>
 
 

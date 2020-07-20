@@ -834,6 +834,11 @@ article .entry-meta-date a::after{
     float: left;
 }
 
+#xr-canvas{
+    width: 100%; height: 0;
+    background-color: red;
+}
+
 
 
 /**
@@ -2223,11 +2228,10 @@ table.variations,
 }
 #exitFPVModeButton {
     display: inline-flex;
-    top: 20px;
-    height: 46px;
+    top: 10px;
+    height: 55px;
     padding: 16px 34px;
-    left: 50%;
-    transform: translateX(-50%);
+    right: 15px;
     background: rgba(230,230,230,0.3);
     border: 1px solid rgba(230,230,230,0.2);
     border-radius: 5px;
@@ -2245,6 +2249,20 @@ table.variations,
     -webkit-touch-callout: none;
     -webkit-user-select: none;
 }
+button.webvr-ui-button,
+#xr-canvas {
+    display: none;
+}
+button.webvr-ui-button {
+    position: absolute;
+    top: 10px;
+    left: 15px;
+}
+
+#overlay-content.full-overlay #cesiumContainer {
+    height: 100%;
+}
+
 @media (hover: hover) {
     #exitFPVModeButton:hover {
         border-color: rgba(230,230,230,0.5);
