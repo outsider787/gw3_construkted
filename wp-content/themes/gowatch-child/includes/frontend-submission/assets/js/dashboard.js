@@ -21,6 +21,7 @@ var runningStatusCodes = {
 };
 
 var apiUrls = [];
+var unreachableAPIUrls = [];
 
 function updateState() {
     apiUrls.forEach( (apiUrl, index, array) => {
@@ -39,6 +40,9 @@ function updateState() {
                     setTimeout(function(){ getTaskAll(); }, 1000);
                 },
                 error: function(xhr, status, error) {
+                    if(!unreachableAPIUrls.includes(apiUrl))
+                        unreachableAPIUrls.push(apiUrl);
+
                     console.error(error);
                     setTimeout(function(){ getTaskAll(); }, 1000);
                 }
@@ -60,6 +64,16 @@ function doUpdateState(data) {
         var wpPostState = postStateDiv.getAttribute('data-wp-state');
         let apiUrl = postStateDiv.getAttribute('data-api-url');
 
+        if(apiUrl === "") {
+            postStateDiv.innerHTML = 'ERROR<br>Please contact<br>support@construkted.com';
+            continue;
+        }
+
+        if(unreachableAPIUrls.includes(apiUrl)) {
+            postStateDiv.innerHTML = 'ERROR<br>Please contact<br>support@construkted.com';
+            continue;
+        }
+
         if(data.apiUrl !== apiUrl)
             continue;
 
@@ -72,7 +86,8 @@ function doUpdateState(data) {
 
         if(taskInfo === null) {
             if(wpPostState === 'pending')
-                postStateDiv.innerHTML = 'Initializing...';
+                postStateDiv.innerHTML = 'ERROR<br>Please contact<br>support@construkted.com';
+                //postStateDiv.innerHTML = 'Initializing...';
             else
                 postStateDiv.innerHTML = wpPostState;
 
@@ -91,8 +106,8 @@ function doUpdateState(data) {
         var percent = getProcessingProgress(taskInfo);
 
         if(percent == 100) {
-            if(statusCode !== statusCode.COMPLETED) {
-                postStateDiv.innerHTML = 'ERROR<br>Please contact<br>support@construkted.com';
+            if(statusCode !== statusCodes.COMPLETED) {
+                postStateDiv.innerHTML = '100%';
             }
             else
                 postStateDiv.innerHTML = 'Completed';
