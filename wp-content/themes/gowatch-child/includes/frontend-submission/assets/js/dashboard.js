@@ -64,6 +64,11 @@ function doUpdateState(data) {
         var wpPostState = postStateDiv.getAttribute('data-wp-state');
         let apiUrl = postStateDiv.getAttribute('data-api-url');
 
+        if(wpPostState === "publish") {
+            postStateDiv.innerHTML = 'Completed';
+            continue;
+        }
+
         if(apiUrl === "") {
             postStateDiv.innerHTML = 'ERROR<br>Please contact<br>support@construkted.com';
             continue;
