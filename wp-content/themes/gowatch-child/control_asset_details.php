@@ -19,10 +19,10 @@ header('Access-Control-Allow-Headers: Content-Type');
 */
 
 $allowedIPs = [
-    '::1',
-    '158.106.136.192',
-    '135.23.228.38',
-    '185.164.35.17'
+    '::1',             // localhost
+    '158.106.136.192', // tile.api.construkted.com or tile-gw3.construkted.com
+    '135.23.228.38',   // tile02.construkted.com
+    '99.224.54.145'    // tile.api03.construkted.com
 ];
 
 foreach ($allowedIPs as $ip) {
@@ -31,7 +31,7 @@ foreach ($allowedIPs as $ip) {
 
 if(!isset($_SERVER['REMOTE_ADDR']) || (isset($_SERVER['REMOTE_ADDR']) && !in_array($_SERVER['REMOTE_ADDR'], $allowedIPs)) ) {
     $addr = $_SERVER['REMOTE_ADDR'];
-    echo json_encode( array('errCode' => 1, 'errMsg' => $addr . 'Not allowed!'), 405 );
+    echo json_encode( array('errCode' => 1, 'errMsg' => $addr . ' Not allowed!'), 405 );
 
     exit();
 }
