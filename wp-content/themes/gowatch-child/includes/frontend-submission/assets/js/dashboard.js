@@ -142,7 +142,7 @@ function getProcessingProgress(taskInfo) {
         else{
             var tilingPercent = taskInfo.tilingProgress;
 
-            var percent = 20 + tilingPercent / 100 * 50;
+            var percent = 20 + tilingPercent / 100 * (70 - 20);
 
             return percent.toFixed(1);
         }

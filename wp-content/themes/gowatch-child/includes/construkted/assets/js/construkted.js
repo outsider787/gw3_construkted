@@ -917,56 +917,9 @@ let theApp = (function () {
 
             //required since the models may not be geographically referenced.
 
-            if(tileset.asset.extras !== null) {
-                if (tileset.asset.extras.ion.georeferenced !== true) {
-                    if (tileset_model_matrix) {
-                        _setTilesetModelMatrix(tileset, tileset_model_matrix);
-
-                        if(CONSTRUKTED_AJAX.is_owner) {
-                            transformEditor = new Cesium.TransformEditor({
-                                container: viewer.container,
-                                scene: viewer.scene,
-                                transform: tileset.modelMatrix,
-                                boundingSphere: tileset.boundingSphere
-                            });
-
-                            transformEditor.viewModel.deactivate();
-                        }
-                    } else {
-                        _toggleGlobeSkyBoxAtmosphere(false);
-
-                        tileset.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(Cesium.Cartesian3.fromDegrees(0, 0));
-
-                        let modelMatrixUpdateTried = false;
-
-                        viewer.scene.globe.tileLoadProgressEvent.addEventListener(function (queuedTileCount) {
-                            if(!modelMatrixUpdateTried && viewer.scene.globe.tilesLoaded){
-                                let cartographic = new Cesium.Cartographic(0, 0);
-
-                                let magicTerrainHeight = 17;
-                                let terrainHeight = viewer.scene.globe.getHeight(cartographic);
-
-                                if(terrainHeight) {
-                                    if(terrainHeight < magicTerrainHeight) {
-                                        console.warn('invalid terrain height 0/0 : ' + terrainHeight);
-                                        terrainHeight = magicTerrainHeight;
-                                    }
-                                }
-                                else {
-                                    console.warn('failed to get terrain height 0/0');
-                                    terrainHeight = magicTerrainHeight;
-                                }
-
-                                tileset.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(Cesium.Cartesian3.fromDegrees(0, 0, terrainHeight));
-
-                                jqTilesetAltitude.val(terrainHeight);
-
-                                modelMatrixUpdateTried = true;
-
-                                viewer.camera.flyToBoundingSphere(tileset.boundingSphere);
-                            }
-                        });
-                    }
+            if (!georeferenced(tileset)) {
+                if (tileset_model_matrix) {
+                    _setTilesetModelMatrix(tileset, tileset_model_matrix);
 
                     if(CONSTRUKTED_AJAX.is_owner) {
                         transformEditor = new Cesium.TransformEditor({
@@ -978,35 +931,80 @@ let theApp = (function () {
 
                         transformEditor.viewModel.deactivate();
                     }
+                } else {
+                    _toggleGlobeSkyBoxAtmosphere(false);
+
+                    tileset.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(Cesium.Cartesian3.fromDegrees(0, 0));
+
+                    let modelMatrixUpdateTried = false;
+
+                    viewer.scene.globe.tileLoadProgressEvent.addEventListener(function (queuedTileCount) {
+                        if(!modelMatrixUpdateTried && viewer.scene.globe.tilesLoaded){
+                            let cartographic = new Cesium.Cartographic(0, 0);
+
+                            let magicTerrainHeight = 17;
+                            let terrainHeight = viewer.scene.globe.getHeight(cartographic);
+
+                            if(terrainHeight) {
+                                if(terrainHeight < magicTerrainHeight) {
+                                    console.warn('invalid terrain height 0/0 : ' + terrainHeight);
+                                    terrainHeight = magicTerrainHeight;
+                                }
+                            }
+                            else {
+                                console.warn('failed to get terrain height 0/0');
+                                terrainHeight = magicTerrainHeight;
+                            }
+
+                            tileset.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(Cesium.Cartesian3.fromDegrees(0, 0, terrainHeight));
+
+                            jqTilesetAltitude.val(terrainHeight);
+
+                            modelMatrixUpdateTried = true;
+
+                            viewer.camera.flyToBoundingSphere(tileset.boundingSphere);
+                        }
+                    });
                 }
-                else {
-                    jqTilesetLatitude.prop('disabled', true);
-                    jqTilesetLongitude.prop('disabled', true);
-                    jqTilesetHeading.prop('disabled', true);
-                    jqEditAssetGeoLocationButton.prop('disabled', true);
-                    jqTilesetEstimateAltitude.prop('disabled', true);
 
-                    let position = tileset.boundingSphere.center;
+                if(CONSTRUKTED_AJAX.is_owner) {
+                    transformEditor = new Cesium.TransformEditor({
+                        container: viewer.container,
+                        scene: viewer.scene,
+                        transform: tileset.modelMatrix,
+                        boundingSphere: tileset.boundingSphere
+                    });
 
-                    let carto = Cesium.Cartographic.fromCartesian(position);
+                    transformEditor.viewModel.deactivate();
+                }
+            }
+            else {
+                jqTilesetLatitude.prop('disabled', true);
+                jqTilesetLongitude.prop('disabled', true);
+                jqTilesetHeading.prop('disabled', true);
+                jqEditAssetGeoLocationButton.prop('disabled', true);
+                jqTilesetEstimateAltitude.prop('disabled', true);
 
-                    originalBoundingSphereCenterHeight = carto.height;
+                let position = tileset.boundingSphere.center;
 
-                    if(CONSTRUKTED_AJAX.asset_geo_location) {
-                        let assetGeoLocationData = CONSTRUKTED_AJAX.asset_geo_location;
+                let carto = Cesium.Cartographic.fromCartesian(position);
 
-                        let heightDifference = originalBoundingSphereCenterHeight - parseFloat(assetGeoLocationData.height);
+                originalBoundingSphereCenterHeight = carto.height;
 
-                        tileset.modelMatrix = Cesium.Matrix4.fromTranslation(new Cesium.Cartesian3(0, 0, heightDifference));
+                if(CONSTRUKTED_AJAX.asset_geo_location) {
+                    let assetGeoLocationData = CONSTRUKTED_AJAX.asset_geo_location;
 
-                        jqTilesetAltitude.val(assetGeoLocationData.height);
-                    }
-                    else
-                    {
-                        jqTilesetLongitude.val(Cesium.Math.toDegrees(carto.longitude));
-                        jqTilesetLatitude.val(Cesium.Math.toDegrees(carto.latitude));
-                        jqTilesetAltitude.val(carto.height);
-                    }
+                    let heightDifference = originalBoundingSphereCenterHeight - parseFloat(assetGeoLocationData.height);
+
+                    tileset.modelMatrix = Cesium.Matrix4.fromTranslation(new Cesium.Cartesian3(0, 0, heightDifference));
+
+                    jqTilesetAltitude.val(assetGeoLocationData.height);
+                }
+                else
+                {
+                    jqTilesetLongitude.val(Cesium.Math.toDegrees(carto.longitude));
+                    jqTilesetLatitude.val(Cesium.Math.toDegrees(carto.latitude));
+                    jqTilesetAltitude.val(carto.height);
                 }
             }
 
@@ -1014,6 +1012,19 @@ let theApp = (function () {
         }).otherwise(function(error){
             window.alert(error);
         });
+    }
+
+    function georeferenced(tileset) {
+        if(tileset.asset.extras === undefined) {
+            return false;
+        }
+
+        if(tileset.asset.extras !== null)
+            if (tileset.asset.extras.ion.georeferenced !== true) {
+                return false;
+            }
+
+        return true;
     }
 
     function _toggleGlobeSkyBoxAtmosphere(show) {
