@@ -225,20 +225,29 @@ const CesiumFVPCameraController = (function () {
 
         const pickedCartographic = globe.ellipsoid.cartesianToCartographic(result.position);
 
-        // consider terrain height
-        const terrainHeightAtPickedCartographic = globe.getHeight(pickedCartographic);
+        // check if user click the inside of 3d tile.
+        // first we get the height value from clicked window position(pickedCartographic.height) which may different from the terrain height when user click the 3d tile
+        // next we get the real terran height for clicked window position(terrainHeightAtPickedCartographic).
+        // then compare it.
 
-        if(terrainHeightAtPickedCartographic === undefined)
-        {
-            console.warn('globe.getHeight(cartographic) failed!');
-            return null;
-        }
+        // if globe is not shown, we do not need to perform this logic.
 
-        // determine if we clicked out of main 3d tileset
-        if (Cesium.Math.equalsEpsilon(pickedCartographic.height, terrainHeightAtPickedCartographic, Cesium.Math.EPSILON4, Cesium.Math.EPSILON1)) {
-            console.warn('out of 3d tile!');
+        if (globe.show) {
+            // consider terrain height
+            const terrainHeightAtPickedCartographic = globe.getHeight(pickedCartographic);
 
-            return null;
+            if(terrainHeightAtPickedCartographic === undefined)
+            {
+                console.warn('globe.getHeight(cartographic) failed!');
+                return null;
+            }
+
+            // determine if we clicked out of main 3d tileset
+            if (Cesium.Math.equalsEpsilon(pickedCartographic.height, terrainHeightAtPickedCartographic, Cesium.Math.EPSILON4, Cesium.Math.EPSILON1)) {
+                console.warn('out of 3d tile!');
+
+                return null;
+            }
         }
 
         // Cesium createWorldTerrain provider gives negative height value on some places
