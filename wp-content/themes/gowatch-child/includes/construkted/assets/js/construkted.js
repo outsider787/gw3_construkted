@@ -24,6 +24,7 @@ let assetGeoLocationData;
 let gl = null;
 let xrButton;
 const sensitivity = 1;
+const defaultBackgroundColorStringOfNonGeoReferencedAsset = "#333333";
 
 let theApp = (function () {
     let tileset = null;
@@ -1359,6 +1360,10 @@ jQuery(document).ready(function(){
     }
 
     CONSTRUKTED_AJAX.is_owner = Boolean(CONSTRUKTED_AJAX.is_owner);
+
+    if(!CONSTRUKTED_AJAX.bg_color_css_string || CONSTRUKTED_AJAX.bg_color_css_string === ""){
+        CONSTRUKTED_AJAX.bg_color_css_string = defaultBackgroundColorStringOfNonGeoReferencedAsset;
+    }
 
     theApp.start();
 });

@@ -29,9 +29,6 @@ function enqueue_construkted_scripts(){
 
     $bg_color_css_string = get_post_meta( $post_id, 'bg_color', true);
 
-    // for test
-    $bg_color_css_string = "#FFF8DC";
-
     // pass parameter to starting script: construkted-scrip.js
 
     error_log('saved asset_geo_location :' . $asset_geo_location_json);
