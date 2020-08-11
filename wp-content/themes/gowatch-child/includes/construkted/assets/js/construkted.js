@@ -171,7 +171,7 @@ let theApp = (function () {
                 return;
             }
 
-            _toggleGlobeSkyBoxAtmosphere(true);
+            _customSceneSetting(true);
 
             let origModelMatrix = tileset.modelMatrix;
 
@@ -202,7 +202,7 @@ let theApp = (function () {
                 return;
             }
 
-            _toggleGlobeSkyBoxAtmosphere(true);
+            _customSceneSetting(true);
 
             let origModelMatrix = tileset.modelMatrix;
 
@@ -266,7 +266,7 @@ let theApp = (function () {
                 return;
             }
 
-            _toggleGlobeSkyBoxAtmosphere(true);
+            _customSceneSetting(true);
             changeTilesetHeight(altitude);
 
             viewer.zoomTo(tileset);
@@ -932,7 +932,7 @@ let theApp = (function () {
                         transformEditor.viewModel.deactivate();
                     }
                 } else {
-                    _toggleGlobeSkyBoxAtmosphere(false);
+                    _customSceneSetting(false);
 
                     tileset.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(Cesium.Cartesian3.fromDegrees(0, 0));
 
@@ -1027,12 +1027,14 @@ let theApp = (function () {
         return true;
     }
 
-    function _toggleGlobeSkyBoxAtmosphere(show) {
-        viewer.scene.globe.show = show;
-        viewer.scene.skyAtmosphere.show = show;
-        viewer.scene.skyBox.show = show;
+    function _customSceneSetting(georeferenced) {
+        viewer.scene.globe.show = georeferenced;
+        viewer.scene.skyAtmosphere.show = georeferenced;
+        viewer.scene.skyBox.show = georeferenced;
+        viewer.scene.moon.show = georeferenced;
+        viewer.scene.sun.show = georeferenced;
 
-        if(show)
+        if(georeferenced)
             viewer.scene.backgroundColor = Cesium.Color.BLACK.clone();
         else
             viewer.scene.backgroundColor = Cesium.Color.LIGHTGREY.clone();
