@@ -27,6 +27,11 @@ function enqueue_construkted_scripts(){
     $default_camera_position_direction = get_post_meta( $post_id, 'default_camera_position_direction', true);
     $asset_geo_location_json = get_post_meta( $post_id, 'asset_geo-location', true);
 
+    $bg_color_css_string = get_post_meta( $post_id, 'bg_color', true);
+
+    // for test
+    $bg_color_css_string = "#FFF8DC";
+
     // pass parameter to starting script: construkted-scrip.js
 
     error_log('saved asset_geo_location :' . $asset_geo_location_json);
@@ -42,7 +47,8 @@ function enqueue_construkted_scripts(){
             'post_slug' => $post_slug,
             'default_camera_position_direction' => $default_camera_position_direction,
             'asset_geo_location' => $asset_geo_location_json,
-            'is_owner' => $post->post_author == get_current_user_id()
+            'is_owner' => $post->post_author == get_current_user_id(),
+            'bg_color_css_string' => $bg_color_css_string
         )
     );
 }

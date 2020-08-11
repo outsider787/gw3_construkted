@@ -1037,7 +1037,7 @@ let theApp = (function () {
         if(georeferenced)
             viewer.scene.backgroundColor = Cesium.Color.BLACK.clone();
         else
-            viewer.scene.backgroundColor = Cesium.Color.LIGHTGREY.clone();
+            viewer.scene.backgroundColor = Cesium.Color.fromCssColorString(CONSTRUKTED_AJAX.bg_color_css_string);
     }
 
     function _setTilesetModelMatrix(tileset, modelMatrixData) {
