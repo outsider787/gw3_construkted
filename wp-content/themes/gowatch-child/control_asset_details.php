@@ -177,6 +177,19 @@ if( 'delete_attachment' == $_REQUEST['action'] ) {
             exit;
         }
 
+        $point_records_count = 0;
+
+        if(isset($_REQUEST['count_of_points_records']))
+            $point_records_count = $_REQUEST['count_of_points_records'];
+
+        $ret = update_post_meta( $post_id, 'point_cloud_size', $point_records_count);
+
+        if($ret == false){
+            echo json_encode(array('errCode' => 1, 'errMsg' => 'failed to update points records count meta field!'));
+            exit;
+        }
+
+
 	    echo json_encode(array('errCode' => 0, 'errMsg' => 'successfully published!'));
 	    exit;
 	}
