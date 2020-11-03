@@ -14,8 +14,8 @@ header('Access-Control-Allow-Headers: Content-Type');
 $allowedIPs = [
     '::1',             // localhost
     '158.106.136.192', // tile.api.construkted.com or tile-gw3.construkted.com
-    '135.23.228.38',   // tile02.construkted.com
-    '99.224.54.145'    // tile.api03.construkted.com
+    '135.23.227.164',   // tile02.construkted.com
+    '99.224.11.215'    // tile.api03.construkted.com
 ];
 
 foreach ($allowedIPs as $ip) {
