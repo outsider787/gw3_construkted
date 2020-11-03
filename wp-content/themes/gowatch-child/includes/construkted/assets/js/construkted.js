@@ -190,7 +190,7 @@ let theApp = (function () {
 
             changeTilesetModelMatrix(newPosition, headingPitchRoll);
 
-            viewer.zoomTo(tileset);
+            viewer.flyTo(tileset);
         });
 
         jqTilesetLatitude.change(function () {
@@ -221,7 +221,7 @@ let theApp = (function () {
 
             changeTilesetModelMatrix(newPosition, headingPitchRoll);
 
-            viewer.zoomTo(tileset);
+            viewer.flyTo(tileset);
         });
 
         function changeTilesetHeight(height) {
@@ -574,8 +574,6 @@ let theApp = (function () {
             if(!tileset)
                 return;
 
-            if(camera)
-
             tileset.maximumScreenSpaceError = 32 - this.value;
         });
 
@@ -916,7 +914,7 @@ let theApp = (function () {
                 cesiumFPVCameraController.setDirectionNone();
             });
 
-            //required since the models may not be geographically referenced.
+            //required since the tileset may not be geo-referenced.
 
             if (!georeferenced(tileset)) {
                 if (tileset_model_matrix) {
@@ -936,36 +934,6 @@ let theApp = (function () {
                     _customSceneSetting(false);
 
                     tileset.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(Cesium.Cartesian3.fromDegrees(0, 0));
-
-                    let modelMatrixUpdateTried = false;
-
-                    viewer.scene.globe.tileLoadProgressEvent.addEventListener(function (queuedTileCount) {
-                        if(!modelMatrixUpdateTried && viewer.scene.globe.tilesLoaded){
-                            let cartographic = new Cesium.Cartographic(0, 0);
-
-                            let magicTerrainHeight = 17;
-                            let terrainHeight = viewer.scene.globe.getHeight(cartographic);
-
-                            if(terrainHeight) {
-                                if(terrainHeight < magicTerrainHeight) {
-                                    console.warn('invalid terrain height 0/0 : ' + terrainHeight);
-                                    terrainHeight = magicTerrainHeight;
-                                }
-                            }
-                            else {
-                                console.warn('failed to get terrain height 0/0');
-                                terrainHeight = magicTerrainHeight;
-                            }
-
-                            tileset.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(Cesium.Cartesian3.fromDegrees(0, 0, terrainHeight));
-
-                            jqTilesetAltitude.val(terrainHeight);
-
-                            modelMatrixUpdateTried = true;
-
-                            viewer.camera.flyToBoundingSphere(tileset.boundingSphere);
-                        }
-                    });
                 }
 
                 if(CONSTRUKTED_AJAX.is_owner) {
