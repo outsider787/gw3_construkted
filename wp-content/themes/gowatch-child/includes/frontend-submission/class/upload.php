@@ -234,6 +234,14 @@ class TSZF_Upload {
             return true;
         }
 
+        if($mime['type'] == 'application/rar') {
+            return true;
+        }
+
+        if($mime['type'] == 'application/x-7z-compressed') {
+            return true;
+        }
+
         return false;
     }
 

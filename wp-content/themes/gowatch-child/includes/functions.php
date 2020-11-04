@@ -279,7 +279,7 @@ function tszf_allowed_extensions()
     $extesions = array(
         'images'  => array('ext' => 'jpg,jpeg,gif,png', 'label' => __('Images', 'gowatch')),
         'video'   => array('ext' => 'mp4,mpeg,mpeg4', 'label' => __('Videos', 'gowatch')),
-        'preview' => array('ext' => 'zip,laz', 'label' => __('Previews', 'gowatch')),
+        'preview' => array('ext' => 'zip,laz,rar,7z', 'label' => __('Previews', 'gowatch')),
     );
 
     return apply_filters('tszf_allowed_extensions', $extesions);
