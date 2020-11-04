@@ -737,6 +737,11 @@ let theApp = (function () {
         });
 
         viewer.extend(Cesium.viewerCesium3DTilesInspectorMixin);
+
+        const inspectorViewModel = viewer.cesium3DTilesInspector.viewModel;
+
+        inspectorViewModel.picking = false;
+
         _showHideTilesInspector(false);
 
         /* Switch mouse buttons in Cesium viewer:
