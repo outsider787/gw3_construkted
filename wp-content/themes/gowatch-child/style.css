@@ -2519,5 +2519,25 @@ button.webvr-ui-button {
         transform: translateX(50%);
         bottom: -50px;
     }
-
 }
+
+/**
+override Cesium 3DTiles Inspector css
+ */
+.cesium-viewer-cesium3DTilesInspectorContainer {
+    /* original width 10px + .bst4-wrapper #navbar-right width 50px*/
+    right: 60px !important;
+}
+
+.cesium-cesiumInspector-dropDown *{
+    /* because it can be changed to text-align: center */
+    text-align: left !important;
+}
+
+.cesium-cesiumInspector-dropDown input[type="checkbox" i] {
+    margin: 3px 3px 3px 4px !important;
+}
+
+
+
+

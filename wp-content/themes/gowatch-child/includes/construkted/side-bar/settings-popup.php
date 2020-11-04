@@ -46,6 +46,16 @@
                 <p class="desc">Use if display is not showing the asset.</p>
                 <button type="button" id="reset_camera_view" class="btn btn-light">Camera view reset</button>
             <?php } ?>
+
+            <!-- This checkbox should only be visible by an admin user only!-->
+            <?php if( current_user_can('administrator') ) {  ?>
+                <div class="form-check">
+                    <input class="form-check-input" id="show-hide-tiles-inspector-checkbox" type="checkbox">
+                    <label class="form-check-label" for="show-hide-tiles-inspector-checkbox">
+                        Display Tiles Inspector
+                    </label>
+                </div>
+            <?php } ?>
         </div>
     </div>
 </div>

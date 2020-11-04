@@ -48,6 +48,7 @@ let theApp = (function () {
     let jqSaveCurrentViewButton = jQuery('#save_current_view');
     let jqResetCameraViewButton = jQuery('#reset_camera_view');
     let jqShowHideWireframeCheckbox = jQuery('#show-hide-wireframe-checkbox');
+    let jqShowHideTilesInspectorCheckbox = jQuery('#show-hide-tiles-inspector-checkbox');
 
     function _start() {
         _create3DMap();
@@ -593,6 +594,22 @@ let theApp = (function () {
 
             tileset.debugWireframe = this.checked;
         });
+
+        jqShowHideTilesInspectorCheckbox.change(function () {
+            if(!tileset)
+                return;
+
+            _showHideTilesInspector(this.checked);
+        });
+    }
+
+    function _showHideTilesInspector(visible){
+        let tilesInspectorContainer = document.querySelector('.cesium-viewer-cesium3DTilesInspectorContainer');
+
+        if(visible)
+            tilesInspectorContainer.style.display = 'block';
+        else
+            tilesInspectorContainer.style.display = 'none';
     }
 
     function _saveTilesetModelMatrixForGeoReferencedTileset() {
@@ -718,6 +735,9 @@ let theApp = (function () {
                 volumeUnits : Cesium.VolumeUnits.CUBIC_METERS
             })
         });
+
+        viewer.extend(Cesium.viewerCesium3DTilesInspectorMixin);
+        _showHideTilesInspector(false);
 
         /* Switch mouse buttons in Cesium viewer:
             - Left button to pan
