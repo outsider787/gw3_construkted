@@ -131,23 +131,33 @@ function has_active_subscription( $user_id='' ) {
     return wcs_user_has_subscription( $user_id, '', 'active' );
 }
 
+/**
+ * example embed url: https://gw3.construkted.com/embed/ages9v7tfzu
+ *
+ * note that the url should not be trailed with slash.
+ *
+ * the length of the post slug can be 10 or 11
+ */
+
 function try_render_embed_cesium_viewer() {
     if( is_admin() )
         return;
 
     $current_url = esc_url( home_url( add_query_arg( NULL, NULL ) ) );
 
-    // .* any string
-    // \/ => /
-    // \w any word character
-    if ( !preg_match( "#^http.*\/embed\/\w{10}#i", $current_url ) )
+    /*
+     .* any string
+     \/ => /
+     \w any word character
+    */
+
+    if ( !preg_match( "#^http.*\/embed\/\w{10}#i", $current_url ) ) {
+        echo 'invalid url';
         return;
+    }
 
     $array_slug = explode( '/', $current_url );
     $post_slug = end( $array_slug );
-
-    if(strlen($post_slug) > 10)
-        $post_slug = substr($post_slug, 0, 10);
 
     $args = array(
         'name'        => $post_slug,
@@ -214,6 +224,7 @@ function try_render_embed_cesium_viewer() {
 
     echo '<div id="cesiumContainer"></div>'  . PHP_EOL;
     echo '<div id="toolbar"><button id="exitFPVModeButton" style="display: none" class="cesium-button">EXIT FPV MODE</button></div>'  . PHP_EOL;
+    echo '<canvas id="xr-canvas"></canvas>';
 
     exit;
 }
