@@ -1,5 +1,10 @@
 # Change Log
 
+### [1.1.1] - 2020-11-25
+
+#### Fixed
+ - bug in embed display
+
 ### [1.1] - 2020-11-05
 
 #### Additions
