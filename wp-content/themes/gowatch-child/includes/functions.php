@@ -132,6 +132,8 @@ function has_active_subscription( $user_id='' ) {
 }
 
 /**
+ * this function will be invoked from all page.
+ *
  * example embed url: https://gw3.construkted.com/embed/ages9v7tfzu
  *
  * note that the url should not be trailed with slash.
@@ -152,7 +154,6 @@ function try_render_embed_cesium_viewer() {
     */
 
     if ( !preg_match( "#^http.*\/embed\/\w{10}#i", $current_url ) ) {
-        echo 'invalid url';
         return;
     }
 
