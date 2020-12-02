@@ -336,3 +336,12 @@ function ck_asset_delete_cron() {
         wp_schedule_event(time(), 'daily', 'ck_asset_delete_action');
     }
 }
+
+
+function ck_change_author_url($url, $author_id, $author_nicename) {
+
+    $profile_url = get_frontend_dashboard_url() . $author_nicename . '/';
+
+    return  apply_filters('gowatch_profile_url', $profile_url);
+}
+add_filter( 'author_link', 'ck_change_author_url', 10, 3);
