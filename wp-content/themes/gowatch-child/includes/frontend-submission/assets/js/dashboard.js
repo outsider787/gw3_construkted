@@ -1,4 +1,4 @@
-var statusCodes = {
+const statusCodes = {
     QUEUED: 10,
     RUNNING: 20,
 
@@ -9,7 +9,7 @@ var statusCodes = {
     CANCELED: 60
 };
 
-var runningStatusCodes = {
+const runningStatusCodes = {
     NONE: 0,
     PROCESSING_DRONE_IMAGE: 10,
     CREATING_CESIUM_ASSET: 20,
@@ -20,12 +20,13 @@ var runningStatusCodes = {
     PUBLISHING_CONSTRUKTED_ASSET: 70
 };
 
-var apiUrls = [];
-var unreachableAPIUrls = [];
+const errorMessageHTML = 'ERROR<br>Please contact<br>support@construkted.com';
+
+let apiUrls = [];
+let unreachableAPIUrls = [];
 
 function updateState() {
     apiUrls.forEach( (apiUrl, index, array) => {
-
         function getTaskAll() {
             $.ajax({
                 url : apiUrl + "/task/all",
@@ -53,15 +54,15 @@ function updateState() {
     })
 }
 
-function doUpdateState(data) {
-    var postStateDivList = $("div[id^='post-processing-state']");
+function doUpdateState(allTasksInfo) {
+    let postStateDivList = $("div[id^='post-processing-state']");
 
-    for(var i = 0; i < postStateDivList.length; i++) {
+    for(let i = 0; i < postStateDivList.length; i++) {
         // this is HTML element
-        var postStateDiv = postStateDivList[i];
+        let postStateDiv = postStateDivList[i];
 
-        var postId = postStateDiv.getAttribute('data-post-id');
-        var wpPostState = postStateDiv.getAttribute('data-wp-state');
+        let postId = postStateDiv.getAttribute('data-post-id');
+        let wpPostState = postStateDiv.getAttribute('data-wp-state');
         let apiUrl = postStateDiv.getAttribute('data-api-url');
 
         if(wpPostState === "publish") {
@@ -70,16 +71,16 @@ function doUpdateState(data) {
         }
 
         if(apiUrl === "") {
-            postStateDiv.innerHTML = 'ERROR<br>Please contact<br>support@construkted.com';
+            postStateDiv.innerHTML = errorMessageHTML;
             continue;
         }
 
         if(unreachableAPIUrls.includes(apiUrl)) {
-            postStateDiv.innerHTML = 'ERROR<br>Please contact<br>support@construkted.com';
+            postStateDiv.innerHTML = errorMessageHTML;
             continue;
         }
 
-        if(data.apiUrl !== apiUrl)
+        if(allTasksInfo.apiUrl !== apiUrl)
             continue;
 
         // we do not need to update state.
@@ -87,11 +88,11 @@ function doUpdateState(data) {
             continue;
         }
 
-        var taskInfo = getTaskInfo(data, postId);
+        const taskInfo = getTaskInfo(allTasksInfo, postId);
 
         if(taskInfo === null) {
             if(wpPostState === 'pending')
-                postStateDiv.innerHTML = 'ERROR<br>Please contact<br>support@construkted.com';
+                postStateDiv.innerHTML = errorMessageHTML;
                 //postStateDiv.innerHTML = 'Initializing...';
             else
                 postStateDiv.innerHTML = wpPostState;
@@ -99,18 +100,18 @@ function doUpdateState(data) {
             continue;
         }
 
-        var statusCode = taskInfo.status.code;
-        var runningStatus = taskInfo.runningStatus;
+        let statusCode = taskInfo.status.code;
+        let runningStatus = taskInfo.runningStatus;
 
         if(statusCode === statusCodes.FAILED) {
-            postStateDiv.innerHTML = 'ERROR<br>Please contact<br>support@construkted.com';
+            postStateDiv.innerHTML = errorMessageHTML;
             console.warn('task failed at running state: ' + runningStatus);
             continue;
         }
 
-        var percent = getProcessingProgress(taskInfo);
+        let percent = getProcessingProgress(taskInfo);
 
-        if(percent == 100) {
+        if(percent === 100) {
             if(statusCode !== statusCodes.COMPLETED) {
                 postStateDiv.innerHTML = '100%';
             }
@@ -123,15 +124,15 @@ function doUpdateState(data) {
 }
 
 function getProcessingProgress(taskInfo) {
-    var runningStatus = taskInfo.runningStatus;
+    let runningStatus = taskInfo.runningStatus;
 
     if(runningStatus === runningStatusCodes.CREATING_CESIUM_ASSET)
         return 5;
     // 5-20%
     else if(runningStatus === runningStatusCodes.UPLOADING){
-        var uploadingPercent = taskInfo.uploadingProgress;
+        let uploadingPercent = taskInfo.uploadingProgress;
 
-        var percent = 5 + uploadingPercent / 100 * 15;
+        let percent = 5 + uploadingPercent / 100 * 15;
 
         return percent.toFixed(1);
     }
@@ -140,20 +141,20 @@ function getProcessingProgress(taskInfo) {
         if(isNaN(taskInfo.tilingProgress) || taskInfo.tilingProgress === -1)
             return 20;
         else{
-            var tilingPercent = taskInfo.tilingProgress;
+            let tilingPercent = taskInfo.tilingProgress;
 
-            var percent = 20 + tilingPercent / 100 * (70 - 20);
+            let percent = 20 + tilingPercent / 100 * (70 - 20);
 
             return percent.toFixed(1);
         }
     }
     else if(runningStatus === runningStatusCodes.DOWNLOADING) {
-        var downloadProgress = taskInfo.downloadProgress; // (0 ~ 1)
+        let downloadProgress = taskInfo.downloadProgress; // (0 ~ 1)
 
         if(downloadProgress === -1)
             return 70;
 
-        var percent = 70 + downloadProgress * (80 - 70);
+        let percent = 70 + downloadProgress * (80 - 70);
 
         return percent.toFixed(1);
     }
@@ -167,7 +168,7 @@ function getProcessingProgress(taskInfo) {
 }
 
 function getState(tilingJobInfo) {
-    var state = tilingJobInfo.state;
+    let state = tilingJobInfo.state;
 
     if(state === State.Completed)
         return "Completed";
@@ -193,13 +194,13 @@ function getState(tilingJobInfo) {
         return "Unknown";
 }
 
-function getTaskInfo(data, postId) {
-    if(data === null)
+function getTaskInfo(allTasksInfo, postId) {
+    if(allTasksInfo === null)
         return null;
 
-    for(var i = 0; i < data.length; i++) {
-        if(data[i].postId === postId ){
-            return data[i];
+    for(let i = 0; i < allTasksInfo.length; i++) {
+        if(allTasksInfo[i].postId === postId ){
+            return allTasksInfo[i];
         }
     }
 
@@ -207,13 +208,13 @@ function getTaskInfo(data, postId) {
 }
 
 function initState() {
-    var postStateDivList = $("div[id^='post-processing-state']");
+    let postStateDivList = $("div[id^='post-processing-state']");
 
-    for(var i = 0; i < postStateDivList.length; i++) {
+    for(let i = 0; i < postStateDivList.length; i++) {
         // this is HTML element
-        var postStateDiv = postStateDivList[i];
+        let postStateDiv = postStateDivList[i];
 
-        var wpPostState = postStateDiv.getAttribute('data-wp-state');
+        let wpPostState = postStateDiv.getAttribute('data-wp-state');
 
         if(wpPostState === 'publish'){
             postStateDiv.innerHTML = "Completed";
@@ -224,13 +225,13 @@ function initState() {
 }
 
 function aggregateAPIUrl() {
-    var postStateDivList = $("div[id^='post-processing-state']");
+    let postStateDivList = $("div[id^='post-processing-state']");
 
-    for(var i = 0; i < postStateDivList.length; i++) {
+    for(let i = 0; i < postStateDivList.length; i++) {
         // this is HTML element
-        var postStateDiv = postStateDivList[i];
+        let postStateDiv = postStateDivList[i];
 
-        var apiUrl = postStateDiv.getAttribute('data-api-url');
+        let apiUrl = postStateDiv.getAttribute('data-api-url');
 
         if(!apiUrl)
             continue;
@@ -246,14 +247,14 @@ function aggregateAPIUrl() {
 }
 
 function showErrorMessage(message) {
-    var data = {
+    let data = {
         alert: 'error',
         label: 'Garbage data detected',
         icon: 'icon-flag',
         message: message
     };
 
-    var $alert = '<div class="airkit_alert fixed-top-right alert-'+ data.alert +' alert-dismissible" role="alert"><button type="button" class="close"><span aria-hidden="true">&times</span></button><p>'+ data.message +'</p></div>';
+    let $alert = '<div class="airkit_alert fixed-top-right alert-'+ data.alert +' alert-dismissible" role="alert"><button type="button" class="close"><span aria-hidden="true">&times</span></button><p>'+ data.message +'</p></div>';
 
     $body.find('.airkit_alert').remove();
 
