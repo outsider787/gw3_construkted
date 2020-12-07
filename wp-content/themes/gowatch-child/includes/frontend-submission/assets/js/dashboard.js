@@ -63,24 +63,24 @@ function doUpdateState(allTasksInfo) {
 
         let postId = postStateDiv.getAttribute('data-post-id');
         let wpPostState = postStateDiv.getAttribute('data-wp-state');
-        let apiUrl = postStateDiv.getAttribute('data-api-url');
+        let usedApiUrl = postStateDiv.getAttribute('data-api-url');
 
         if(wpPostState === "publish") {
             postStateDiv.innerHTML = 'Completed';
             continue;
         }
 
-        if(apiUrl === "") {
+        if(usedApiUrl === "") {
             postStateDiv.innerHTML = errorMessageHTML;
             continue;
         }
 
-        if(unreachableAPIUrls.includes(apiUrl)) {
+        if(unreachableAPIUrls.includes(usedApiUrl)) {
             postStateDiv.innerHTML = errorMessageHTML;
             continue;
         }
 
-        if(allTasksInfo.apiUrl !== apiUrl)
+        if(allTasksInfo.apiUrl !== usedApiUrl)
             continue;
 
         // we do not need to update state.
@@ -92,8 +92,8 @@ function doUpdateState(allTasksInfo) {
 
         if(taskInfo === null) {
             if(wpPostState === 'pending')
-                postStateDiv.innerHTML = errorMessageHTML;
-                //postStateDiv.innerHTML = 'Initializing...';
+                //postStateDiv.innerHTML = errorMessageHTML;
+                postStateDiv.innerHTML = 'Initializing...';
             else
                 postStateDiv.innerHTML = wpPostState;
 
