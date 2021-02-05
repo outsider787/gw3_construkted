@@ -37,8 +37,6 @@ function gowatch_child_enqueue_styles()
 {
     wp_enqueue_style('gowatch-child-style', get_stylesheet_directory_uri() . '/style.css', array('gowatch-style', 'gowatch-bootstrap', 'gowatch-widgets'));
 
-    wp_enqueue_script('side-bar-script',  get_stylesheet_directory_uri() . '/includes/construkted/assets/js/side-bar.js', array('jquery'), CS_LIB_VER, true);
-
     // Check if is single video page to enqueue the scripts
     if( is_singular() && get_post_type(get_the_ID()) == 'video' ) {
         enqueue_construkted_scripts();

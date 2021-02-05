@@ -1,5 +1,10 @@
 # Change Log
 
+### [1.1.4] - 2021-02-05
+
+#### Additions
+ - add camera fly function, switch fpv, fly, orbit camera mode
+
 ### [1.1.3] - 2020-12-7
 
 #### Fixed

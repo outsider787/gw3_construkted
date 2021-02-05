@@ -193,15 +193,11 @@ function try_render_embed_cesium_viewer() {
         </style>
         ';
 
-
     echo '<link rel="stylesheet" href="https://cesiumjs.org/releases/' . CESIUMJS_VER . '/Build/Cesium/Widgets/widgets.css" type="text/css">' . PHP_EOL;
     echo '<link rel="stylesheet" href="' . $server_url. '/includes/construkted/assets/css/construkted.css" type="text/css">' . PHP_EOL;
     echo '<script type="text/javascript" src="' . get_site_url() . '/wp-includes/js/jquery/jquery.js"></script>' . PHP_EOL;
     echo '<script type="text/javascript" src="'.get_template_directory_uri() . '/js/jquery.cookie.js"></script>' . PHP_EOL;
     echo '<script type="text/javascript" src="https://cesiumjs.org/releases/' . CESIUMJS_VER . '/Build/Cesium/Cesium.js"></script>' . PHP_EOL;
-    echo '<script type="text/javascript" src="' . $server_url . '/includes/construkted/assets/js/cesium-ion-sdk-plugin.js"></script>' . PHP_EOL;
-    echo '<script type="text/javascript" src="' . $server_url . '/includes/construkted/assets/js/cs-camera-controller.js"></script>' . PHP_EOL;
-    echo '<script type="text/javascript" src="' . $server_url . '/includes/construkted/assets/js/construkted-xr-dependencies.js"></script>' . PHP_EOL;
 
     // prepare javascript parameters
     echo '<script>'  . PHP_EOL;
