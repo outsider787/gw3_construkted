@@ -64,11 +64,13 @@ Template: gowatch
   /* Uncomment for 3D effect */
   /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
 }
- 
-.gwicon-gear:before { content: '\e800'; } /* '' */
-.gwicon-pencil:before { content: '\e801'; } /* '' */
-.gwicon-global:before { content: '\e802'; } /* '' */
-.gwicon-layers:before { content: '\e803'; } /* '' */
+.gwicon-layers:before { content: '\e800'; } /* '' */
+.gwicon-global:before { content: '\ea07'; } /* '' */
+.gwicon-pencil:before { content: '\ea08'; } /* '' */
+.gwicon-gear:before { content: '\ea09'; } /* '' */
+.gwicon-user:before { content: '\ea0a'; } /* '' */
+.gwicon-orbit:before { content: '\ea0b'; } /* '' */
+.gwicon-baloon:before { content: '\ea0c'; } /* '' */
 
 body {
     --blue: #25345D;
@@ -2538,6 +2540,65 @@ override Cesium 3DTiles Inspector css
     margin: 3px 3px 3px 4px !important;
 }
 
+.theme-gowatch .construkted-viewer-controlbarContainer {
+    background: transparent;
+    margin-top: 16px;
+    height: auto;
+}
+.theme-gowatch .construkted-viewer-controlbarContainer .construkted-viewer-controlbar-button,
+.ck-view-mobile-selector {
+    background: rgba(255, 255, 255, 0.62);
+    backdrop-filter: blur(10px);
+    border-radius: 5px;
+    color: #676F76;
+    display: inline-flex;
+    height: 38px;
+    padding: 12px 18px;
+    line-height: 1;
+    text-transform: uppercase;
+    border: 0 none;
+    align-items: center;
+    font-weight: 500;
+    font-size: 15px;
+    margin-right: 12px;
+}
+.theme-gowatch .construkted-viewer-controlbarContainer .construkted-viewer-controlbar-button:hover {
+    color: var(--blue);
+}
+.theme-gowatch .construkted-viewer-controlbarContainer .construkted-viewer-controlbar-button.active,
+.ck-view-mobile-selector.active {
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.25);
+    color: var(--blue);
+}
+.ck-view-mobile-selector {
+    display: none;
+}
+@media screen and (max-width: 960px) {
+    .ck-view-mobile-selector {
+        display: inline-flex;
+        position: absolute;
+        top: 20px;
+        left: 20px;
+    }
+    .theme-gowatch .construkted-viewer-controlbarContainer {
+        display: none;
+    }
+    .theme-gowatch .construkted-viewer-controlbarContainer > * {
+        clear: both;
+    }
+    .theme-gowatch .construkted-viewer-controlbarContainer.shown {
+        display: block;
+        top: 49px;
+        left: 20px;
+    }
+    .theme-gowatch .construkted-viewer-controlbarContainer.shown > .active {
+        display: none;
+    }
+    .theme-gowatch .construkted-viewer-controlbarContainer .construkted-viewer-controlbar-button {
+        display: block;
+        width: auto;
+        margin: 0 0 6px 0;
+    }
 
-
-
+}

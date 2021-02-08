@@ -17004,25 +17004,34 @@
           this._flyButtonClicked = new Event();
           this._orbitButtonClicked = new Event();
 
-          const fpvButton = newButton('FPV');
+          const fpvButton = newButton('FPV', 'gwicon-user');
 
           fpvButton.addEventListener('click', () =>{
+              fpvButton.classList.add('active');
+              orbitButton.classList.remove('active');
+              flyButton.classList.remove('active');
               this._fpvButtonClicked.raiseEvent();
           });
 
           container.appendChild(fpvButton);
 
-          const flyButton = newButton('FLY');
+          const flyButton = newButton('FLY', 'gwicon-baloon');
 
           flyButton.addEventListener('click', () =>{
+              fpvButton.classList.remove('active');
+              orbitButton.classList.remove('active');
+              flyButton.classList.add('active');
               this._flyButtonClicked.raiseEvent();
           });
 
           container.appendChild(flyButton);
 
-          const orbitButton = newButton('ORBIT');
+          const orbitButton = newButton('ORBIT', 'gwicon-orbit');
 
           orbitButton.addEventListener('click', () =>{
+              fpvButton.classList.remove('active');
+              orbitButton.classList.add('active');
+              flyButton.classList.remove('active');
               this._orbitButtonClicked.raiseEvent();
           });
 
@@ -17048,11 +17057,16 @@
       }
   });
 
-  function newButton(text) {
+  function newButton(text,iconClass) {
       const button = document.createElement('button');
+        let icon;
+      if( iconClass != '' ) {
+          icon = document.createElement('i');
+          icon.className = iconClass;
+      }
 
       button.type = "button";
-      button.textContent = text;
+      button.innerHTML = icon.outerHTML + text;
       button.className = "construkted-viewer-controlbar-button";
 
       return button;
@@ -17696,6 +17710,12 @@
           return false;
       });
 
+      jQuery(document).on('load', function(){
+        if( jQuery(window).width() < 768 ) {
+            // jQuery('.construkted-viewer-controlbarContainer').wrap()
+        }
+      });
+
       jQuery(document).on('click', '.letiation-action', function(){
           let currentItem = jQuery(this);
           let currentValue = jQuery(this).attr('data-value');
@@ -17835,6 +17855,18 @@
 
       construktedViewer.start();
       initSidebar();
+
+    // Check if it's mobile
+    if( isMobile() ) {
+        jQuery('.construkted-viewer-controlbarContainer').before('<button class="ck-view-mobile-selector">Choose view <i class="icon-down"></i></button>');
+    }
+    jQuery(document).on('click', '.ck-view-mobile-selector', function(){
+        jQuery('.construkted-viewer-controlbarContainer').toggleClass('shown');
+    });
+    jQuery(document).on('click', '.construkted-viewer-controlbar-button', function(){
+        jQuery('.construkted-viewer-controlbarContainer').toggleClass('shown');
+        jQuery('.ck-view-mobile-selector').addClass('active').html( jQuery(this).html() + '<i class="icon-down"></i>' );
+    });
   });
 
 })));
