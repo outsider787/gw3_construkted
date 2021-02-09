@@ -2185,7 +2185,8 @@ table.variations,
 }
 
 
-.fpv-navigation {
+.fpv-navigation,
+.fly-navigation {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
@@ -2196,30 +2197,50 @@ table.variations,
     -webkit-touch-callout: none;
     -webkit-user-select: none;
 }
-.fpv-navigation .fpv-up {
+.fly-navigation {
+    left: 40%;
+    display: block;
+}
+.fpv-navigation .fpv-up,
+.fly-navigation .fly-forward {
     position: absolute;
     top: 0;
     left: 50%;
     transform: translateX(-50%);
     line-height: 1;
 }
-.fpv-navigation .fpv-left {
+.fpv-navigation .fpv-left,
+.fly-navigation .fly-left {
     transform: rotate(-90deg);
     position: absolute;
     top: 50%;
     left: 0;
 }
-.fpv-navigation .fpv-right {
+.fpv-navigation .fpv-right,
+.fly-navigation .fly-right {
     transform: rotate(90deg);
     position: absolute;
     top: 50%;
     right: 0;
 }
-.fpv-navigation .fpv-down {
+.fpv-navigation .fpv-down,
+.fly-navigation .fly-back {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translateX(-50%) rotate(-180deg);
+}
+.fly-navigation .fly-down{
+    position: absolute;
+    top: 50%;
+    left: calc(100% + 50px);
+    transform: translateX(-50%) rotate(-180deg);
+}
+.fly-navigation .fly-up{
+    position: absolute;
+    top: 0;
+    left: calc(100% + 50px);
+    transform: translateX(-50%) rotate(0);
 }
 .fpv-navigation > div {
     border-radius: 5px;
@@ -2258,7 +2279,7 @@ button.webvr-ui-button,
 button.webvr-ui-button {
     position: absolute;
     top: 10px;
-    left: 15px;
+    right: 60px;
 }
 
 #overlay-content.full-overlay #cesiumContainer {
@@ -2273,6 +2294,10 @@ button.webvr-ui-button {
 }
 @media screen and (min-width: 1281px) {
     .fpv-navigation {
+        display: block;
+    }
+    .fpv-navigation,
+    .fly-navigation {
         transform: translate(0);
         left: 10px;
         bottom: 50px;
@@ -2283,19 +2308,24 @@ button.webvr-ui-button {
         width: 62px;
     }
     .fpv-navigation .fpv-nav-btn,
-    .fpv-navigation .fpv-nav-btn svg {
+    .fpv-navigation .fpv-nav-btn svg,
+    .fly-navigation .fpv-nav-btn,
+    .fly-navigation .fpv-nav-btn svg {
         width: 18px;
         height: 18px;
     }
-    .fpv-navigation .fpv-up {
+    .fpv-navigation .fpv-up,
+    .fly-navigation .fly-up {
         top: 4px;
     }
     .fpv-navigation .fpv-down {
     }
-    .fpv-navigation .fpv-left {
+    .fpv-navigation .fpv-left,
+    .fly-navigation .fly-left {
         left: 4px;
     }
-    .fpv-navigation .fpv-right {
+    .fpv-navigation .fpv-right,
+    .fly-navigation .fly-right {
         right: 4px;
     }
     .fpv-navigation::after {
@@ -2320,6 +2350,10 @@ button.webvr-ui-button {
     }
 }
 @media only screen and (max-width: 768px) {
+    button.webvr-ui-button {
+        left: auto;
+        right: 20px;
+    }
     .ck-asset-modal {
         top: 20px;
         left: 20px;

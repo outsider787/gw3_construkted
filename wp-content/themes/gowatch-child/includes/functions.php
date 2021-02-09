@@ -1054,6 +1054,16 @@ function construkted_asset_modal() {
         <div class="fpv-nav-btn fpv-down"><?php echo $svg_arrow_up; ?></div>
     </div>
     <button id="exitFPVModeButton">EXIT FPV MODE</button>
+
+
+    <div class="fly-navigation hidden">
+        <div id="fly-forward" class="fpv-nav-btn fly-forward"><?php echo $svg_arrow_up; ?></div>
+        <div id="fly-left" class="fpv-nav-btn fly-left"><?php echo $svg_arrow_up; ?></div>
+        <div id="fly-right" class="fpv-nav-btn fly-right"><?php echo $svg_arrow_up; ?></div>
+        <div id="fly-back" class="fpv-nav-btn fly-back"><?php echo $svg_arrow_up; ?></div>
+        <div id="fly-up" class="fpv-nav-btn fly-up"><?php echo $svg_arrow_up; ?></div>
+        <div id="fly-down" class="fpv-nav-btn fly-down"><?php echo $svg_arrow_up; ?></div>
+    </div>
         
     <div class="ck-asset-modal" style="display: none;">
         <i class="icon-close"></i>
