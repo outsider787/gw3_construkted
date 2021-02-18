@@ -1143,3 +1143,39 @@ function construkted_asset_modal() {
     <span class="ck-modal-toggler"><i class="icon-help"></i></span>
     <?php
 }
+
+
+function ck_get_assets() {
+
+    $data = array();
+
+    $args = array(
+        'post_type'   => 'video',
+        'post_status' => 'publish',
+        'posts_per_page' => -1,
+        'meta_query' => array(
+            array(
+                'key' => 'view_access',
+                'value' => 'public'
+            )
+        )
+    );
+
+    $query = new WP_Query($args);
+
+    if ( $query->have_posts() ) {
+        while ( $query->have_posts() ) {
+            $query->the_post();
+            $location = get_post_meta( get_the_ID(), 'asset_geo-location', true );
+            $data[] = array('post_title' => get_the_title(), 'post_slug' => get_post_field( 'post_name', get_the_ID() ), 'coordinates' => $location);
+        }
+    }
+
+    return new WP_REST_Response( $data, 200 );
+}
+add_action( 'rest_api_init', function () {
+  register_rest_route( 'ck/v1', '/get_items', array(
+    'methods' => 'GET',
+    'callback' => 'ck_get_assets',
+  ) );
+} );
