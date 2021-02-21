@@ -22,7 +22,7 @@
              <div class="form-group">
                 <label for="fpv_speed"><strong>FPV Movement</strong></label>
                 <br>Movement Speed 
-                <input type="range" id="fpv-movement-speed-slider" class="form-control-range" name="fpv_speed" min="0.01" max="1" value="0.4" step="0.01">
+                <input type="range" id="fpv-movement-speed-slider" class="form-control-range" name="fpv_speed" min="0.01" max="2" value="0.4" step="0.01">
                 <div class="label-min-max">
                     <span class="lbl-min">Slow</span>
                     <span class="lbl-max" style="float:right">Fast</span>
