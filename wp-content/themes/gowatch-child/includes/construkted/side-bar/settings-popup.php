@@ -60,7 +60,7 @@
             <strong>Advanced Performance Settings</strong>    
             <p class="desc">Extra knobsd and switches to adjust the display quality and performnace.</p>
             <div class="form-check">
-                <input class="form-check-input" id="fxaa-enable-checkbox" type="checkbox">
+                <input class="form-check-input" id="fxaa-enable-checkbox" type="checkbox" checked>
                 <label class="form-check-label" for="fxaa-enable-checkbox">
                   Anti-Aliasing
                 </label>
