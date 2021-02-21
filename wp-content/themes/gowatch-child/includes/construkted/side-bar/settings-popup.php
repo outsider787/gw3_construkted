@@ -6,7 +6,7 @@
             <div class="form-group">
                 <label for="display_performance"><strong>Display</strong></label>
                 <br>Rendering performance
-                <input type="range" id="maximum-screen-space-error-slider" class="form-control-range" name="display_performance" min="2" max="32" value="24">
+                <input type="range" id="maximum-screen-space-error-slider" class="form-control-range" name="display_performance" min="2" max="32" value="16">
                 <div class="label-min-max">
                     <span class="lbl-min">Performance</span>
                     <span class="lbl-max" style="float:right">Quality</span>
@@ -22,7 +22,7 @@
              <div class="form-group">
                 <label for="fpv_speed"><strong>FPV Movement</strong></label>
                 <br>Movement Speed 
-                <input type="range" id="fpv-movement-speed-slider" class="form-control-range" name="fpv_speed" min="0.01" max="1" value="0.2" step="0.01">
+                <input type="range" id="fpv-movement-speed-slider" class="form-control-range" name="fpv_speed" min="0.01" max="1" value="0.4" step="0.01">
                 <div class="label-min-max">
                     <span class="lbl-min">Slow</span>
                     <span class="lbl-max" style="float:right">Fast</span>
