@@ -22,7 +22,7 @@
              <div class="form-group">
                 <label for="fpv_speed"><strong>FPV Movement</strong></label>
                 <br>Movement Speed 
-                <input type="range" id="fpv-movement-speed-slider" class="form-control-range" name="fpv_speed" min="0.01" max="1" value="0.3" step="0.01">
+                <input type="range" id="fpv-movement-speed-slider" class="form-control-range" name="fpv_speed" min="0.01" max="1" value="0.4" step="0.01">
                 <div class="label-min-max">
                     <span class="lbl-min">Slow</span>
                     <span class="lbl-max" style="float:right">Fast</span>
@@ -60,8 +60,8 @@
             <strong>Advanced Performance Settings</strong>    
             <p class="desc">Extra knobsd and switches to adjust the display quality and performnace.</p>
             <div class="form-check">
-                <input class="form-check-input" id="show-hide-tiles-inspector-checkbox" type="checkbox">
-                <label class="form-check-label" for="show-hide-tiles-inspector-checkbox">
+                <input class="form-check-input" id="fxaa-enable-checkbox" type="checkbox">
+                <label class="form-check-label" for="fxaa-enable-checkbox">
                   Anti-Aliasing
                 </label>
            </div>
