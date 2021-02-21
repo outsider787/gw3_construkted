@@ -230,6 +230,10 @@ class TSZF_Upload {
             return true;
         }
 
+        if($mime['type'] == 'application/las') {
+            return true;
+        }
+        
         if($mime['type'] == 'application/laz') {
             return true;
         }
