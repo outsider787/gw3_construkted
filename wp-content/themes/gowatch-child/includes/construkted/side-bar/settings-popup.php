@@ -56,6 +56,15 @@
                     </label>
                 </div>
             <?php } ?>
+            <hr style="width:100%;text-align:left;margin-left:0">
+            <strong>Advanced Performance Settings</strong>    
+            <p class="desc">Extra knobsd and switches to adjust the display quality and performnace.</p>
+            <div class="form-check">
+                <input class="form-check-input" id="show-hide-tiles-inspector-checkbox" type="checkbox">
+                <label class="form-check-label" for="show-hide-tiles-inspector-checkbox">
+                  Anti-Aliasing
+                </label>
+           </div>
         </div>
     </div>
 </div>
