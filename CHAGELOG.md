@@ -1,5 +1,10 @@
 # Change Log
 
+### 1.2.4 - 2021-02-24
+####Additions
+- Enable FXAA and give the option to turn it on/off. [#169](https://github.com/Construkted-Reality/construkted_reality/issues/169)
+- When pressing WASD to move in FLY/FPV mode the camera moves at the normal speed.[#169](https://github.com/Construkted-Reality/construkted_reality/issues/169)
+
 ### 1.2.3 - 2021-02-20
 ####Additions
 - Globe showing all assets [#168](https://github.com/Construkted-Reality/construkted_reality/issues/168)
