@@ -122,7 +122,7 @@ class TSZF_Upload {
             return array('success' => false, 'error' => 'disk quota exceed the 2GB limit!');
 
         if(!self::is_allowed_upload_file_type($upload_data['name'])){
-            return array('success' => false, 'error' => 'only one zip or laz file is allowed!');
+            return array('success' => false, 'error' => 'File type not allowed!');
         }
 
         add_filter( 'upload_dir', array($this, 'custom_upload_dir') );
@@ -230,6 +230,10 @@ class TSZF_Upload {
             return true;
         }
 
+        if($mime['type'] == 'application/las') {
+            return true;
+        }
+        
         if($mime['type'] == 'application/laz') {
             return true;
         }
