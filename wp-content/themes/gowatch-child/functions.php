@@ -39,7 +39,7 @@ function gowatch_child_enqueue_styles()
 
     // Check if is single video page to enqueue the scripts
     if( is_singular() && get_post_type(get_the_ID()) == 'video' ) {
-        enqueue_construkted_scripts();
+        enqueue_construkted_scripts(ConstruktedAjaxType::AssetViewer);
     }
 }
 
@@ -343,3 +343,18 @@ function ck_change_author_url($url, $author_id, $author_nicename) {
     return  apply_filters('gowatch_profile_url', $profile_url);
 }
 add_filter( 'author_link', 'ck_change_author_url', 10, 3);
+
+// Add Shortcode
+function custom_shortcode() {
+    wp_enqueue_style( 'cesiumjs-style',  'https://cesiumjs.org/releases/' . CESIUMJS_VER . '/Build/Cesium/Widgets/widgets.css', array(), CESIUMJS_VER );
+    wp_enqueue_script('cesiumjs', 'https://cesiumjs.org/releases/' . CESIUMJS_VER .'/Build/Cesium/Cesium.js', array('jquery'), CESIUMJS_VER, true);
+
+    enqueue_construkted_scripts(ConstruktedAjaxType::AssetExplorer);
+
+    return
+        '<div id = "cesiumContainer">
+        </div> 
+        ';
+}
+
+add_shortcode( 'asset-explorer', 'custom_shortcode' );
