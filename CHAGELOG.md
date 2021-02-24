@@ -4,11 +4,15 @@
 ####Additions
 - Enable FXAA and give the option to turn it on/off. [#169](https://github.com/Construkted-Reality/construkted_reality/issues/169)
 - When pressing WASD to move in FLY/FPV mode the camera moves at the normal speed.[#169](https://github.com/Construkted-Reality/construkted_reality/issues/169)
+- Add a section to the Settings page for "Advanced performance settings" [#169](https://github.com/Construkted-Reality/construkted_reality/issues/169)
+- Added LAS file type (for front end submission) support [#169](https://github.com/Construkted-Reality/construkted_reality/issues/169)
+- Lowered ScreenError to 16 (from 24) [#169](https://github.com/Construkted-Reality/construkted_reality/issues/169)
+- Adjusted FPV/FLY speeds [#169](https://github.com/Construkted-Reality/construkted_reality/issues/169)
 
 ### 1.2.3 - 2021-02-20
 ####Additions
-- Globe showing all assets [#168](https://github.com/Construkted-Reality/construkted_reality/issues/168)
-
+- Inital concepts for "Globe showing all assets" **WORK IN PROGRESS** [#168](https://github.com/Construkted-Reality/construkted_reality/issues/168) 
+ - Added shortcode for displaying globe
 
 ### [1.1.4] - 2021-02-05
 
