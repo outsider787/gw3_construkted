@@ -262,6 +262,7 @@ add_filter('sanitize_file_name', 'make_ascii_filename', 10);
 
 function construkted_upload_mimes($mime_types) {
     $mime_types['laz'] = 'application/laz';
+    $mime_types['las'] = 'application/las';
 
     return $mime_types;
 }
@@ -319,7 +320,7 @@ function ck_asset_delete_action() {
     if ($attachments) {
         foreach ($attachments as $post) {
             setup_postdata($post);
-            if( in_array($post->post_mime_type, array('application/zip', 'application/laz') ) ) {
+            if( in_array($post->post_mime_type, array('application/zip', 'application/laz', 'application/las') ) ) {
                 wp_delete_attachment( $post->ID, true );
             }
         }
