@@ -12,12 +12,6 @@
                     <span class="lbl-max" style="float:right">Quality</span>
                 </div>
             </div>
-            <div class="form-check">
-                <input class="form-check-input" id="show-hide-wireframe-checkbox" type="checkbox">
-                <label class="form-check-label" for="show-hide-wireframe-checkbox">
-                    Show Wireframe
-                </label>
-            </div>
             <hr style="width:100%;text-align:left;margin-left:0">
              <div class="form-group">
                 <label for="fpv_speed"><strong>FPV Movement</strong></label>
@@ -64,7 +58,13 @@
                 <label class="form-check-label" for="fxaa-enable-checkbox">
                   Anti-Aliasing
                 </label>
-           </div>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" id="show-hide-wireframe-checkbox" type="checkbox">
+                <label class="form-check-label" for="show-hide-wireframe-checkbox">
+                    Show Wireframe
+                </label>
+            </div>
         </div>
     </div>
 </div>
