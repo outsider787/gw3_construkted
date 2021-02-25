@@ -1,5 +1,9 @@
 # Change Log
 
+### 1.2.5 - 2021-02-25
+####Additions
+- add README.md
+
 ### 1.2.4 - 2021-02-24
 ####Additions
 - Enable FXAA and give the option to turn it on/off. [#169](https://github.com/Construkted-Reality/construkted_reality/issues/169)
