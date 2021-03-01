@@ -19,7 +19,7 @@ if (!defined('CONSTRUKTED_API_URLS')) {
     define('CONSTRUKTED_API_URLS', $api_urls);
 }
 
-define('CESIUMJS_VER', '1.66');
+define('CESIUMJS_VER', '1.78');
 
 require(CONSTRUKTED_PATH . '/includes/functions.php');
 require(CONSTRUKTED_PATH . '/includes/ajax.php');
