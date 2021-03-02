@@ -6,31 +6,35 @@
             <div class="form-group">
                 <label for="display_performance"><strong>Display</strong></label>
                 <br>Rendering performance
-                <input type="range" id="maximum-screen-space-error-slider" class="form-control-range" name="display_performance" min="2" max="32" value="16">
+                <input type="range" id="maximum-screen-space-error-slider" class="form-control-range"
+                       name="display_performance" min="2" max="32" value="16">
                 <div class="label-min-max">
                     <span class="lbl-min">Performance</span>
                     <span class="lbl-max" style="float:right">Quality</span>
                 </div>
             </div>
+
             <hr style="width:100%;text-align:left;margin-left:0">
-             <div class="form-group">
+
+            <div class="form-group">
                 <label for="fpv_speed"><strong>FPV Movement</strong></label>
-                <br>Movement Speed 
-                <input type="range" id="fpv-movement-speed-slider" class="form-control-range" name="fpv_speed" min="0.01" max="2" value="0.4" step="0.01">
+                <br>Movement Speed
+                <input type="range" id="fpv-movement-speed-slider" class="form-control-range" name="fpv_speed"
+                       min="0.01" max="2" value="0.4" step="0.01">
                 <div class="label-min-max">
                     <span class="lbl-min">Slow</span>
                     <span class="lbl-max" style="float:right">Fast</span>
                 </div>
             </div>
-            
+
             <!-- These buttons should only be visible to the asset owner (logged in) -->
 
             <?php
             global $post;
 
-            if($post->post_author == get_current_user_id()) { ?>
+            if ($post->post_author == get_current_user_id()) { ?>
                 <hr style="width:100%;text-align:left;margin-left:0">
-                <strong>Thumbnail and View Settings</strong>    
+                <strong>Thumbnail and View Settings</strong>
                 <p class="desc">Create/update thumbnail from current asset view.</p>
                 <button type="button" id="capture_thumbnail" class="btn btn-light">Update asset thumbnail</button>
 
@@ -42,7 +46,7 @@
             <?php } ?>
 
             <!-- This checkbox should only be visible by an admin user only!-->
-            <?php if( current_user_can('administrator') ) {  ?>
+            <?php if (current_user_can('administrator')) { ?>
                 <div class="form-check">
                     <input class="form-check-input" id="show-hide-tiles-inspector-checkbox" type="checkbox">
                     <label class="form-check-label" for="show-hide-tiles-inspector-checkbox">
@@ -50,20 +54,44 @@
                     </label>
                 </div>
             <?php } ?>
+
             <hr style="width:100%;text-align:left;margin-left:0">
-            <strong>Advanced Performance Settings</strong>    
+
+            <strong>Advanced Performance Settings</strong>
             <p class="desc">Extra knobsd and switches to adjust the display quality and performnace.</p>
+
             <div class="form-check">
                 <input class="form-check-input" id="fxaa-enable-checkbox" type="checkbox" checked>
                 <label class="form-check-label" for="fxaa-enable-checkbox">
-                  Anti-Aliasing
+                    Anti-Aliasing
                 </label>
             </div>
+
             <div class="form-check">
                 <input class="form-check-input" id="show-hide-wireframe-checkbox" type="checkbox">
                 <label class="form-check-label" for="show-hide-wireframe-checkbox">
                     Show Wireframe
                 </label>
+            </div>
+
+            <div class="form-check">
+                <input class="form-check-input" id="translucency-checkbox" type="checkbox">
+                <label class="form-check-label" for="translucency-checkbox">
+                    Translucency
+                </label>
+            </div>
+
+            <div class="form-check">
+                <input class="form-check-input" id="fade-by-distance-checkbox" type="checkbox">
+                <label class="form-check-label" for="fade-by-distance-checkbox">
+                    Fade by distance
+                </label>
+            </div>
+
+            <div class="form-group">
+                <br>Alpha
+                <input type="range" id="alpha-by-distance-slider" class="form-control-range" name="alpha-by-distance-slider"
+                       min="0.0" max="1" value="1" step="0.01">
             </div>
         </div>
     </div>
