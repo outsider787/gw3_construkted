@@ -1,4 +1,4 @@
-<p align="center">
+<p align="center" style="background-color: blue;">
 <img src="https://construkted.com/wp-content/uploads/2020/04/construkted-logo-1.png" width="50%" />
 </p>
 
