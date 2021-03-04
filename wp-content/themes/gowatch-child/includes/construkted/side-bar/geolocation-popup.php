@@ -48,13 +48,15 @@
                 <button type="button" id = "tileset_estimate_altitude" class="btn btn-light">Estimate Altitude</button>
             <?php } ?>
             
-            <div class="form-check">
-                <input class="form-check-input" id="is-underground" type="checkbox">
-                <label class="form-check-label" for="is-underground">
-                    Underground/underwater Asset
-                </label>
-            </div>         
-
+            <?php
+            if($is_owner) { ?>
+                <div class="form-check">
+                    <input class="form-check-input" id="is-underground" type="checkbox">
+                    <label class="form-check-label" for="is-underground">
+                        Underground/underwater Asset
+                    </label>
+                </div>         
+            <?php } ?>
 
             <!-- These buttons should only be visible to the asset owner (logged in) -->
 
