@@ -1,5 +1,9 @@
 # Change Log
 
+### 1.2.8 - 2021-03-4
+#### Changes
+- Move the Cesium Ion text to help overlay. [#183](https://github.com/Construkted-Reality/construkted_reality/issues/183)
+
 ### 1.2.6 - 2021-02-27
 #### Additions
 - supports underground. [#177](https://github.com/Construkted-Reality/construkted_reality/issues/177)

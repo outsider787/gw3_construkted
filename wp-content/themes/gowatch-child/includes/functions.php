@@ -1139,6 +1139,22 @@ function construkted_asset_modal() {
                     <?php esc_html_e('Don’t show this window any more.', 'gowatch-child'); ?>
                 </span>
             </label>
+
+            <div class="cesium-widget-credits">
+                <div class="cesium-credit-logoContainer" style="display: inline;">
+                    <div style="display: inline;">
+                        <a href="https://cesium.com/" target="_blank">
+                            <img title="Cesium ion" src="https://cesiumjs.org/releases/1.78/Build/CesiumUnminified/Assets/Images/ion-credit.png">
+                        </a>
+                    </div>
+                </div>
+                <div class="cesium-credit-textContainer" style="display: inline;">
+                    <div style="display: inline;">
+                        <a href="https://cesium.com/pricing/" target="_blank">Upgrade for commercial use. </a>
+                    </div>
+                </div>
+                <a class="cesium-credit-expand-link" style="display: inline;">Data attribution</a>
+            </div>
         </div>
     </div>
     <span class="ck-modal-toggler"><i class="icon-help"></i></span>
