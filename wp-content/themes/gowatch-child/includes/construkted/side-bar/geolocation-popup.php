@@ -53,7 +53,7 @@
                 <div class="form-check">
                     <input class="form-check-input" id="is-underground" type="checkbox">
                     <label class="form-check-label" for="is-underground">
-                        Underground/underwater Asset
+                        Underground/underwater Asset 2
                     </label>
                 </div>         
             <?php } ?>
