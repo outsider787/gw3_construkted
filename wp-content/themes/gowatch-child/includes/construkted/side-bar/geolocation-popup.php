@@ -48,13 +48,13 @@
                 <button type="button" id = "tileset_estimate_altitude" class="btn btn-light">Estimate Altitude</button>
             <?php } ?>
             
-            
-            <div class="text-input-group">
-                <div class="input-group">
-                    <label for="heading">Heading:</label>
-                    <input type="text" id = "tileset_heading" name="heading" <?php if(!$is_owner) { ?>  readonly <?php }?>>
-                </div>
-            </div>
+            <div class="form-check">
+                <input class="form-check-input" id="is-underground" type="checkbox">
+                <label class="form-check-label" for="is-underground">
+                    Underground/underwater Asset
+                </label>
+            </div>         
+
 
             <!-- These buttons should only be visible to the asset owner (logged in) -->
 
