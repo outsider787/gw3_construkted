@@ -27,6 +27,7 @@ function enqueue_construkted_scripts($ajaxType){
     $post_slug = get_post_field( 'post_name', $post_id );
     $default_camera_position_direction = get_post_meta( $post_id, 'default_camera_position_direction', true);
     $asset_geo_location_json = get_post_meta( $post_id, 'asset_geo-location', true);
+    $asset_is_underground = get_post_meta( $post_id, 'asset_is_underground', true);
 
     $bg_color_css_string = get_post_meta( $post_id, 'bg_color', true);
 
@@ -82,7 +83,8 @@ function enqueue_construkted_scripts($ajaxType){
                 'default_camera_position_direction' => $default_camera_position_direction,
                 'asset_geo_location' => $asset_geo_location_json,
                 'is_owner' => $post->post_author == get_current_user_id(),
-                'bg_color_css_string' => $bg_color_css_string
+                'bg_color_css_string' => $bg_color_css_string,
+                'asset_is_underground' =>$asset_is_underground
             )
         );
     }

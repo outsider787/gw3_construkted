@@ -74,25 +74,7 @@
                 </label>
             </div>
 
-            <div class="form-check">
-                <input class="form-check-input" id="translucency-checkbox" type="checkbox">
-                <label class="form-check-label" for="translucency-checkbox">
-                    Translucency
-                </label>
-            </div>
 
-            <div class="form-check">
-                <input class="form-check-input" id="fade-by-distance-checkbox" type="checkbox">
-                <label class="form-check-label" for="fade-by-distance-checkbox">
-                    Fade by distance
-                </label>
-            </div>
-
-            <div class="form-group">
-                <br>Alpha
-                <input type="range" id="alpha-by-distance-slider" class="form-control-range" name="alpha-by-distance-slider"
-                       min="0.0" max="1" value="1" step="0.01">
-            </div>
         </div>
     </div>
 </div>

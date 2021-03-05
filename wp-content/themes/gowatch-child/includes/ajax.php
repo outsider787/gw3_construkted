@@ -230,14 +230,16 @@ function construkted_remove_post() {
     die();
 }
 
-add_action( 'wp_ajax_nopriv_set_asset_geo_location_json', 'set_asset_geo_location_json');
-add_action( 'wp_ajax_set_asset_geo_location_json', 'set_asset_geo_location_json');
+add_action( 'wp_ajax_nopriv_set_asset_geo_location_json_and_underground_flag', 'set_asset_geo_location_json_and_underground_flag');
+add_action( 'wp_ajax_set_asset_geo_location_json_and_underground_flag', 'set_asset_geo_location_json_and_underground_flag');
 
-function set_asset_geo_location_json() {
+function set_asset_geo_location_json_and_underground_flag() {
     $post_id = $_REQUEST['post_id'];
     $tileset_model_matrix_json = $_REQUEST['asset_geo_location_json'];
+    $asset_is_underground = $_REQUEST['asset_is_underground'];
 
     $ret = update_post_meta( $post_id, 'asset_geo-location', $tileset_model_matrix_json );
+    $ret = update_post_meta( $post_id, 'asset_is_underground', $asset_is_underground );
 
     $data->ret = $ret;
 

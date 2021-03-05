@@ -51,8 +51,8 @@
             <?php
             if($is_owner) { ?>
                 <div class="form-check">
-                    <input class="form-check-input" id="is-underground" type="checkbox">
-                    <label class="form-check-label" for="is-underground">
+                    <input class="form-check-input" id="is-underground-checkbox" type="checkbox">
+                    <label class="form-check-label" for="is-underground-checkbox">
                         Underground/underwater Asset
                     </label>
                 </div>         
