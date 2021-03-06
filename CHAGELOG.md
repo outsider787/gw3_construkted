@@ -8,6 +8,10 @@
 #### Changes
 - Move the Cesium Ion text to help overlay. [#183](https://github.com/Construkted-Reality/construkted_reality/issues/183)
 
+### 1.2.7 - 2021-03-4
+#### Fixes
+- FLY speed should be consistent for all assets. [#182](https://github.com/Construkted-Reality/construkted_reality/issues/182)
+
 ### 1.2.6 - 2021-02-27
 #### Additions
 - supports underground. [#177]ttps://github.com/Construkted-Reality/construkted_reality/issues/177)
