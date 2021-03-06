@@ -1,12 +1,16 @@
 # Change Log
 
+### 1.2.9 - 2021-03-6
+#### Changes
+- add code to toggle the yellow line on/off and toggle the on/off the terrain fade effect with the checkbox. [#184](https://github.com/Construkted-Reality/construkted_reality/issues/184)
+
 ### 1.2.8 - 2021-03-4
 #### Changes
 - Move the Cesium Ion text to help overlay. [#183](https://github.com/Construkted-Reality/construkted_reality/issues/183)
 
 ### 1.2.6 - 2021-02-27
 #### Additions
-- supports underground. [#177](https://github.com/Construkted-Reality/construkted_reality/issues/177)
+- supports underground. [#177]ttps://github.com/Construkted-Reality/construkted_reality/issues/177)
 
 ### 1.2.5 - 2021-02-25
 #### Additions
