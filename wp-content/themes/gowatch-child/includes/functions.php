@@ -1322,3 +1322,22 @@ add_action( 'rest_api_init', function () {
     'callback' => 'ck_get_assets',
   ) );
 } );
+
+
+/**
+ * Function to filter the query for the related posts so can be modified with airkit_filter_related_posts hook
+ *
+ * @param array $query
+ * @return array
+ */
+function ck_filter_related($query) {
+
+    $query['meta_query'][] = array(
+        'key'     => 'view_access',
+        'value'   => 'public',
+        'compare' => '='
+    );
+
+    return $query;
+}
+add_filter('airkit_filter_related_posts', 'ck_filter_related');
