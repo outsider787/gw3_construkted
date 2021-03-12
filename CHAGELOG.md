@@ -1,5 +1,9 @@
 # Change Log
 
+### 1.2.9.a - 2021-03-13
+#### Changes
+- revert issue 183 change
+
 ### 1.2.9 - 2021-03-6
 #### Changes
 - add code to toggle the yellow line on/off and toggle the on/off the terrain fade effect with the checkbox. [#184](https://github.com/Construkted-Reality/construkted_reality/issues/184)
