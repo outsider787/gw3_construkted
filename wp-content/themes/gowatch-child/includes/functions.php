@@ -1068,69 +1068,211 @@ function construkted_asset_modal() {
         
     <div class="ck-asset-modal" style="display: none;">
         <i class="icon-close"></i>
-        <h4><?php esc_html_e('First Person View Navigation', 'gowatch-child'); ?></h4>
-        <div class="flexer">
-            <div class="ck-col">
-                <div class="ck-modal-item">
-                    <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/double-click.svg" alt="" />
-                    <div class="ck-modal__item-details">
-                        <strong><?php esc_html_e('Enable First Person View', 'gowatch-child'); ?></strong>
-                        <span><?php esc_html_e('Double-click on the asset to choose start location.', 'gowatch-child'); ?></span>
+        <h4><?php esc_html_e('How to navigate', 'gowatch-child'); ?></h4>
+        <div class="ck-tabs">
+            <ul class="ck-tabs-items">
+                <li class="active">
+                    <i class="gwicon-orbit"></i>
+                    <?php esc_html_e('Orbit', 'gowatch-child') ?>
+                </li>
+                <li>
+                    <i class="gwicon-baloon"></i>
+                    <?php esc_html_e('Fly', 'gowatch-child') ?>
+                </li>
+                <li>
+                    <i class="gwicon-user"></i>
+                    <?php esc_html_e('FPV', 'gowatch-child') ?>
+                </li>
+            </ul>
+            <div class="ck-tabs-container">
+                <div class="ck-tabs-content ck-tab-orbit active">
+                    <div class="flexer">
+                        <div class="ck-col">
+                            <div class="ck-modal-item">
+                                <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/left-click.svg" alt="" />
+                                <div class="ck-modal__item-details">
+                                    <strong><?php esc_html_e('Pan', 'gowatch-child'); ?></strong>
+                                    <span><?php esc_html_e('Left click and drag to pan.', 'gowatch-child'); ?></span>
+                                </div>
+                            </div>
+                            <div class="ck-modal-item">
+                                <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/right-click.svg" alt="" />
+                                <div class="ck-modal__item-details">
+                                    <strong><?php esc_html_e('Rotate', 'gowatch-child'); ?></strong>
+                                    <span><?php esc_html_e('Right click and grad to rotate.', 'gowatch-child'); ?></span>
+                                </div>
+                            </div>
+                            <div class="ck-modal-item">
+                                <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/mouse-scroll.svg" alt="" />
+                                <div class="ck-modal__item-details">
+                                    <strong><?php esc_html_e('Mouse scroll', 'gowatch-child'); ?></strong>
+                                    <span><?php esc_html_e('Scroll wheel to zoom', 'gowatch-child'); ?></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ck-col">
+                            <div class="ck-modal-item">
+                                <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/finger-drag.svg" alt="" />
+                                <div class="ck-modal__item-details">
+                                    <strong><?php esc_html_e('Move around', 'gowatch-child'); ?></strong>
+                                    <span><?php esc_html_e('Tap and drag an any direction to move around.', 'gowatch-child'); ?></span>
+                                </div>
+                            </div>
+                            <div class="ck-modal-item">
+                                <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/pinch.svg" alt="" />
+                                <div class="ck-modal__item-details">
+                                    <strong><?php esc_html_e('Pinch', 'gowatch-child'); ?></strong>
+                                    <span><?php esc_html_e('Zoom in, rotate the view', 'gowatch-child'); ?></span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="ck-modal-item">
-                    <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/mouse-drag.svg" alt="" />
-                    <div class="ck-modal__item-details">
-                        <strong><?php esc_html_e('Look around', 'gowatch-child'); ?></strong>
-                        <span><?php esc_html_e('Click and drag an any direction to look around ', 'gowatch-child'); ?></span>
+                <div class="ck-tabs-content ck-tab-fly">
+                    <div class="flexer">
+                        <div class="ck-col">
+                            <div class="ck-modal-item">
+                                <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/mouse-drag.svg" alt="" />
+                                <div class="ck-modal__item-details">
+                                    <strong><?php esc_html_e('Look around', 'gowatch-child'); ?></strong>
+                                    <span><?php esc_html_e('Click and drag an any direction to look around ', 'gowatch-child'); ?></span>
+                                </div>
+                            </div>
+                            <div class="ck-modal-item">
+                                <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/keyboard-control.svg" alt="" />
+                                <div class="ck-modal__item-details">
+                                    <strong><?php esc_html_e('Movement', 'gowatch-child'); ?></strong>
+                                    <span><?php esc_html_e('Use keyboard WASD keys to move around', 'gowatch-child'); ?></span>
+                                </div>
+                            </div>
+                            <div class="ck-modal-item">
+                                <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/rkey.svg" alt="" />
+                                <div class="ck-modal__item-details">
+                                    <strong><?php esc_html_e('Move up', 'gowatch-child'); ?></strong>
+                                    <span><?php esc_html_e('Use keyboard R key to move up', 'gowatch-child'); ?></span>
+                                </div>
+                            </div>
+                            <div class="ck-modal-item">
+                                <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/fkey.svg" alt="" />
+                                <div class="ck-modal__item-details">
+                                    <strong><?php esc_html_e('Move down', 'gowatch-child'); ?></strong>
+                                    <span><?php esc_html_e('Use keyboard R key to move down', 'gowatch-child'); ?></span>
+                                </div>
+                            </div>
+                            <div class="ck-modal-item">
+                                <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/shiftkey.svg" alt="" />
+                                <div class="ck-modal__item-details">
+                                    <strong><?php esc_html_e('Increase speed', 'gowatch-child'); ?></strong>
+                                    <span><?php esc_html_e('Press the Shift key to increase movement speed', 'gowatch-child'); ?></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ck-col">
+                            <div class="ck-modal-item">
+                                <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/finger-drag.svg" alt="" />
+                                <div class="ck-modal__item-details">
+                                    <strong><?php esc_html_e('Look around', 'gowatch-child'); ?></strong>
+                                    <span><?php esc_html_e('Tap and drag an any direction to look around.', 'gowatch-child'); ?></span>
+                                </div>
+                            </div>
+                            <div class="ck-modal-item">
+                                <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/double-tap.svg" alt="" />
+                                <div class="ck-modal__item-details">
+                                    <strong><?php esc_html_e('Jump to new location', 'gowatch-child'); ?></strong>
+                                    <span><?php esc_html_e('Double-tap on the asset to choose start location.', 'gowatch-child'); ?></span>
+                                </div>
+                            </div>
+                            <div class="ck-modal-item">
+                                <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/key-arrows.svg" alt="" />
+                                <div class="ck-modal__item-details">
+                                    <strong><?php esc_html_e('Movement', 'gowatch-child'); ?></strong>
+                                    <span><?php esc_html_e('Use arrows keys to move around', 'gowatch-child'); ?></span>
+                                </div>
+                            </div>
+                            <div class="ck-modal-item">
+                                <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/up-down-key.svg" alt="" />
+                                <div class="ck-modal__item-details">
+                                    <strong><?php esc_html_e('Move up/down', 'gowatch-child'); ?></strong>
+                                    <span><?php esc_html_e('Click on the right up arrow to move up or down arrow to move down', 'gowatch-child'); ?></span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="ck-modal-item">
-                    <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/key-arrows.svg" alt="" />
-                    <div class="ck-modal__item-details">
-                        <strong><?php esc_html_e('Movement', 'gowatch-child'); ?></strong>
-                        <span><?php esc_html_e('Use keyboard arrows keys or WASD keys to move around', 'gowatch-child'); ?></span>
-                    </div>
-                </div>
-                <div class="ck-modal-item">
-                    <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/double-click.svg" alt="" />
-                    <div class="ck-modal__item-details">
-                        <strong><?php esc_html_e('Jump to new location', 'gowatch-child'); ?></strong>
-                        <span><?php esc_html_e('Double-click on the asset to choose new location.', 'gowatch-child'); ?></span>
-                    </div>
-                </div> 
-            </div>
-            <div class="ck-col">
-                <div class="ck-modal-item">
-                    <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/double-tap.svg" alt="" />
-                    <div class="ck-modal__item-details">
-                        <strong><?php esc_html_e('Enable First Person View', 'gowatch-child'); ?></strong>
-                        <span><?php esc_html_e('Double-tap on the asset to choose start location.', 'gowatch-child'); ?></span>
-                    </div>
-                </div>
-                <div class="ck-modal-item">
-                    <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/finger-drag.svg" alt="" />
-                    <div class="ck-modal__item-details">
-                        <strong><?php esc_html_e('Look around', 'gowatch-child'); ?></strong>
-                        <span><?php esc_html_e('Tap and drag an any direction to look around.', 'gowatch-child'); ?></span>
-                    </div>
-                </div>
-                <div class="ck-modal-item">
-                    <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/key-arrows.svg" alt="" />
-                    <div class="ck-modal__item-details">
-                        <strong><?php esc_html_e('Movement', 'gowatch-child'); ?></strong>
-                        <span><?php esc_html_e('Use arrows keys to move around', 'gowatch-child'); ?></span>
-                    </div>
-                </div>
-                <div class="ck-modal-item">
-                    <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/double-tap.svg" alt="" />
-                    <div class="ck-modal__item-details">
-                        <strong><?php esc_html_e('Jump to new location', 'gowatch-child'); ?></strong>
-                        <span><?php esc_html_e('Double-tap on the asset to choose start location.', 'gowatch-child'); ?></span>
+                <div class="ck-tabs-content ck-tab-fpv">
+                    <div class="flexer">
+                        <div class="ck-col">
+                            <div class="ck-modal-item">
+                                <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/double-click.svg" alt="" />
+                                <div class="ck-modal__item-details">
+                                    <strong><?php esc_html_e('Enable First Person View', 'gowatch-child'); ?></strong>
+                                    <span><?php esc_html_e('Double-click on the asset to choose start location.', 'gowatch-child'); ?></span>
+                                </div>
+                            </div>
+                            <div class="ck-modal-item">
+                                <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/mouse-drag.svg" alt="" />
+                                <div class="ck-modal__item-details">
+                                    <strong><?php esc_html_e('Look around', 'gowatch-child'); ?></strong>
+                                    <span><?php esc_html_e('Click and drag an any direction to look around ', 'gowatch-child'); ?></span>
+                                </div>
+                            </div>
+                            <div class="ck-modal-item">
+                                <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/keyboard-control.svg" alt="" />
+                                <div class="ck-modal__item-details">
+                                    <strong><?php esc_html_e('Movement', 'gowatch-child'); ?></strong>
+                                    <span><?php esc_html_e('Use WASD keys to move around', 'gowatch-child'); ?></span>
+                                </div>
+                            </div>
+                            <div class="ck-modal-item">
+                                <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/shiftkey.svg" alt="" />
+                                <div class="ck-modal__item-details">
+                                    <strong><?php esc_html_e('Increase speed', 'gowatch-child'); ?></strong>
+                                    <span><?php esc_html_e('Press the Shift key to increase movement speed', 'gowatch-child'); ?></span>
+                                </div>
+                            </div>
+                            <div class="ck-modal-item">
+                                <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/double-click.svg" alt="" />
+                                <div class="ck-modal__item-details">
+                                    <strong><?php esc_html_e('Jump to new location', 'gowatch-child'); ?></strong>
+                                    <span><?php esc_html_e('Double-click on the asset to choose new location.', 'gowatch-child'); ?></span>
+                                </div>
+                            </div> 
+                        </div>
+                        <div class="ck-col">
+                            <div class="ck-modal-item">
+                                <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/double-tap.svg" alt="" />
+                                <div class="ck-modal__item-details">
+                                    <strong><?php esc_html_e('Enable First Person View', 'gowatch-child'); ?></strong>
+                                    <span><?php esc_html_e('Double-tap on the asset to choose start location.', 'gowatch-child'); ?></span>
+                                </div>
+                            </div>
+                            <div class="ck-modal-item">
+                                <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/finger-drag.svg" alt="" />
+                                <div class="ck-modal__item-details">
+                                    <strong><?php esc_html_e('Look around', 'gowatch-child'); ?></strong>
+                                    <span><?php esc_html_e('Tap and drag an any direction to look around.', 'gowatch-child'); ?></span>
+                                </div>
+                            </div>
+                            <div class="ck-modal-item">
+                                <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/double-tap.svg" alt="" />
+                                <div class="ck-modal__item-details">
+                                    <strong><?php esc_html_e('Jump to new location', 'gowatch-child'); ?></strong>
+                                    <span><?php esc_html_e('Double-tap on the asset to choose start location.', 'gowatch-child'); ?></span>
+                                </div>
+                            </div>
+                            <div class="ck-modal-item">
+                                <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/key-arrows.svg" alt="" />
+                                <div class="ck-modal__item-details">
+                                    <strong><?php esc_html_e('Movement', 'gowatch-child'); ?></strong>
+                                    <span><?php esc_html_e('Use arrows keys to move around', 'gowatch-child'); ?></span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+        
         <div class="ck-asset-modal-footer">
             <a href="#" class="gw3-button"><?php esc_html_e('Ok, thank you.', 'gowatch-child'); ?></a>
             <label for="ck-asset-modal-close">
